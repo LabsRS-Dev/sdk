@@ -125,7 +125,6 @@ $bc_.XPC = {
         var params = {
           xpc_key: _json.xpc_key || 'default',
           callback: _json.callback || $bc_._get_callback(function (obj) {
-            console.log($.obj2string(obj))
             cb && cb(obj)
           }, true),
           messageDic: _json.messageDic
@@ -225,7 +224,6 @@ $bc_.XPCNodeHelper = {
         'xpc_key': xpc_key,
         'messageDic': messageDic
       }, function (obj) {
-        console.log('XPCNodeHelper log: ' + $.obj2string(obj))
         successCB && successCB(obj)
       })
     } else {
@@ -303,7 +301,6 @@ $bc_.XPCPythonHelper = {
         'xpc_key': xpc_key,
         'messageDic': messageDic
       }, function (obj) {
-        console.log('XPCNodeHelper log: ' + $.obj2string(obj))
         successCB && successCB(obj)
       })
     } else {

@@ -1,8 +1,6 @@
 import util from './dove.sdk/util/index'
 import b$ from './dove.sdk/bs/index'
 import underscore from './dove.sdk/underscore'
-var _ = underscore._
-
 
 window.BS = b$
 window.Romanysoft = {
@@ -10,7 +8,6 @@ window.Romanysoft = {
   u$: util,
   b$: b$
 }
-
 
 export default {
   _: underscore._,

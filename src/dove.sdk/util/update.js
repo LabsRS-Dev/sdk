@@ -1,10 +1,7 @@
-import underscore from '../underscore'
+
 import { common } from './common'
 import { communication } from './communication'
 import { loaderWrapper } from './loaderWrapper'
-
-var _ = underscore._
-
 
 // 自动更新设置
 /**

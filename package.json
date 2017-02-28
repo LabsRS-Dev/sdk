@@ -18,7 +18,7 @@
     "build:main": "rollup -c build/rollup.config.js && uglifyjs dist/dove.max.sdk.js -cm --comments -o dist/dove.max.sdk.min.js",
     "build:esm": "rollup -c build/rollup.config.js --environment ESM",
     "lint": "eslint src test",
-    "#test": "npm run lint && npm run test:types && npm run test:unit && npm run test:e2e",
+    "test": "npm run lint && npm run test:types && npm run test:unit && npm run test:e2e",
     "test:unit": "rollup -c build/rollup.config.js && jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
     "test:e2e": "node test/e2e/runner.js",
     "test:types": "tsc -p types/test",

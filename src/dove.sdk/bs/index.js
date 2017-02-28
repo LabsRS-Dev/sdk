@@ -15,10 +15,7 @@ import { dragdrop } from './dragdrop'
 import { task } from './task'
 import { filedialog } from './filedialog'
 
-
-
 var _ = underscore._
-
 
 // ---------------------------
 // Interface outside
@@ -38,11 +35,8 @@ $bc_ = _.extend($bc_, dragdrop)
 $bc_ = _.extend($bc_, task)
 $bc_ = _.extend($bc_, filedialog)
 
-
 export default {
   version: '__VERSION__',
   b$: $bc_
 }
-
-
 

@@ -1,4 +1,4 @@
-# dove.max.sdk.js [![Build Status](https://circleci.com/gh/LabsRS-Dev/sdk/tree/dev.png?style=shield)](https://circleci.com/gh/LabsRS-Dev/sdk)
+# dove.max.sdk.js [![CircleCI](https://circleci.com/gh/LabsRS-Dev/sdk/tree/master.svg?style=svg)](https://circleci.com/gh/LabsRS-Dev/sdk/tree/master)
 
 > SDK for Romanysoft Desktop App
 

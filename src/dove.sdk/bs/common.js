@@ -1,3 +1,6 @@
+import underscore from '../underscore'
+var _ = underscore._
+
 // Object functions
 // -------------------------------------------------------------------------
 var $bc_ = {}

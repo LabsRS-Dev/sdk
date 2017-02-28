@@ -33,6 +33,7 @@ $bc_.enableDragDropFeature = function (jsonObj, cb) {
       }
 
       if (t$.pIsUseElectron) {
+        var $ = common.getJQuery$()
         $(document).ready(function () {
           // document.ondragover = document.ondrop = function(e) {
           //   e.preventDefault();
