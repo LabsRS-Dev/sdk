@@ -164,6 +164,12 @@ $bc_.revertDefaultManifest = function () {
   return true
 }
 
+$bc_.getJQuery$ = function () {
+  var $ = window.jQuery || window.$ || undefined
+  console.assert(_.isObject($), 'Must be loaded jQuery library first \n')
+  return $
+}
+
 //
 // -----------------------------------------------
 const common = $bc_

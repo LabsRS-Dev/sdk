@@ -7,14 +7,28 @@ var $bc_ = common
 $bc_.IAP_SE_KEY = 'RSSDK_SE_SANBOX_IAP'
 $bc_.IAP_SE_OBJ = {}
 $bc_.IAP_SE_Wrapper = {
+  _caller: 0,
   productIdentifiers: [],   // 商品的ID 数组
-  caller: window.$ ? window.$.Callbacks() : {}     // 消息回调处理
+  caller: function () { // 消息回调处理
+    if (this._caller === 0) {
+      var $ = common.getJQuery$()
+      this._caller = $.Callbacks()
+    }
+    return this._caller
+  }
 }
 
 // IAP 功能封装
 $bc_.cb_handleIAPCallback = null // IAP的回调函数
 $bc_.IAP = {
-  NoticeCenter: window.$ ? window.$.Callbacks() : {}, // 参照Jquery.Callbacks消息回调处理。增加动态注册监控信息的回调处理。是一种扩展
+  _pNoticeCenter: 0,
+  NoticeCenter: function () {
+    if (this._pNoticeCenter === 0) {
+      var $ = common.getJQuery$()
+      this._pNoticeCenter = $.Callbacks()
+    }
+    return this._pNoticeCenter
+  }, // 参照Jquery.Callbacks消息回调处理。增加动态注册监控信息的回调处理。是一种扩展
   MessageType: (function () { // 开放内核中的消息
     var msg = [
       // /{常用购买流程}
@@ -116,13 +130,11 @@ $bc_.IAP = {
     var t$ = this
 
     try {
-      $.testObjectType(in_parms, 'object')
-
       var parms = {}
       parms['cb_IAP_js'] = in_parms['cb_IAP_js'] || $bc_._get_callback(function (obj) {
         // ////////////////////////内部处理//////////////////////////////////
         try {
-          if ($.isPlainObject(obj)) {
+          if (_.isObject(obj)) {
             var info = obj.info
             var notifyType = obj.notifyType
 
@@ -134,7 +146,7 @@ $bc_.IAP = {
               t$.data.productIsRequested = true
               t$.data.productInfoList = info
 
-              $.each(t$.data.productInfoList, function (index, product) {
+              _.each(t$.data.productInfoList, function (product, index, list) {
                 t$.data.productInfoMap[product.productIdentifier] = {
                   productIdentifier: product.productIdentifier, // 商品ID
                   description: product.description || '', // 商品描述
@@ -149,11 +161,11 @@ $bc_.IAP = {
         }
 
         try {
-          $bc_.IAP.NoticeCenter.fire(obj)
+          $bc_.IAP.NoticeCenter().fire(obj)
         } catch (e) {}
 
         // /////////////////////////外部处理/////////////////////////////////
-        if ($.isFunction($bc_.cb_handleIAPCallback)) {
+        if (_.isFunction($bc_.cb_handleIAPCallback)) {
           $bc_.cb_handleIAPCallback && $bc_.cb_handleIAPCallback(obj)
         } else {
           cb && cb(obj)
@@ -175,7 +187,7 @@ $bc_.IAP = {
       if (_.isArray(in_parms['products'])) { // [{productIdentifier, description, buyUrl, price}]
         try {
           var productIds = []
-          $.each(in_parms['products'], function (index, product) {
+          _.each(in_parms['products'], function (product, index, list) {
             productIds.push(product.productIdentifier)
           })
 
@@ -221,7 +233,7 @@ $bc_.IAP = {
  // / 以下是Demo 处理
 
         // /注册模拟IAP回调
-        $bc_.IAP_SE_Wrapper.caller.add(function (obj) {
+        $bc_.IAP_SE_Wrapper.caller().add(function (obj) {
           console.assert(_.isString(parms.cb_IAP_js) === true, 'must be function string')
 
           var fnc = window.eval(parms.cb_IAP_js)
@@ -234,7 +246,7 @@ $bc_.IAP = {
         $bc_.IAP_SE_Wrapper.productIdentifiers = parms.productIds || []
 
         var productsInfo = []
-        $.each(parms.productIds, function (index, id) {
+        _.each(parms.productIds, function (id, index, list) {
           var productObj = {
             productIdentifier: id,
             description: 'Plugin Description and price demo for ' + id,
@@ -246,7 +258,7 @@ $bc_.IAP = {
         })
 
         // /模拟发送获取产品信息
-        $bc_.IAP_SE_Wrapper.caller.fire({
+        $bc_.IAP_SE_Wrapper.caller().fire({
           notifyType: t$.MessageType.ProductRequested,
           info: productsInfo
         })
@@ -298,8 +310,8 @@ $bc_.IAP = {
     // ////////////////////////////////////////////////////////////////////////////
     var _cb = function (obj) {
       try {
-        $bc_.IAP.NoticeCenter.remove(_cb)
-        if ($.isPlainObject(obj)) {
+        $bc_.IAP.NoticeCenter().remove(_cb)
+        if (_.isObject(obj)) {
           var info = obj.info
           var notifyType = obj.notifyType
 
@@ -315,7 +327,7 @@ $bc_.IAP = {
     }
 
     // 注册一个消息回调
-    $bc_.IAP.NoticeCenter.add(_cb)
+    $bc_.IAP.NoticeCenter().add(_cb)
 
     if ($bc_.pN) {
       // 发送购买请求
@@ -330,7 +342,7 @@ $bc_.IAP = {
       var purchasedItemList = [] // 声明原先已经购买的商品列表
 
       // /检测所有已经注册的ID
-      $.each($bc_.IAP_SE_Wrapper.productIdentifiers, function (index, productID) {
+      _.each($bc_.IAP_SE_Wrapper.productIdentifiers, function (productID, index, list) {
         if ($bc_.IAP_SE_OBJ.hasOwnProperty(productID)) {
           var quantity = $bc_.IAP_SE_OBJ[productID]
           if (quantity > 0) {
@@ -345,7 +357,7 @@ $bc_.IAP = {
       })
 
       // /模拟发送获取产品信息
-      $bc_.IAP_SE_Wrapper.caller.fire({
+      $bc_.IAP_SE_Wrapper.caller().fire({
         notifyType: t$.MessageType['ProductsPaymentQueueRestoreCompleted'],
         info: purchasedItemList
       })
@@ -365,8 +377,8 @@ $bc_.IAP = {
     // ////////////////////////////////////////////////////////////////////////////
     var _cb = function (obj) {
       try {
-        $bc_.IAP.NoticeCenter.remove(_cb)
-        if ($.isPlainObject(obj)) {
+        $bc_.IAP.NoticeCenter().remove(_cb)
+        if (_.isObject(obj)) {
           var info = obj.info
           var notifyType = obj.notifyType
 
@@ -384,7 +396,7 @@ $bc_.IAP = {
     }
 
     // 注册一个消息回调
-    $bc_.IAP.NoticeCenter.add(_cb)
+    $bc_.IAP.NoticeCenter().add(_cb)
 
     if ($bc_.pN) {
       // 发送购买请求
@@ -410,7 +422,7 @@ $bc_.IAP = {
       window.localStorage.setItem($bc_.IAP_SE_KEY, JSON.stringify($bc_.IAP_SE_OBJ))
 
       // 模拟发送成功购买信息
-      $bc_.IAP_SE_Wrapper.caller.fire({
+      $bc_.IAP_SE_Wrapper.caller().fire({
         notifyType: t$.MessageType['ProductPurchased'],
         info: {
           productIdentifier: parms.productIdentifier,
@@ -419,7 +431,7 @@ $bc_.IAP = {
       })
 
       // 模拟发送购买完成信息
-      $bc_.IAP_SE_Wrapper.caller.fire({
+      $bc_.IAP_SE_Wrapper.caller().fire({
         notifyType: t$.MessageType['ProductCompletePurchased'],
         info: {
           productIdentifier: parms.productIdentifier,
