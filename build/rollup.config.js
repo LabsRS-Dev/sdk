@@ -4,7 +4,7 @@ const version = process.env.VERSION || require('../package.json').version
 
 module.exports = {
   entry: process.env.ESM ? 'src/index.esm.js' : 'src/index.js',
-  dest: process.env.ESM ? 'dist/dove.max.sdk.esm.js' : 'dist/dove.max.sdk.js',
+  dest: process.env.ESM ? 'dist/dovemax-sdk.esm.js' : 'dist/dovemax-sdk.js',
   format: process.env.ESM ? 'es' : 'umd',
   moduleName: 'DoveMaxSDK',
   plugins: [

@@ -3,10 +3,13 @@
 > SDK for Romanysoft Desktop App
 
 
+
 Running the build:
 
 ``` bash
 $ npm install
+$ npm run build
+$ npm run test
 $ npm run dev # serve examples at localhost:8080
 ```
 
