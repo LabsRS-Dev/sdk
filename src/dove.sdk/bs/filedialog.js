@@ -37,7 +37,7 @@ $bc_.importFiles = function (in_parms, noNcb, cb) {
   try {
     var parms = {}
     // 限制内部属性：
-    parms['callback'] = in_parms['callback'] || $bc_._get_callback(function (obj) {
+    parms['callback'] = in_parms['callback'] || _this._get_callback(function (obj) {
       if (_this.cb_importFiles) {
         _this.cb_importFiles && _this.cb_importFiles(obj)
       } else {

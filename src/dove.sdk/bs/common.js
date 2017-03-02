@@ -13,9 +13,10 @@ $bc_.pIsUseMacCocoEngine = false // 是否使用了MacOSX本地引擎
 // 定义临时回调处理函数定义接口
 $bc_._ncb_idx = 0
 $bc_._get_callback = function (func, noDelete) {
+  var that = this
   window._nativeCallback = window._nativeCallback || {}
   var _nativeCallback = window._nativeCallback
-  var r = 'ncb' + $bc_._ncb_idx++
+  var r = 'ncb' + that._ncb_idx++
   _nativeCallback[r] = function () {
     try {
       if (!noDelete) {
@@ -41,6 +42,7 @@ $bc_.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
 $bc_.pIAPPlugin = {
   path: '/plugin.iap.bundle'
 }
+
 
 // 自动匹配检测
 var __auto = function (ref) {

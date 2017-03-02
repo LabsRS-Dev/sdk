@@ -1,5 +1,6 @@
 import { common } from './common'
 import underscore from '../underscore'
+import { Observable } from '../observable'
 var _ = underscore._
 
 var $bc_ = common
@@ -12,7 +13,7 @@ $bc_.IAP_SE_Wrapper = {
   caller: function () { // 消息回调处理
     if (this._caller === 0) {
       var $ = common.getJQuery$()
-      this._caller = $.Callbacks()
+      this._caller = _.isUndefined($) ? (new Observable()) : $.Callbacks()
     }
     return this._caller
   }
@@ -25,7 +26,7 @@ $bc_.IAP = {
   NoticeCenter: function () {
     if (this._pNoticeCenter === 0) {
       var $ = common.getJQuery$()
-      this._pNoticeCenter = $.Callbacks()
+      this._pNoticeCenter = _.isUndefined($) ? (new Observable()) : $.Callbacks()
     }
     return this._pNoticeCenter
   }, // 参照Jquery.Callbacks消息回调处理。增加动态注册监控信息的回调处理。是一种扩展

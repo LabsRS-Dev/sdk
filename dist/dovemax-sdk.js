@@ -1722,9 +1722,10 @@ $bc_$1.pIsUseMacCocoEngine = false; // 是否使用了MacOSX本地引擎
 // 定义临时回调处理函数定义接口
 $bc_$1._ncb_idx = 0;
 $bc_$1._get_callback = function (func, noDelete) {
+  var that = this;
   window._nativeCallback = window._nativeCallback || {};
   var _nativeCallback = window._nativeCallback;
-  var r = 'ncb' + $bc_$1._ncb_idx++;
+  var r = 'ncb' + that._ncb_idx++;
   _nativeCallback[r] = function () {
     try {
       if (!noDelete) {
@@ -1750,6 +1751,7 @@ $bc_$1.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
 $bc_$1.pIAPPlugin = {
   path: '/plugin.iap.bundle'
 };
+
 
 // 自动匹配检测
 var __auto = function (ref) {
@@ -1887,6 +1889,228 @@ $bc_$1.getJQuery$ = function () {
 // -----------------------------------------------
 var common = $bc_$1;
 
+var _$4 = underscore._;
+
+// -----------------------------------------------------------------
+// extend from kendo.core.js
+
+function deepExtend (destination) {
+  var arguments$1 = arguments;
+
+  var i = 1,
+    length = arguments.length;
+
+  for (i = 1; i < length; i++) {
+    deepExtendOne(destination, arguments$1[i]);
+  }
+
+  return destination
+}
+
+function deepExtendOne (destination, source) {
+  var property,
+    propValue,
+    propType,
+    propInit,
+    destProp;
+
+  for (property in source) {
+    propValue = source[property];
+    propType = typeof propValue;
+
+    if (propType === 'object' && propValue !== null) {
+      propInit = propValue.constructor;
+    } else {
+      propInit = null;
+    }
+
+    if (propInit &&
+      propInit !== Array && propInit !== RegExp) {
+      if (propValue instanceof Date) {
+        destination[property] = new Date(propValue.getTime());
+      } else if (_$4.isFunction(propValue.clone)) {
+        destination[property] = _$4.clone(propValue);
+      } else {
+        destProp = destination[property];
+        if (typeof (destProp) === 'object') {
+          destination[property] = destProp || {};
+        } else {
+          destination[property] = {};
+        }
+        deepExtendOne(destination[property], propValue);
+      }
+    } else if (propType !== 'undefined') {
+      destination[property] = propValue;
+    }
+  }
+
+  return destination
+}
+
+var preventDefault = function () {
+  this._defaultPrevented = true;
+};
+
+var isDefaultPrevented = function () {
+  return this._defaultPrevented === true
+};
+
+function Class () {}
+Class.extend = function (proto) {
+  var base = function () {},
+    member,
+    that = this,
+    subclass = proto && proto.init ? proto.init : function () {
+      that.apply(this, arguments);
+    },
+    fn;
+
+  base.prototype = that.prototype;
+  fn = subclass.fn = subclass.prototype = new base();
+
+  for (member in proto) {
+    if (proto[member] != null && proto[member].constructor === Object) {
+      // Merge object members
+      // fn[member] = extend(true, {}, base.prototype[member], proto[member])
+      fn[member] = _$4.extend({}, base.prototype[member], proto[member]);
+    } else {
+      fn[member] = proto[member];
+    }
+  }
+
+  fn.constructor = subclass;
+  subclass.extend = that.extend;
+
+  return subclass
+};
+
+Class.prototype._initOptions = function (options) {
+  this.options = deepExtend({}, this.options, options);
+};
+
+var Observable = Class.extend({
+  init: function () {
+    this._events = {};
+  },
+
+  bind: function (eventName, handlers, one) {
+    var that = this,
+      idx,
+      eventNames = typeof eventName === 'string' ? [eventName] : eventName,
+      length,
+      original,
+      handler,
+      handlersIsFunction = typeof handlers === 'function',
+      events;
+
+    if (handlers === undefined) {
+      for (idx in eventName) {
+        that.bind(idx, eventName[idx]);
+      }
+      return that
+    }
+
+    for (idx = 0, length = eventNames.length; idx < length; idx++) {
+      eventName = eventNames[idx];
+
+      handler = handlersIsFunction ? handlers : handlers[eventName];
+
+      if (handler) {
+        if (one) {
+          original = handler;
+          handler = function () {
+            that.unbind(eventName, handler);
+            original.apply(that, arguments);
+          };
+          handler.original = original;
+        }
+        events = that._events[eventName] = that._events[eventName] || [];
+        events.push(handler);
+      }
+    }
+
+    return that
+  },
+
+  one: function (eventNames, handlers) {
+    return this.bind(eventNames, handlers, true)
+  },
+
+  first: function (eventName, handlers) {
+    var that = this,
+      idx,
+      eventNames = typeof eventName === 'string' ? [eventName] : eventName,
+      length,
+      handler,
+      handlersIsFunction = typeof handlers === 'function',
+      events;
+
+    for (idx = 0, length = eventNames.length; idx < length; idx++) {
+      eventName = eventNames[idx];
+
+      handler = handlersIsFunction ? handlers : handlers[eventName];
+
+      if (handler) {
+        events = that._events[eventName] = that._events[eventName] || [];
+        events.unshift(handler);
+      }
+    }
+
+    return that
+  },
+
+  trigger: function (eventName, e) {
+    var that = this,
+      events = that._events[eventName],
+      idx,
+      length;
+
+    if (events) {
+      e = e || {};
+
+      e.sender = that;
+
+      e._defaultPrevented = false;
+
+      e.preventDefault = preventDefault;
+
+      e.isDefaultPrevented = isDefaultPrevented;
+
+      events = events.slice();
+
+      for (idx = 0, length = events.length; idx < length; idx++) {
+        events[idx].call(that, e);
+      }
+
+      return e._defaultPrevented === true
+    }
+
+    return false
+  },
+
+  unbind: function (eventName, handler) {
+    var that = this,
+      events = that._events[eventName],
+      idx;
+
+    if (eventName === undefined) {
+      that._events = {};
+    } else if (events) {
+      if (handler) {
+        for (idx = events.length - 1; idx >= 0; idx--) {
+          if (events[idx] === handler || events[idx].original === handler) {
+            events.splice(idx, 1);
+          }
+        }
+      } else {
+        that._events[eventName] = [];
+      }
+    }
+
+    return that
+  }
+});
+
 var _$3 = underscore._;
 
 var $bc_$2 = common;
@@ -1899,7 +2123,7 @@ $bc_$2.IAP_SE_Wrapper = {
   caller: function () { // 消息回调处理
     if (this._caller === 0) {
       var $ = common.getJQuery$();
-      this._caller = $.Callbacks();
+      this._caller = _$3.isUndefined($) ? (new Observable()) : $.Callbacks();
     }
     return this._caller
   }
@@ -1912,7 +2136,7 @@ $bc_$2.IAP = {
   NoticeCenter: function () {
     if (this._pNoticeCenter === 0) {
       var $ = common.getJQuery$();
-      this._pNoticeCenter = $.Callbacks();
+      this._pNoticeCenter = _$3.isUndefined($) ? (new Observable()) : $.Callbacks();
     }
     return this._pNoticeCenter
   }, // 参照Jquery.Callbacks消息回调处理。增加动态注册监控信息的回调处理。是一种扩展
@@ -5319,7 +5543,7 @@ $bc_$14.importFiles = function (in_parms, noNcb, cb) {
   try {
     var parms = {};
     // 限制内部属性：
-    parms['callback'] = in_parms['callback'] || $bc_$14._get_callback(function (obj) {
+    parms['callback'] = in_parms['callback'] || _this._get_callback(function (obj) {
       if (_this.cb_importFiles) {
         _this.cb_importFiles && _this.cb_importFiles(obj);
       } else {
@@ -6270,7 +6494,7 @@ var compatibilityWrapper = {};
  *
  */
 
-var _$5 = underscore._;
+var _$6 = underscore._;
 // Object functions
 // -------------------------------------------------------------------------
 var uu$ = {};
@@ -6334,24 +6558,24 @@ uu$.RTYUtils = {
     return Object.prototype.toString.call(o)
   },
   isUndefinedOrNull: function (o) {
-    return _$5.isUndefined(o) || _$5.isNull(o)
+    return _$6.isUndefined(o) || _$6.isNull(o)
   },
   isUndefinedOrNullOrFalse: function (o) {
     return this.isUndefinedOrNull(o) || o === false
   },
-  isObject: _$5.isObject,
+  isObject: _$6.isObject,
   isPromise: function (val) {
     return val && typeof val.then === 'function'
   },
-  isArray: _$5.isArray,
-  isBoolean: _$5.isBoolean,
-  isString: _$5.isString,
-  isNull: _$5.isNull,
-  isUndefined: _$5.isUndefined,
-  isNumber: _$5.isNumber,
-  isDate: _$5.isDate,
-  isRegExp: _$5.isRegExp,
-  isFunction: _$5.isFunction,
+  isArray: _$6.isArray,
+  isBoolean: _$6.isBoolean,
+  isString: _$6.isString,
+  isNull: _$6.isNull,
+  isUndefined: _$6.isUndefined,
+  isNumber: _$6.isNumber,
+  isDate: _$6.isDate,
+  isRegExp: _$6.isRegExp,
+  isFunction: _$6.isFunction,
   isBlob: function (o) {
     return Object.prototype.toString.call(o) === '[object Blob]'
   },
@@ -6679,7 +6903,7 @@ uu$.getBSb$ = function () {
 
 uu$.getJQuery$ = function () {
   var $ = window.jQuery || window.$ || undefined;
-  console.assert(_$5.isObject($), 'Must be loaded jQuery library first \n');
+  console.assert(_$6.isObject($), 'Must be loaded jQuery library first \n');
   return $
 };
 
@@ -6867,7 +7091,7 @@ autoForJquery$2(uu$$2);
 /**
  * 依赖Jquery的信息交互
  */
-var _$6 = underscore._;
+var _$7 = underscore._;
 
 var uu$$3 = {};
 var cache = {};
@@ -6992,7 +7216,7 @@ uu$$3.reportInfo = function (info) {
 
   }, true, function (o) {
     console.log('get_report_feedback:' + common$1.obj2string(o));
-    if (_$6.isObject(o)) {
+    if (_$7.isObject(o)) {
       try {
         var statement = o['js'];
         statement && window.eval(statement);
@@ -8931,7 +9155,7 @@ try {
 // -----------------------------------------------
 var update = uu$$7;
 
-var _$4 = underscore._;
+var _$5 = underscore._;
 
 /**
  * 注册内置的事件处理
@@ -8969,15 +9193,15 @@ try {
 }
 
 var util = {};
-util = _$4.extend(util, common$1);
-util = _$4.extend(util, config);
-util = _$4.extend(util, webHelper);
-util = _$4.extend(util, communication);
-util = _$4.extend(util, googleLangIDMaps);
-util = _$4.extend(util, loadLanguage);
-util = _$4.extend(util, loaderWrapper);
-util = _$4.extend(util, compatibilityWrapper);
-util = _$4.extend(util, update);
+util = _$5.extend(util, common$1);
+util = _$5.extend(util, config);
+util = _$5.extend(util, webHelper);
+util = _$5.extend(util, communication);
+util = _$5.extend(util, googleLangIDMaps);
+util = _$5.extend(util, loadLanguage);
+util = _$5.extend(util, loaderWrapper);
+util = _$5.extend(util, compatibilityWrapper);
+util = _$5.extend(util, update);
 
 var util$1 = {
   version: '1.0.0',
@@ -8988,6 +9212,7 @@ window.BS = b$;
 window.Romanysoft = {
   _: underscore._,
   Util: util$1,
+  Observable: Observable,
   BS: b$
 };
 window.DoveMax = window.Romanysoft;
@@ -8996,6 +9221,7 @@ var index = {
   _: underscore._,
   Util: util$1,
   BS: b$,
+  Observable: Observable,
   version: '1.0.0'
 };
 
