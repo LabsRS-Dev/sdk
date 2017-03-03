@@ -33,7 +33,7 @@ $bc_._get_callback = function (func, noDelete) {
 $bc_.cb_execTaskUpdateInfo = null // 执行任务的回调
 $bc_.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
   useThread: true,
-  passBack: 'BS.$bc_.cb_execTaskUpdateInfo',
+  passBack: 'BS.b$.cb_execTaskUpdateInfo',
   packageMode: 'bundle',
   taskToolPath: '/Plugins/extendLoader.bundle',
   bundleClassName: 'LibCommonInterface'
@@ -42,7 +42,6 @@ $bc_.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
 $bc_.pIAPPlugin = {
   path: '/plugin.iap.bundle'
 }
-
 
 // 自动匹配检测
 var __auto = function (ref) {

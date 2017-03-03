@@ -1,5 +1,7 @@
 import { common } from './common'
-import _ from '../underscore'
+import underscore from '../underscore'
+var _ = underscore._
+
 var $bc_ = common
 // 启动核心插件功能
 $bc_.enablePluginCore = function (pluginList, cbFuncName) {
@@ -18,7 +20,9 @@ $bc_.enablePluginCore = function (pluginList, cbFuncName) {
 
       var extendObj = _.clone($bc_.pCorePlugin)
       extendObj['callMethod'] = 'initCore'
-      if (cbFuncName) extendObj['passBack'] = cbFuncName // 取代默认回调函数
+      if (_.isString(cbFuncName)) {
+        extendObj['passBack'] = cbFuncName // 取代默认回调函数
+      }
       extendObj['arguments'] = [
         true,
         pluginArray
