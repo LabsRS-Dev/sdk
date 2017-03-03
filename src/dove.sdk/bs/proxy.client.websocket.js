@@ -8,13 +8,12 @@ var $bc_ = common
 const logCord = '[SDK.Proxy.Client.Websocket]'
 
 const __key = 'proxy-client-websocket'
-const __msgPrefix = __key + _.now() + _.random(1, Number.MAX_VALUE)
+const __msgPrefix = __key + _.now() + _.random(1, Number.MAX_SAFE_INTEGER)
 const TypeMsg = {
-  onCreateError: __msgPrefix + 'onCreateError',
-  onWSClose: __msgPrefix + 'onWSClose',
-  onWSGetServerMessage: __msgPrefix + 'onWSGetServerMessage',
-  onSendMessageToServer: __msgPrefix + 'onSendMessageToServer'
-
+  OnCreateError: __msgPrefix + 'OnCreateError',
+  OnWSClose: __msgPrefix + 'OnWSClose',
+  OnWSGetServerMessage: __msgPrefix + 'OnWSGetServerMessage',
+  OnSendMessageToServer: __msgPrefix + 'OnSendMessageToServer'
 }
 
 // 核心消息处理中心
@@ -65,16 +64,16 @@ $bc_[__key] = {
     ip: '127.0.0.1',
     port: '8080',
     protocol: 'ws://',
-    autoCWSMaxRunTimes: Number.MAX_VALUE // 设置重新连接的秒数,
-
+    reqUrl: '/websocket',
+    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER // 设置重新连接的秒数,
   },
   getUrl: function () {
     var that = this
-    var url = that.protocol + that.ip + ':' + that.port + '/websocket'
+    var url = that.protocol + that.ip + ':' + that.port + this.reqUrl
     return url
   },
   getAutoReConnectSec: () => {
-    return this.config.autoCWSMaxRunTimes
+    return this.config.autoReconnectMaxRunTimes
   },
   isRunning: false,
   init: function (inConfig = {}) {
@@ -102,52 +101,39 @@ $bc_[__key] = {
     }
 
     this.wsHandler.send(message)
-    this.internal.trigger(TypeMsg.onSendMessageToServer, { data: message })
+    this.internal.trigger(TypeMsg.OnSendMessageToServer, message)
   },
   onReceiveMessage: (message) => {
-    this.internal.trigger(TypeMsg.onWSGetServerMessage, { data: message })
-  },
-  registerOnSendMessageToServer: (handler, one = false) => {
-    this.internal.bind(TypeMsg.onSendMessageToServer, handler, one)
-  },
-  unregisterOnSendMessageToServer: (handler) => {
-    this.internal.unbind(TypeMsg.onSendMessageToServer, handler)
-  },
-  registerOnReceiveServerMessage: (handler, one = false) => {
-    this.internal.bind(TypeMsg.onWSGetServerMessage, handler, one)
-  },
-  unregisterOnReceiveServerMessage: (handler) => {
-    this.internal.unbind(TypeMsg.onWSGetServerMessage, handler)
+    this.internal.trigger(TypeMsg.OnWSGetServerMessage, message)
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: (message) => {
-    this.internal.trigger(TypeMsg.onCreateError, { data: message })
+    this.internal.trigger(TypeMsg.OnCreateError, message)
   },
   noticeWSClosed: (message) => {
-    this.internal.trigger(TypeMsg.onWSClose, { data: message })
-  },
-  registerOnCreateErrorNotice: (handler, one = false) => {
-    this.internal.bind(TypeMsg.onCreateError, handler, one)
-  },
-  unregisterOnCreateErrorNotice: (handler) => {
-    this.internal.unbind(TypeMsg.onCreateError, handler)
-  },
-  registerOnWSClosedNotice: (handler, one = false) => {
-    this.internal.bind(TypeMsg.onWSClose, handler, one)
-  },
-  unregisterOnWSCloseNotice: (handler) => {
-    this.internal.unbind(TypeMsg.onWSClose, handler)
+    this.internal.trigger(TypeMsg.OnWSClose, message)
   }
 }
 
 // 创建一个助手
 const __agent = $bc_[__key]
 
+// 批量处理注册及接收方式
+_.each(_.keys(TypeMsg), (eventType, key, list) => {
+  __agent['register' + key] = (handler, one = false) => {
+    __agent.internal.bind(eventType, handler, one)
+  }
+  __agent['unregister' + key] = (handler) => {
+    __agent.internal.unbind(eventType, handler)
+  }
+})
+
+// ------------------------------------------------------------------------------
+// ---
 var autoCWSTimesIndex = 0   // 自动启动计数器
-var autoCWSMaxRunTimes = 3 // 最多尝试启动运行次数
+var autoReconnectMaxRunTimes = 3 // 最多尝试启动运行次数
 var ws = null              // 客户端Websocket对象
 var wsID = ''             // 客户端ID
-
 
 function showInitializedTip () {
   console.warn(logCord, initializedTip)
@@ -160,7 +146,7 @@ function autoCreateWS () {
 function _pAutoCreateWS () {
   if (!__agent.isRunning) {
     // 尝试新的链接
-    if (autoCWSTimesIndex <= autoCWSMaxRunTimes) {
+    if (autoCWSTimesIndex <= autoReconnectMaxRunTimes) {
       __agent.log(logCord, 'try create new socket connect, port = ' + __agent.port)
       createWS(__agent.getUrl())
     }
