@@ -1,9 +1,8 @@
-import { proxyClientWebsocket } from './proxy.client.websocket'
-import { Observable } from '../observable'
+import { ProxyClientWebsocket } from './proxy.client.websocket'
+import { ProxyMessageCenter } from './proxy'
+import { Class } from '../observable'
 import underscore from '../underscore'
-import { Tool } from '../include'
 var _ = underscore._
-var $bc_ = proxyClientWebsocket
 
 const logCord = '[SDK.agent.client]'
 
@@ -21,10 +20,8 @@ const TypeMsg = {
   OnChannelFault: __msgPrefix + 'OnChannelFault' // 通讯通道意外发生故障
 }
 
-// 核心消息处理中心
-const __mc = new Observable()
-
-
+// ------------------------------------------------------------------------
+// Class Chancel
 const ChancelType = {
   websocket: 0,
   httpX: 1
@@ -44,8 +41,8 @@ class Chancel {
     if (config.type === ChancelType.websocket) {
       this.config = config
       this.type = ChancelType.websocket
-      this.proxyObj = $bc_['proxy-client-websocket']
-      this.proxyObj.init(config)
+      this.proxyObj = new ProxyClientWebsocket()
+      this.proxyObj.initWithConfig(config)
     }
   }
 
@@ -66,41 +63,21 @@ class Chancel {
   }
 }
 
-
-/**
- *
- * 统一的Client 客户端与底层的交互处理, (底层包括：websocket服务器, httpX 服务器， 其他类型的服务)
- * 用来与后台服务器的交互处理
- */
-$bc_[__key] = {
+// ------------------------------------------------------------------------
+// Class AgentClient
+var AgentClientPrivate = {
   name: __key,
+  mc: new ProxyMessageCenter(),
   getMsgHelper: () => {
-    return __mc
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end = '') {
     if (this.debug) {
-      console.log(title, message)
+      console.log(title, message, end)
     }
   },
-  internal: { // 包装到内部来处理
-    bind: function (eventName, handlers, one = false) {
-      __mc.bind(eventName, handlers, one)
-    },
-    one: function (eventNames, handlers) {
-      __mc.one(eventNames, handlers)
-    },
-    first: function (eventName, handlers) {
-      __mc.first(eventName, handlers)
-    },
-    trigger: function (eventName, e) {
-      __mc.trigger(eventName, e)
-    },
-    unbind: function (eventName, handler) {
-      __mc.unbind(eventName, handler)
-    }
-  },
-  // --------------- 信息交互 ------------------------
+  // --------------- 信息交互 通道建立 ------------------------
   ChancelType: ChancelType,
   Chancel: Chancel,
   __chancelList: [],  // 通讯通道对象
@@ -113,6 +90,7 @@ $bc_[__key] = {
 
       chancel.server.registerOnCreateError(this.onBuildChannelError)
       chancel.server.registerOnWSClose(this.onChannelFault)
+      chancel.server.registerOnWSOpen(this.onFinishBuildChannel)
 
       chancel.active()
     }
@@ -130,48 +108,48 @@ $bc_[__key] = {
   },
   // -------------------------------------------------
   noticeToServer: (message) => {
+    if (this.__chancelList.length === 0) {
+      console.warn(logCord, 'You maybe add one chancel')
+    }
+
     _.each(this.__chancelList, (chancel) => {
       chancel.server.sendMessage(message)
     })
-    this.internal.trigger(TypeMsg.OnNoticeToServer, message)
+    this.mc.trigger(TypeMsg.OnNoticeToServer, message)
   },
   onReceiveFromServer: (message) => {
-    this.internal.trigger(TypeMsg.onReceiveFromServer, message)
+    this.mc.trigger(TypeMsg.onReceiveFromServer, message)
   },
   onStartBuildChannel: (message) => {
-    this.internal.trigger(TypeMsg.OnStartBuildChannel, message)
+    this.mc.trigger(TypeMsg.OnStartBuildChannel, message)
   },
   onBuildChannelError: (message) => {
-    this.internal.trigger(TypeMsg.onBuildChannelError, message)
+    this.mc.trigger(TypeMsg.onBuildChannelError, message)
   },
   onFinishBuildChannel: (message) => {
-    this.internal.trigger(TypeMsg.onFinishBuildChannel, message)
+    this.mc.trigger(TypeMsg.onFinishBuildChannel, message)
   },
   onChannelFault: (message) => {
-    this.internal.trigger(TypeMsg.onChannelFault, message)
+    this.mc.trigger(TypeMsg.onChannelFault, message)
   }
 }
 
-// 创建一个助手
-const __agent = $bc_[__key]
-
 // 批量处理注册及接收方式
+var __private = AgentClientPrivate
 _.each(_.keys(TypeMsg), (eventType, key, list) => {
-  __agent['register' + key] = (handler, one = false) => {
-    __agent.internal.bind(eventType, handler, one)
+  __private['register' + key] = (handler, one = false) => {
+    __private.mc.bind(eventType, handler, one)
   }
-  __agent['unregister' + key] = (handler) => {
-    __agent.internal.unbind(eventType, handler)
+  __private['unregister' + key] = (handler) => {
+    __private.mc.unbind(eventType, handler)
   }
 })
 
+var AgentClient = Class.extend(AgentClientPrivate)
 
 //
 // -----------------------------------------------
-const agentClient = $bc_
 export {
-  agentClient
+  AgentClient
 }
-
-
 

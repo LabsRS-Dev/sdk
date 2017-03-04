@@ -221,5 +221,6 @@ var Observable = Class.extend({
 })
 
 export {
+   Class,
    Observable
 }
