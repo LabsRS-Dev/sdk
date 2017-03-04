@@ -1736,7 +1736,7 @@ $bc_$1._get_callback = function (func, noDelete) {
 $bc_$1.cb_execTaskUpdateInfo = null; // 执行任务的回调
 $bc_$1.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
   useThread: true,
-  passBack: 'BS.$bc_.cb_execTaskUpdateInfo',
+  passBack: 'BS.b$.cb_execTaskUpdateInfo',
   packageMode: 'bundle',
   taskToolPath: '/Plugins/extendLoader.bundle',
   bundleClassName: 'LibCommonInterface'
@@ -1745,7 +1745,6 @@ $bc_$1.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
 $bc_$1.pIAPPlugin = {
   path: '/plugin.iap.bundle'
 };
-
 
 // 自动匹配检测
 var __auto = function (ref) {
@@ -5277,6 +5276,8 @@ $bc_$10.Binary = {
 // -----------------------------------------------
 var binary = $bc_$10;
 
+var _$6 = underscore._;
+
 var $bc_$11 = common;
 // 启动核心插件功能
 $bc_$11.enablePluginCore = function (pluginList, cbFuncName) {
@@ -5293,9 +5294,11 @@ $bc_$11.enablePluginCore = function (pluginList, cbFuncName) {
         }
       }
 
-      var extendObj = underscore.clone($bc_$11.pCorePlugin);
+      var extendObj = _$6.clone($bc_$11.pCorePlugin);
       extendObj['callMethod'] = 'initCore';
-      if (cbFuncName) { extendObj['passBack'] = cbFuncName; } // 取代默认回调函数
+      if (_$6.isString(cbFuncName)) {
+        extendObj['passBack'] = cbFuncName; // 取代默认回调函数
+      }
       extendObj['arguments'] = [
         true,
         pluginArray
@@ -5712,6 +5715,793 @@ $bc_$14.selectOutFile = function (in_parms, noNcb, cb) {
 // -----------------------------------------------
 var filedialog = $bc_$14;
 
+var __$p$$2 = {
+  init: function () {
+    __$p$$2.__mc = new Observable();
+  },
+
+  debugLog: false,
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$$2.debugLog) {
+      console.log(title, message, end);
+    }
+  },
+
+  bind: function (eventName, handlers, one) {
+    if ( one === void 0 ) one = false;
+
+    __$p$$2.__mc.bind(eventName, handlers, one);
+  },
+  one: function (eventNames, handlers) {
+    __$p$$2.__mc.one(eventNames, handlers);
+  },
+  first: function (eventName, handlers) {
+    __$p$$2.__mc.first(eventName, handlers);
+  },
+  trigger: function (eventName, e) {
+    __$p$$2.__mc.trigger(eventName, e);
+  },
+  unbind: function (eventName, handler) {
+    __$p$$2.__mc.unbind(eventName, handler);
+  }
+};
+
+var ProxyMessageCenter = Class.extend(__$p$$2);
+
+var _$10 = underscore._;
+
+/**
+ * 纯算法，不依赖bs模块及util模块
+ */
+var Tool = {
+  /**
+   * Get the first item that pass the test
+   * by second argument function
+   *
+   * @param {Array} list
+   * @param {Function} f
+   * @return {*}
+   */
+  find: function (list, f) {
+    return list.filter(f)[0]
+  },
+  /**
+   * Deep copy the given object considering circular structure.
+   * This function caches all nested objects and its copies.
+   * If it detects circular structure, use cached copy to avoid infinite loop.
+   *
+   * @param {*} obj
+   * @param {Array<Object>} cache
+   * @return {*}
+   */
+  deepCopy: function (obj, cache) {
+    if ( cache === void 0 ) cache = [];
+
+    var t$ = this;
+    // just return if obj is immutable value
+    if (obj === null || typeof obj !== 'object') {
+      return obj
+    }
+
+    // if obj is hit, it is in circular structure
+    var hit = t$.find(cache, function (c) { return c.original === obj; });
+    if (hit) {
+      return hit.copy
+    }
+
+    var copy = Array.isArray(obj) ? [] : {};
+    // put the copy into cache at first
+    // because we want to refer it in recursive deepCopy
+    cache.push({
+      original: obj,
+      copy: copy
+    });
+
+    Object.keys(obj).forEach(function (key) {
+      copy[key] = t$.deepCopy(obj[key], cache);
+    });
+
+    return copy
+  },
+  forEachValue: function (obj, fn) {
+    Object.keys(obj).forEach(function (key) { return fn(obj[key], key); });
+  },
+  assert: function (condition, msg) {
+    if (!condition) { throw new Error(("[sdk] " + msg)) }
+  },
+  getType: function (o) {
+    return Object.prototype.toString.call(o)
+  },
+  isUndefinedOrNull: function (o) {
+    return _$10.isUndefined(o) || _$10.isNull(o)
+  },
+  isUndefinedOrNullOrFalse: function (o) {
+    return this.isUndefinedOrNull(o) || o === false
+  },
+  isObject: _$10.isObject,
+  isPromise: function (val) {
+    return val && typeof val.then === 'function'
+  },
+  isArray: _$10.isArray,
+  isBoolean: _$10.isBoolean,
+  isString: _$10.isString,
+  isNull: _$10.isNull,
+  isUndefined: _$10.isUndefined,
+  isNumber: _$10.isNumber,
+  isDate: _$10.isDate,
+  isRegExp: _$10.isRegExp,
+  isFunction: _$10.isFunction,
+  isBlob: function (o) {
+    return Object.prototype.toString.call(o) === '[object Blob]'
+  },
+  /**
+   * Blob data convert to String
+   * @param o Blob obj
+   * @param cb callback function
+   */
+  blobData2String: function (o, cb) {
+    try {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        cb && cb(reader.result);
+      };
+      reader.readAsText(o);
+    } catch (error) {
+      throw error
+    }
+  },
+  /**
+   * Blob data convert to ArrayBuffer
+   * @param o Blob obj
+   * @param cb callback function
+   */
+  blobData2ArrayBuffer: function (o, cb) {
+    try {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        cb && cb(reader.result);
+      };
+      reader.readAsArrayBuffer(o);
+    } catch (error) {
+      throw error
+    }
+  },
+  /**
+   * param wrapper to Array
+   */
+  param2Array: function (param, allowTypes) {
+    if ( allowTypes === void 0 ) allowTypes = [];
+
+    var t$ = this;
+    if (this.isUndefinedOrNull(param)) { return [] }
+    if (allowTypes.findIndex(function (value, index, err) {
+      return value === t$.getType(param)
+    }) > -1) {
+      return [param]
+    }
+    if (t$.isArray(param)) { return param }
+    return []
+  },
+  /**
+   * convert arguments to a Array
+   */
+  arguments2Array: function () {
+    return [].slice.call(arguments, 0)
+  },
+  /**
+   * Format error string
+   * @param err  error object
+   * @return String
+   */
+  getErrorMessage: function (err) {
+    var msg = '';
+    try {
+      if (this.isString(err)) {
+        msg = err;
+      } else if (this.isObject(err)) {
+        var errMsg = [];
+        for (var p in err) {
+          if (err.hasOwnProperty(p)) {
+            errMsg.push(p + '=' + err[p]);
+          }
+        }
+        if (errMsg.length === 0) {
+          msg = err;
+        } else {
+          msg = errMsg.join('\n');
+        }
+      } else {
+        msg += '[RTY_CANT_TYPE] = ' + this.getType(err);
+        msg += JSON.stringify(err);
+      }
+    } catch (error) {
+      throw error
+    }
+
+    return msg
+  },
+  queue: function (_done) {
+    var _next = [];
+    var callback = function (err) {
+      if (!err) {
+        var next = _next.shift();
+        if (next) {
+          var args = arguments;
+          args.length ? (args[0] = callback) : (args = [callback]);
+          return next.apply(null, args)
+        }
+      }
+    };
+
+    var r = {
+      next: function (fn) {
+        _next.push(fn);
+      },
+      done: function (fn) {
+        _done = fn;
+      },
+      start: function () {
+        callback(null, callback);
+      }
+    };
+
+    return r
+  },
+  /**
+   * Check fileName's type in the fileTypes
+   * @param fileName String
+   * @param fileTypes Array []
+   * @return Boolean {true, false}
+   */
+  checkFileType: function (fileName, fileTypes) {
+    var _fileNameStr = fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length).toLowerCase();
+    if (fileTypes.indexOf(_fileNameStr) > -1) { return true }
+    return false
+  },
+  obj2string: function (o) {
+    var r = [];
+    var t$ = this;
+    if (typeof o === 'string') {
+      return '\'' + o.replace(/([\'\'\\])/g, '\\$1').replace(/(\n)/g, '\\n')
+        .replace(/(\r)/g, '\\r').replace(/(\t)/g, '\\t') + '\''
+    }
+    if (typeof o === 'object' && o != null) {
+      if (!o.sort) {
+        for (var i in o) {
+          r.push(i + ':' + t$.obj2string(o[i]));
+        }
+        if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {
+          r.push('toString:' + o.toString.toString());
+        }
+        r = '{' + r.join() + '}';
+      } else {
+        for (var i$1 = 0; i$1 < o.length; i$1++) {
+          r.push(t$.obj2string(o[i$1]));
+        }
+        r = '[' + r.join() + ']';
+      }
+      return r
+    }
+
+    if (o != null) {
+      return o.toString()
+    }
+
+    return ''
+  },
+  // 字符串参数格式化 {index}
+  stringFormat: function () {
+    var arguments$1 = arguments;
+
+    if (arguments.length === 0) { return null }
+    var str = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+      var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+      str = str.replace(re, arguments$1[i]);
+    }
+    return str
+  },
+  objClone: function (Obj) {
+    var this$1 = this;
+
+    var buf;
+    if (Obj instanceof Array) {
+      buf = [];
+      var i = Obj.length;
+      while (i--) {
+        buf[i] = this$1.objClone(Obj[i]);
+      }
+      return buf
+    } else if (Obj instanceof Object) {
+      buf = {};
+      for (var k in Obj) {
+        if (Obj.hasOwnProperty(k)) {
+          buf[k] = this$1.objClone(Obj[k]);
+        }
+      }
+      return buf
+    } else {
+      return Obj
+    }
+  },
+  // 获取简易的格式化时间
+  getFormatDateStr: function (dateObj, fmt) {
+    // 对Date的扩展，将 Date 转化为指定格式的String
+    // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+    // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+    // 例子：
+    // (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
+    // (new Date()).Format('yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
+    var that = dateObj;
+    var o = {
+      'M+': that.getMonth() + 1, // 月份
+      'd+': that.getDate(), // 日
+      'h+': that.getHours(), // 小时
+      'm+': that.getMinutes(), // 分
+      's+': that.getSeconds(), // 秒
+      'q+': Math.floor((that.getMonth() + 3) / 3), // 季度
+      'S': that.getMilliseconds() // 毫秒
+    };
+
+    if (/(y+)/.test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (that.getFullYear() + '').substr(4 - RegExp.$1.length));
+    }
+
+    for (var k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(
+          ('' + o[k]).length)));
+      }
+    }
+
+    return fmt
+  },
+  // 比较两个版本号
+  compareVersion: function (version1, version2) {
+    try {
+      var version1Array = version1.split('.');
+      var version2Array = version2.split('.');
+
+      var ver1IntList = [];
+      var ver2IntList = [];
+
+      version1Array.forEach(function (value, index, array) {
+        ver1IntList.push(parseInt(value));
+      });
+
+      version2Array.forEach(function (value, index, array) {
+        ver2IntList.push(parseInt(value));
+      });
+
+      var i = 0;
+      // format
+      if (ver1IntList.length < ver2IntList.length) {
+        i = 0;
+        for (; i < (ver2IntList.length - ver1IntList.length); ++i) {
+          ver1IntList.push(0);
+        }
+      }
+
+      if (ver1IntList.length > ver2IntList.length) {
+        i = 0;
+        for (; i < (ver1IntList.length - ver2IntList.length); ++i) {
+          ver2IntList.push(0);
+        }
+      }
+
+      i = 0;
+      for (; i < ver1IntList.length; ++i) {
+        var cVer1 = ver1IntList[i];
+        var cVer2 = ver2IntList[i];
+
+        if (cVer1 > cVer2) { return 1 }
+        if (cVer1 < cVer2) { return -1 }
+      }
+
+      return 0
+    } catch (e) {
+      return -1
+    }    
+  },
+  // 测试对象类型
+  testObjectType: function (obj, type) {
+    var actualType = this.getType(obj);
+    if (actualType !== type) {
+      var errMsg = 'TestType:[' + type + '], actual:[' + actualType + '].';
+      console.assert(false, errMsg);
+    }
+  }
+
+};
+
+var _$8 = underscore._;
+
+var logCord$1 = '[SDK.Proxy.Client.Websocket]';
+
+var __key$1 = 'proxy-client-websocket';
+var __msgPrefix$1 = __key$1 + _$8.now() + _$8.random(1, Number.MAX_SAFE_INTEGER);
+var TypeMsg$1 = {
+  OnCreateError: __msgPrefix$1 + 'OnCreateError', // Websocket 创建失败
+  OnWSOpen: __msgPrefix$1 + 'OnWSOpen',          // WebSocket 创建并连接上
+  OnWSClose: __msgPrefix$1 + 'OnWSClose',        // WebSocket 意外关闭
+
+  OnWSGetServerMessage: __msgPrefix$1 + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
+  OnSendMessageToServer: __msgPrefix$1 + 'OnSendMessageToServer' // 向服务器发送信息
+};
+
+var initializedTip = "\nYou must use init(config) function first, the use listen to start!!!!\n";
+
+// ------------------------------------------------------------------------
+// Class ProxyClientWebsocketPrivate
+var __$p$$1 = {
+  name: __key$1,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return __$p$$1.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$$1.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$1
+  },
+  // -------------------------------------------------------------------------
+  initialized: false, // 是否初始化配置
+  config: {       // 包含的基本配置
+    ip: '127.0.0.1',
+    port: '8080',
+    protocol: 'ws://',
+    reqUrl: '/websocket',
+    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER // 设置重新连接的秒数,
+  },
+  getUrl: function () {
+    var that = __$p$$1;
+    var url = that.protocol + that.ip + ':' + that.port + that.reqUrl;
+    return url
+  },
+  getAutoReConnectSec: function () {
+    return __$p$$1.config.autoReconnectMaxRunTimes
+  },
+  isRunning: false,
+  initWithConfig: function (inConfig) {
+    if ( inConfig === void 0 ) inConfig = {};
+
+    __$p$$1.log(logCord$1, __key$1 + ' call initWithConfig function ....');
+    __$p$$1.config = _$8.extend(__$p$$1.config, inConfig);
+    __$p$$1.initialized = true;
+  },
+  run: function () {
+    if (!__$p$$1.initialized) {
+      __$p$$1.showInitializedTip();
+      return
+    }
+    __$p$$1.autoCreateWS(__$p$$1.getUrl());
+  },
+  // ------------------------------------------------
+  // 消息交互的核心部分
+  wsHandler: null,              // websocket 对象句柄
+
+  // --------------- 核心消息 ------------------------
+  cacheSendMessage: [],         // 缓存发送信息部分
+  sendMessage: function (message, first) {
+    if ( first === void 0 ) first = false;
+   // 客户端向服务器发送消息
+    if (!__$p$$1.isRunning || !__$p$$1.wsHandler) {
+      __$p$$1.cacheSendMessage.push(message);
+      console.warn(logCord$1, 'WebSocket is not running .....');
+      return
+    }
+
+    first ? __$p$$1.cacheSendMessage.unshift(message) : __$p$$1.cacheSendMessage.push(message);
+    _$8.each(__$p$$1.cacheSendMessage, function (curMessage) {
+      __$p$$1.wsHandler.send(curMessage);
+      __$p$$1.mc.trigger(TypeMsg$1.OnSendMessageToServer, curMessage);
+      __$p$$1.cacheSendMessage.shift();
+    });
+  },
+  onReceiveMessage: function (message) {
+    __$p$$1.mc.trigger(TypeMsg$1.OnWSGetServerMessage, message);
+  },
+  // ---------------- 创建失败是回话被关闭交互 ----------------
+  noticeCreateError: function (message) {
+    __$p$$1.mc.trigger(TypeMsg$1.OnCreateError, message);
+  },
+  noticeWSOpen: function (message) {
+    __$p$$1.mc.trigger(TypeMsg$1.OnWSOpen, message);
+  },
+  noticeWSClosed: function (message) {
+    __$p$$1.mc.trigger(TypeMsg$1.OnWSClose, message);
+  },
+  // --------------------------------------------------------
+  // Websocket连接处理内核核心处理函数
+  autoCWSTimesIndex: 0,  // 自动启动计数器
+  autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
+  wsID: '', // 客户端ID
+  showInitializedTip: function () {
+    console.warn(logCord$1, initializedTip);
+  },
+  autoCreateWS: function () {
+    __$p$$1._pAutoCreateWS();
+  },
+  _pAutoCreateWS: function () {
+    if (!__$p$$1.isRunning) {
+      // 尝试新的链接
+      if (__$p$$1.autoCWSTimesIndex <= __$p$$1.autoReconnectMaxRunTimes) {
+        __$p$$1.log(logCord$1, 'try create new socket connect, port = ' + __$p$$1.config.port);
+        __$p$$1.createWS(__$p$$1.getUrl());
+      }
+      ++__$p$$1.autoCWSTimesIndex;
+    }
+  },
+  createWS: function (url) { // 建立Websocket 客户端
+    var __agent = __$p$$1;
+    var WebSocket = window.WebSocket || window.MozWebSocket;
+    __agent.log(logCord$1, 'create new socket connect, wsurl = ' + url);
+
+    try {
+      var ws = new WebSocket(url); // 启动监听服务
+      if (ws) {
+        // ==== onopen
+        ws.onopen = function (evt) {
+          var that = this;
+          __agent.wsHandler = this;
+
+          __agent.wsID = 'ws' + _$8.now() + _$8.random(1, 999999);
+
+          if (that.readyState === 1) {
+            __agent.log(logCord$1, 'is connecting ...');
+            __agent.isRunning = true;
+            // 广播自己已经连接上
+            __agent.noticeWSClosed({ data: ws });
+
+            // 向服务器发送注册信息，测试返回
+            __agent.sendMessage(JSON.stringify({
+              'user_id': __agent.wsID,
+              'msg_type': 'c_notice_id_Info'
+            }));
+          }
+        };
+
+        // ==== onmessage
+        ws.onmessage = function (evt) {
+          __agent.isRunning = true;
+          __agent.log(logCord$1, evt.data);
+
+          var msgPackage = '';
+          // Decodeing 匹配大部分数据格式，进行处理
+          if (Tool.isBlob(evt.data)) {
+            Tool.blobData2String(evt.data, function (text) {
+              msgPackage = text;
+              __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+            });
+            return
+          }
+          if (_$8.isObject(evt.data)) {
+            msgPackage = JSON.stringify(evt.data);
+            __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+          } else if (_$8.isString(evt.data)) {
+            msgPackage = evt.data;
+            __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+          } else {
+            console.warn(logCord$1, 'cannot process this message type ....');
+          }
+        };
+
+        // ===== onerror = function (evt) {
+        ws.onerror = function (evt) {
+
+        };
+
+        // ==== onclose
+        ws.onclose = function (evt) {
+          try {
+            __agent.log(logCord$1, 'onclose code = ' + evt);
+          } catch (error) {}
+
+          var tryCreateWS = function () {
+            setTimeout(function () {
+              __agent.autoCreateWS();
+            }, __agent.getAutoReConnectSec());
+          };
+          __agent.isRunning = false;
+
+          // notice some message for others
+          __agent.noticeWSClosed({ errCode: evt.code });
+          tryCreateWS();
+        };
+      }
+    } catch (error) {
+      __agent.log(logCord$1, error);
+      __agent.isRunning = false;
+      // notice some message for others
+      __agent.noticeCreateError({ errCode: error });
+    }
+  }
+  // --------------------------------------------------------
+
+};
+
+// 批量处理注册及接收方式
+_$8.each(TypeMsg$1, function (eventType, key, list) {
+  __$p$$1['register' + key] = function (handler, one) {
+    if ( one === void 0 ) one = false;
+
+    __$p$$1.mc.bind(eventType, handler, one);
+  };
+  __$p$$1['unregister' + key] = function (handler) {
+    __$p$$1.mc.unbind(eventType, handler);
+  };
+});
+
+var ProxyClientWebsocket = Class.extend(__$p$$1);
+
+var _$7 = underscore._;
+
+// -----------------------------------------------------------------------
+var logCord = '[SDK.agent.client]';
+
+var __key = 'agent-client';
+var __msgPrefix = __key + _$7.now() + _$7.random(1, Number.MAX_SAFE_INTEGER);
+var TypeMsg = {
+  // ---------- 抽象上层为发送通知(Notice)及接收信息(Receive)
+  OnReceiveFromServer: __msgPrefix + 'OnReceiveFromServer',
+  OnNoticeToServer: __msgPrefix + 'OnNoticeToServer',
+
+  // ---------- 抽象传输通道的状态变化
+  OnStartBuildChannel: __msgPrefix + 'OnStartBuildChannel', // 开始建立通讯通道
+  OnBuildChannelError: __msgPrefix + 'OnBuildChannelError', // 建立通讯通道发生错误
+  OnFinishBuildChannel: __msgPrefix + 'OnFinishBuildChannel', // 建立通讯通道发生完成
+  OnChannelFault: __msgPrefix + 'OnChannelFault' // 通讯通道意外发生故障
+};
+
+// ------------------------------------------------------------------------
+// Class Chancel
+var ChancelType = {
+  websocket: 0,
+  httpX: 1
+};
+
+var Chancel = function Chancel () {};
+
+var prototypeAccessors = { type: {},config: {},server: {} };
+
+Chancel.prototype.build = function build (config) {
+    if ( config === void 0 ) config = {};
+
+  config = _$7.extend({
+    type: ChancelType.websocket,
+    ip: '127.0.0.1',
+    port: '8080',
+    protocol: 'ws://', // http://wwww https://wwww
+    reqUrl: '/websocket',
+    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER
+  }, config);
+
+  if (config.type === ChancelType.websocket) {
+    this.config = config;
+    this.type = ChancelType.websocket;
+    this.proxyObj = new ProxyClientWebsocket();
+    this.proxyObj.initWithConfig(config);
+  }
+};
+
+prototypeAccessors.type.get = function () {
+  return this.type
+};
+
+prototypeAccessors.config.get = function () {
+  return this.config
+};
+
+prototypeAccessors.server.get = function () {
+  return this.proxyObj
+};
+
+Chancel.prototype.active = function active () {
+  this.proxyObj.run();
+};
+
+Object.defineProperties( Chancel.prototype, prototypeAccessors );
+
+// ------------------------------------------------------------------------
+// Class AgentClient
+var __$p$ = {
+  name: __key,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return __$p$.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$.debug) {
+      console.log(title, message, end);
+    }
+  },
+  // --------------------------------------------------------
+  init: function () {
+  },
+  // --------------- 信息交互 通道建立 ------------------------
+  ChancelType: ChancelType,
+  Chancel: Chancel,
+  __chancelList: [],   // 通讯通道对象
+
+  appendChancel: function (chancel, handler) {
+    // 建立信息关联
+    if (chancel.type === ChancelType.websocket) {
+      chancel.server.registerOnWSGetServerMessage(__$p$.onReceiveFromServer);
+      chancel.server.registerOnSendMessageToServer(function (message) {});
+
+      chancel.server.registerOnCreateError(__$p$.onBuildChannelError);
+      chancel.server.registerOnWSClose(__$p$.onChannelFault);
+      chancel.server.registerOnWSOpen(__$p$.onFinishBuildChannel);
+
+      chancel.active();
+    }
+
+    __$p$.__chancelList.push(chancel);
+  },
+  removeChancel: function (chancel) {
+    if (chancel.type === ChancelType.websocket) {
+      chancel.server.unregisterOnWSGetServerMessage(__$p$.onReceiveFromServer);
+      chancel.server.unregisterOnSendMessageToServer(function (message) {});
+
+      chancel.server.unregisterOnCreateError(__$p$.onBuildChannelError);
+      chancel.server.unregisterOnWSClose(__$p$.onChannelFault);
+    }
+  },
+  // -------------------------------------------------
+  noticeToServer: function (message) {
+    if (__$p$.__chancelList.length === 0) {
+      console.warn(logCord, 'You maybe add one chancel');
+    }
+
+    _$7.each(__$p$.__chancelList, function (chancel) {
+      chancel.server.sendMessage(message);
+    });
+    __$p$.mc.trigger(TypeMsg.OnNoticeToServer, message);
+  },
+  onReceiveFromServer: function (message) {
+    __$p$.mc.trigger(TypeMsg.onReceiveFromServer, message);
+  },
+  onStartBuildChannel: function (message) {
+    __$p$.mc.trigger(TypeMsg.OnStartBuildChannel, message);
+  },
+  onBuildChannelError: function (message) {
+    __$p$.mc.trigger(TypeMsg.onBuildChannelError, message);
+  },
+  onFinishBuildChannel: function (message) {
+    __$p$.mc.trigger(TypeMsg.onFinishBuildChannel, message);
+  },
+  onChannelFault: function (message) {
+    __$p$.mc.trigger(TypeMsg.onChannelFault, message);
+  }
+};
+
+// 批量处理注册及接收方式
+
+_$7.each(TypeMsg, function (eventType, key, list) {
+  __$p$['register' + key] = function (handler, one) {
+    if ( one === void 0 ) one = false;
+
+    __$p$.mc.bind(eventType, handler, one);
+  };
+  __$p$['unregister' + key] = function (handler) {
+    __$p$.mc.unbind(eventType, handler);
+  };
+});
+
+
+var AgentClient = Class.extend(__$p$);
+
 var _$1 = underscore._;
 
 // ---------------------------
@@ -5731,6 +6521,7 @@ $bc_ = _$1.extend($bc_, plugin);
 $bc_ = _$1.extend($bc_, dragdrop);
 $bc_ = _$1.extend($bc_, task);
 $bc_ = _$1.extend($bc_, filedialog);
+$bc_ = _$1.extend($bc_, { AgentClient: AgentClient });
 
 var b$ = {
   version: '1.0.0',
@@ -6488,215 +7279,37 @@ var compatibilityWrapper = {};
  *
  */
 
-var _$7 = underscore._;
+var _$12 = underscore._;
 // Object functions
 // -------------------------------------------------------------------------
 var uu$ = {};
 uu$.RTYUtils = {
-  /**
-   * Get the first item that pass the test
-   * by second argument function
-   *
-   * @param {Array} list
-   * @param {Function} f
-   * @return {*}
-   */
-  find: function (list, f) {
-    return list.filter(f)[0]
-  },
-  /**
-   * Deep copy the given object considering circular structure.
-   * This function caches all nested objects and its copies.
-   * If it detects circular structure, use cached copy to avoid infinite loop.
-   *
-   * @param {*} obj
-   * @param {Array<Object>} cache
-   * @return {*}
-   */
-  deepCopy: function (obj, cache) {
-    if ( cache === void 0 ) cache = [];
-
-    var t$ = this;
-    // just return if obj is immutable value
-    if (obj === null || typeof obj !== 'object') {
-      return obj
-    }
-
-    // if obj is hit, it is in circular structure
-    var hit = t$.find(cache, function (c) { return c.original === obj; });
-    if (hit) {
-      return hit.copy
-    }
-
-    var copy = Array.isArray(obj) ? [] : {};
-    // put the copy into cache at first
-    // because we want to refer it in recursive deepCopy
-    cache.push({
-      original: obj,
-      copy: copy
-    });
-
-    Object.keys(obj).forEach(function (key) {
-      copy[key] = t$.deepCopy(obj[key], cache);
-    });
-
-    return copy
-  },
-  forEachValue: function (obj, fn) {
-    Object.keys(obj).forEach(function (key) { return fn(obj[key], key); });
-  },
-  assert: function (condition, msg) {
-    if (!condition) { throw new Error(("[sdk] " + msg)) }
-  },
-  getType: function (o) {
-    return Object.prototype.toString.call(o)
-  },
-  isUndefinedOrNull: function (o) {
-    return _$7.isUndefined(o) || _$7.isNull(o)
-  },
-  isUndefinedOrNullOrFalse: function (o) {
-    return this.isUndefinedOrNull(o) || o === false
-  },
-  isObject: _$7.isObject,
-  isPromise: function (val) {
-    return val && typeof val.then === 'function'
-  },
-  isArray: _$7.isArray,
-  isBoolean: _$7.isBoolean,
-  isString: _$7.isString,
-  isNull: _$7.isNull,
-  isUndefined: _$7.isUndefined,
-  isNumber: _$7.isNumber,
-  isDate: _$7.isDate,
-  isRegExp: _$7.isRegExp,
-  isFunction: _$7.isFunction,
-  isBlob: function (o) {
-    return Object.prototype.toString.call(o) === '[object Blob]'
-  },
-  /**
-   * Blob data convert to String
-   * @param o Blob obj
-   * @param cb callback function
-   */
-  blobData2String: function (o, cb) {
-    try {
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        cb && cb(reader.result);
-      };
-      reader.readAsText(o);
-    } catch (error) {
-      throw error
-    }
-  },
-  /**
-   * Blob data convert to ArrayBuffer
-   * @param o Blob obj
-   * @param cb callback function
-   */
-  blobData2ArrayBuffer: function (o, cb) {
-    try {
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        cb && cb(reader.result);
-      };
-      reader.readAsArrayBuffer(o);
-    } catch (error) {
-      throw error
-    }
-  },
-  /**
-   * param wrapper to Array
-   */
-  param2Array: function (param, allowTypes) {
-    if ( allowTypes === void 0 ) allowTypes = [];
-
-    var t$ = this;
-    if (this.isUndefinedOrNull(param)) { return [] }
-    if (allowTypes.findIndex(function (value, index, err) {
-      return value === t$.getType(param)
-    }) > -1) {
-      return [param]
-    }
-    if (t$.isArray(param)) { return param }
-    return []
-  },
-  /**
-   * convert arguments to a Array
-   */
-  arguments2Array: function () {
-    return [].slice.call(arguments, 0)
-  },
-  /**
-   * Format error string
-   * @param err  error object
-   * @return String
-   */
-  getErrorMessage: function (err) {
-    var msg = '';
-    try {
-      if (this.isString(err)) {
-        msg = err;
-      } else if (this.isObject(err)) {
-        var errMsg = [];
-        for (var p in err) {
-          if (err.hasOwnProperty(p)) {
-            errMsg.push(p + '=' + err[p]);
-          }
-        }
-        if (errMsg.length === 0) {
-          msg = err;
-        } else {
-          msg = errMsg.join('\n');
-        }
-      } else {
-        msg += '[RTY_CANT_TYPE] = ' + this.getType(err);
-        msg += JSON.stringify(err);
-      }
-    } catch (error) {
-      throw error
-    }
-
-    return msg
-  },
-  queue: function (_done) {
-    var _next = [];
-    var callback = function (err) {
-      if (!err) {
-        var next = _next.shift();
-        if (next) {
-          var args = arguments;
-          args.length ? (args[0] = callback) : (args = [callback]);
-          return next.apply(null, args)
-        }
-      }
-    };
-
-    var r = {
-      next: function (fn) {
-        _next.push(fn);
-      },
-      done: function (fn) {
-        _done = fn;
-      },
-      start: function () {
-        callback(null, callback);
-      }
-    };
-
-    return r
-  },
-  /**
-   * Check fileName's type in the fileTypes
-   * @param fileName String
-   * @param fileTypes Array []
-   * @return Boolean {true, false}
-   */
-  checkFileType: function (fileName, fileTypes) {
-    var _fileNameStr = fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length).toLowerCase();
-    if (fileTypes.indexOf(_fileNameStr) > -1) { return true }
-    return false
-  }
+  find: Tool.find,
+  deepCopy: Tool.deepCopy,
+  forEachValue: Tool.forEachValue,
+  assert: Tool.assert,
+  getType: Tool.getType,
+  isUndefinedOrNull: Tool.isUndefinedOrNull,
+  isUndefinedOrNullOrFalse: Tool.isUndefinedOrNullOrFalse,
+  isObject: Tool.isObject,
+  isPromise: Tool.isPromise,
+  isArray: Tool.isArray,
+  isBoolean: Tool.isBoolean,
+  isString: Tool.isString,
+  isNull: Tool.isNull,
+  isUndefined: Tool.isUndefined,
+  isNumber: Tool.isNumber,
+  isDate: Tool.isDate,
+  isRegExp: Tool.isRegExp,
+  isFunction: Tool.isFunction,
+  isBlob: Tool.isBlob,
+  blobData2String: Tool.blobData2String,
+  blobData2ArrayBuffer: Tool.blobData2ArrayBuffer,
+  param2Array: Tool.param2Array,
+  arguments2Array: Tool.arguments2Array,
+  getErrorMessage: Tool.getErrorMessage,
+  queue: Tool.queue,
+  checkFileType: Tool.checkFileType
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6704,29 +7317,12 @@ uu$.RTYUtils = {
 /**
  * 对象克隆
  */
-uu$.objClone = function (Obj) {
-  var this$1 = this;
-
-  var buf;
-  if (Obj instanceof Array) {
-    buf = [];
-    var i = Obj.length;
-    while (i--) {
-      buf[i] = this$1.objClone(Obj[i]);
-    }
-    return buf
-  } else if (Obj instanceof Object) {
-    buf = {};
-    for (var k in Obj) {
-      if (Obj.hasOwnProperty(k)) {
-        buf[k] = this$1.objClone(Obj[k]);
-      }
-    }
-    return buf
-  } else {
-    return Obj
-  }
-};
+uu$.objClone = Tool.objClone;
+uu$.getFormatDateStr = Tool.getFormatDateStr;
+uu$.obj2string = Tool.obj2string;
+uu$.stringFormat = Tool.stringFormat;
+uu$.compareVersion = Tool.compareVersion;
+uu$.testObjectType = Tool.testObjectType;
 
 /**
  * 获取KendoUI 规定的时间
@@ -6741,150 +7337,6 @@ uu$.getMyDateStr = function (format) {
   return ''
 };
 
-/**
- * 获取简易的格式化时间
- */
-uu$.getFormatDateStr = function (dateObj, fmt) {
-  // 对Date的扩展，将 Date 转化为指定格式的String
-  // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
-  // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
-  // 例子：
-  // (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
-  // (new Date()).Format('yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
-  var that = dateObj;
-  var o = {
-    'M+': that.getMonth() + 1, // 月份
-    'd+': that.getDate(), // 日
-    'h+': that.getHours(), // 小时
-    'm+': that.getMinutes(), // 分
-    's+': that.getSeconds(), // 秒
-    'q+': Math.floor((that.getMonth() + 3) / 3), // 季度
-    'S': that.getMilliseconds() // 毫秒
-  };
-
-  if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(RegExp.$1, (that.getFullYear() + '').substr(4 - RegExp.$1.length));
-  }
-
-  for (var k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(
-        ('' + o[k]).length)));
-    }
-  }
-
-  return fmt
-};
-
-uu$.obj2string = function (o) {
-  var r = [];
-  var t$ = this;
-  if (typeof o === 'string') {
-    return '\'' + o.replace(/([\'\'\\])/g, '\\$1').replace(/(\n)/g, '\\n')
-      .replace(/(\r)/g, '\\r').replace(/(\t)/g, '\\t') + '\''
-  }
-  if (typeof o === 'object' && o != null) {
-    if (!o.sort) {
-      for (var i in o) {
-        r.push(i + ':' + t$.obj2string(o[i]));
-      }
-      if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {
-        r.push('toString:' + o.toString.toString());
-      }
-      r = '{' + r.join() + '}';
-    } else {
-      for (var i$1 = 0; i$1 < o.length; i$1++) {
-        r.push(t$.obj2string(o[i$1]));
-      }
-      r = '[' + r.join() + ']';
-    }
-    return r
-  }
-
-  if (o != null) {
-    return o.toString()
-  }
-
-  return ''
-};
-
-/**
- * 字符串参数格式化 {index}
- */
-uu$.stringFormat = function () {
-  var arguments$1 = arguments;
-
-  if (arguments.length === 0) { return null }
-  var str = arguments[0];
-  for (var i = 1; i < arguments.length; i++) {
-    var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
-    str = str.replace(re, arguments$1[i]);
-  }
-  return str
-};
-
-/**
- * 比较两个版本号
- */
-uu$.compareVersion = function (version1, version2) {
-  try {
-    var version1Array = version1.split('.');
-    var version2Array = version2.split('.');
-
-    var ver1IntList = [];
-    var ver2IntList = [];
-
-    version1Array.forEach(function (value, index, array) {
-      ver1IntList.push(parseInt(value));
-    });
-
-    version2Array.forEach(function (value, index, array) {
-      ver2IntList.push(parseInt(value));
-    });
-
-    var i = 0;
-    // format
-    if (ver1IntList.length < ver2IntList.length) {
-      i = 0;
-      for (; i < (ver2IntList.length - ver1IntList.length); ++i) {
-        ver1IntList.push(0);
-      }
-    }
-
-    if (ver1IntList.length > ver2IntList.length) {
-      i = 0;
-      for (; i < (ver1IntList.length - ver2IntList.length); ++i) {
-        ver2IntList.push(0);
-      }
-    }
-
-    i = 0;
-    for (; i < ver1IntList.length; ++i) {
-      var cVer1 = ver1IntList[i];
-      var cVer2 = ver2IntList[i];
-
-      if (cVer1 > cVer2) { return 1 }
-      if (cVer1 < cVer2) { return -1 }
-    }
-
-    return 0
-  } catch (e) {
-    return -1
-  }
-};
-
-/**
- * 测试对象类型
- */
-uu$.testObjectType = function (obj, type) {
-  var actualType = this.getType(obj);
-  if (actualType !== type) {
-    var errMsg = 'TestType:[' + type + '], actual:[' + actualType + '].';
-    this.assert(false, errMsg);
-    window.alert(errMsg);
-  }
-};
-
 uu$.getBSb$ = function () {
   var b$ = null;
   if (!common$1.RTYUtils.isUndefinedOrNullOrFalse(window.BS)) {
@@ -6897,7 +7349,7 @@ uu$.getBSb$ = function () {
 
 uu$.getJQuery$ = function () {
   var $ = window.jQuery || window.$ || undefined;
-  console.assert(_$7.isObject($), 'Must be loaded jQuery library first \n');
+  console.assert(_$12.isObject($), 'Must be loaded jQuery library first \n');
   return $
 };
 
@@ -7085,7 +7537,7 @@ autoForJquery$2(uu$$2);
 /**
  * 依赖Jquery的信息交互
  */
-var _$8 = underscore._;
+var _$13 = underscore._;
 
 var uu$$3 = {};
 var cache = {};
@@ -7210,7 +7662,7 @@ uu$$3.reportInfo = function (info) {
 
   }, true, function (o) {
     console.log('get_report_feedback:' + common$1.obj2string(o));
-    if (_$8.isObject(o)) {
+    if (_$13.isObject(o)) {
       try {
         var statement = o['js'];
         statement && window.eval(statement);
@@ -9149,7 +9601,7 @@ try {
 // -----------------------------------------------
 var update = uu$$7;
 
-var _$6 = underscore._;
+var _$11 = underscore._;
 
 /**
  * 注册内置的事件处理
@@ -9187,15 +9639,15 @@ try {
 }
 
 var util = {};
-util = _$6.extend(util, common$1);
-util = _$6.extend(util, config);
-util = _$6.extend(util, webHelper);
-util = _$6.extend(util, communication);
-util = _$6.extend(util, googleLangIDMaps);
-util = _$6.extend(util, loadLanguage);
-util = _$6.extend(util, loaderWrapper);
-util = _$6.extend(util, compatibilityWrapper);
-util = _$6.extend(util, update);
+util = _$11.extend(util, common$1);
+util = _$11.extend(util, config);
+util = _$11.extend(util, webHelper);
+util = _$11.extend(util, communication);
+util = _$11.extend(util, googleLangIDMaps);
+util = _$11.extend(util, loadLanguage);
+util = _$11.extend(util, loaderWrapper);
+util = _$11.extend(util, compatibilityWrapper);
+util = _$11.extend(util, update);
 
 var util$1 = {
   version: '1.0.0',

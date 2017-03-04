@@ -2,35 +2,36 @@ import { Observable, Class } from '../observable'
 import underscore from '../underscore'
 var _ = underscore._
 
-var ProxyMessageCenter = Class.extend({
+var __$p$ = {
   init: function () {
-    this.__mc = new Observable()
+    __$p$.__mc = new Observable()
   },
 
   debugLog: false,
   log: (title, message, end = '') => {
-    if (this.debugLog) {
+    if (__$p$.debugLog) {
       console.log(title, message, end)
     }
   },
 
   bind: function (eventName, handlers, one = false) {
-    this.__mc.bind(eventName, handlers, one)
+    __$p$.__mc.bind(eventName, handlers, one)
   },
   one: function (eventNames, handlers) {
-    this.__mc.one(eventNames, handlers)
+    __$p$.__mc.one(eventNames, handlers)
   },
   first: function (eventName, handlers) {
-    this.__mc.first(eventName, handlers)
+    __$p$.__mc.first(eventName, handlers)
   },
   trigger: function (eventName, e) {
-    this.__mc.trigger(eventName, e)
+    __$p$.__mc.trigger(eventName, e)
   },
   unbind: function (eventName, handler) {
-    this.__mc.unbind(eventName, handler)
+    __$p$.__mc.unbind(eventName, handler)
   }
-})
+}
 
+var ProxyMessageCenter = Class.extend(__$p$)
 //
 // -----------------------------------------------
 export {

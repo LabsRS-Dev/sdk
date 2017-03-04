@@ -23,15 +23,15 @@ You must use init(config) function first, the use listen to start!!!!
 
 // ------------------------------------------------------------------------
 // Class ProxyClientWebsocketPrivate
-var ProxyClientWebsocketPrivate = {
+var __$p$ = {
   name: __key,
   mc: new ProxyMessageCenter(),
   getMsgHelper: () => {
-    return this.mc
+    return __$p$.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end = '') {
-    if (this.debug) {
+    if (__$p$.debug) {
       console.log(title, message, end)
     }
   },
@@ -48,25 +48,25 @@ var ProxyClientWebsocketPrivate = {
     autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER // 设置重新连接的秒数,
   },
   getUrl: function () {
-    var that = this
-    var url = that.protocol + that.ip + ':' + that.port + this.reqUrl
+    var that = __$p$
+    var url = that.protocol + that.ip + ':' + that.port + that.reqUrl
     return url
   },
   getAutoReConnectSec: () => {
-    return this.config.autoReconnectMaxRunTimes
+    return __$p$.config.autoReconnectMaxRunTimes
   },
   isRunning: false,
   initWithConfig: function (inConfig = {}) {
-    this.log(logCord, __key + ' call initWithConfig function ....')
-    this.config = _.extend(this.config, inConfig)
-    this.initialized = true
+    __$p$.log(logCord, __key + ' call initWithConfig function ....')
+    __$p$.config = _.extend(__$p$.config, inConfig)
+    __$p$.initialized = true
   },
   run: function () {
-    if (!this.initialized) {
-      this.showInitializedTip()
+    if (!__$p$.initialized) {
+      __$p$.showInitializedTip()
       return
     }
-    this.autoCreateWS(this.getUrl())
+    __$p$.autoCreateWS(__$p$.getUrl())
   },
   // ------------------------------------------------
   // 消息交互的核心部分
@@ -75,31 +75,31 @@ var ProxyClientWebsocketPrivate = {
   // --------------- 核心消息 ------------------------
   cacheSendMessage: [],         // 缓存发送信息部分
   sendMessage: (message, first = false) => {   // 客户端向服务器发送消息
-    if (!this.isRunning || !this.wsHandler) {
-      this.cacheSendMessage.push(message)
+    if (!__$p$.isRunning || !__$p$.wsHandler) {
+      __$p$.cacheSendMessage.push(message)
       console.warn(logCord, 'WebSocket is not running .....')
       return
     }
 
-    first ? this.cacheSendMessage.unshift(message) : this.cacheSendMessage.push(message)
-    _.each(this.cacheSendMessage, (curMessage) => {
-      this.wsHandler.send(curMessage)
-      this.mc.trigger(TypeMsg.OnSendMessageToServer, curMessage)
-      this.cacheSendMessage.shift()
+    first ? __$p$.cacheSendMessage.unshift(message) : __$p$.cacheSendMessage.push(message)
+    _.each(__$p$.cacheSendMessage, (curMessage) => {
+      __$p$.wsHandler.send(curMessage)
+      __$p$.mc.trigger(TypeMsg.OnSendMessageToServer, curMessage)
+      __$p$.cacheSendMessage.shift()
     })
   },
   onReceiveMessage: (message) => {
-    this.mc.trigger(TypeMsg.OnWSGetServerMessage, message)
+    __$p$.mc.trigger(TypeMsg.OnWSGetServerMessage, message)
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: (message) => {
-    this.mc.trigger(TypeMsg.OnCreateError, message)
+    __$p$.mc.trigger(TypeMsg.OnCreateError, message)
   },
   noticeWSOpen: (message) => {
-    this.mc.trigger(TypeMsg.OnWSOpen, message)
+    __$p$.mc.trigger(TypeMsg.OnWSOpen, message)
   },
   noticeWSClosed: (message) => {
-    this.mc.trigger(TypeMsg.OnWSClose, message)
+    __$p$.mc.trigger(TypeMsg.OnWSClose, message)
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
@@ -110,20 +110,20 @@ var ProxyClientWebsocketPrivate = {
     console.warn(logCord, initializedTip)
   },
   autoCreateWS: () => {
-    this._pAutoCreateWS()
+    __$p$._pAutoCreateWS()
   },
   _pAutoCreateWS: () => {
-    if (!this.isRunning) {
+    if (!__$p$.isRunning) {
       // 尝试新的链接
-      if (this.autoCWSTimesIndex <= this.autoReconnectMaxRunTimes) {
-        this.log(logCord, 'try create new socket connect, port = ' + this.config.port)
-        this.createWS(this.getUrl())
+      if (__$p$.autoCWSTimesIndex <= __$p$.autoReconnectMaxRunTimes) {
+        __$p$.log(logCord, 'try create new socket connect, port = ' + __$p$.config.port)
+        __$p$.createWS(__$p$.getUrl())
       }
-      ++this.autoCWSTimesIndex
+      ++__$p$.autoCWSTimesIndex
     }
   },
   createWS: (url) => { // 建立Websocket 客户端
-    var __agent = this
+    var __agent = __$p$
     var WebSocket = window.WebSocket || window.MozWebSocket
     __agent.log(logCord, 'create new socket connect, wsurl = ' + url)
 
@@ -211,17 +211,16 @@ var ProxyClientWebsocketPrivate = {
 }
 
 // 批量处理注册及接收方式
-var __private = ProxyClientWebsocketPrivate
-_.each(_.keys(TypeMsg), (eventType, key, list) => {
-  __private['register' + key] = (handler, one = false) => {
-    __private.mc.bind(eventType, handler, one)
+_.each(TypeMsg, (eventType, key, list) => {
+  __$p$['register' + key] = (handler, one = false) => {
+    __$p$.mc.bind(eventType, handler, one)
   }
-  __private['unregister' + key] = (handler) => {
-    __private.mc.unbind(eventType, handler)
+  __$p$['unregister' + key] = (handler) => {
+    __$p$.mc.unbind(eventType, handler)
   }
 })
 
-var ProxyClientWebsocket = Class.extend(ProxyClientWebsocketPrivate)
+var ProxyClientWebsocket = Class.extend(__$p$)
 
 // -----------------------------------------------------------------------
 // 统一的Client Websocket 处理, 用来与后台服务器的交互处理

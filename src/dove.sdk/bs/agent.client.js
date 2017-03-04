@@ -4,6 +4,7 @@ import { Class } from '../observable'
 import underscore from '../underscore'
 var _ = underscore._
 
+// -----------------------------------------------------------------------
 const logCord = '[SDK.agent.client]'
 
 const __key = 'agent-client'
@@ -65,87 +66,91 @@ class Chancel {
 
 // ------------------------------------------------------------------------
 // Class AgentClient
-var AgentClientPrivate = {
+var __$p$ = {
   name: __key,
   mc: new ProxyMessageCenter(),
   getMsgHelper: () => {
-    return this.mc
+    return __$p$.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end = '') {
-    if (this.debug) {
+    if (__$p$.debug) {
       console.log(title, message, end)
     }
+  },
+  // --------------------------------------------------------
+  init: () => {
   },
   // --------------- 信息交互 通道建立 ------------------------
   ChancelType: ChancelType,
   Chancel: Chancel,
-  __chancelList: [],  // 通讯通道对象
+  __chancelList: [],   // 通讯通道对象
 
   appendChancel: (chancel, handler) => {
     // 建立信息关联
     if (chancel.type === ChancelType.websocket) {
-      chancel.server.registerOnWSGetServerMessage(this.onReceiveFromServer)
+      chancel.server.registerOnWSGetServerMessage(__$p$.onReceiveFromServer)
       chancel.server.registerOnSendMessageToServer((message) => {})
 
-      chancel.server.registerOnCreateError(this.onBuildChannelError)
-      chancel.server.registerOnWSClose(this.onChannelFault)
-      chancel.server.registerOnWSOpen(this.onFinishBuildChannel)
+      chancel.server.registerOnCreateError(__$p$.onBuildChannelError)
+      chancel.server.registerOnWSClose(__$p$.onChannelFault)
+      chancel.server.registerOnWSOpen(__$p$.onFinishBuildChannel)
 
       chancel.active()
     }
 
-    this.__chancelList.push(chancel)
+    __$p$.__chancelList.push(chancel)
   },
   removeChancel: (chancel) => {
     if (chancel.type === ChancelType.websocket) {
-      chancel.server.unregisterOnWSGetServerMessage(this.onReceiveFromServer)
+      chancel.server.unregisterOnWSGetServerMessage(__$p$.onReceiveFromServer)
       chancel.server.unregisterOnSendMessageToServer((message) => {})
 
-      chancel.server.unregisterOnCreateError(this.onBuildChannelError)
-      chancel.server.unregisterOnWSClose(this.onChannelFault)
+      chancel.server.unregisterOnCreateError(__$p$.onBuildChannelError)
+      chancel.server.unregisterOnWSClose(__$p$.onChannelFault)
     }
   },
   // -------------------------------------------------
   noticeToServer: (message) => {
-    if (this.__chancelList.length === 0) {
+    if (__$p$.__chancelList.length === 0) {
       console.warn(logCord, 'You maybe add one chancel')
     }
 
-    _.each(this.__chancelList, (chancel) => {
+    _.each(__$p$.__chancelList, (chancel) => {
       chancel.server.sendMessage(message)
     })
-    this.mc.trigger(TypeMsg.OnNoticeToServer, message)
+    __$p$.mc.trigger(TypeMsg.OnNoticeToServer, message)
   },
   onReceiveFromServer: (message) => {
-    this.mc.trigger(TypeMsg.onReceiveFromServer, message)
+    __$p$.mc.trigger(TypeMsg.onReceiveFromServer, message)
   },
   onStartBuildChannel: (message) => {
-    this.mc.trigger(TypeMsg.OnStartBuildChannel, message)
+    __$p$.mc.trigger(TypeMsg.OnStartBuildChannel, message)
   },
   onBuildChannelError: (message) => {
-    this.mc.trigger(TypeMsg.onBuildChannelError, message)
+    __$p$.mc.trigger(TypeMsg.onBuildChannelError, message)
   },
   onFinishBuildChannel: (message) => {
-    this.mc.trigger(TypeMsg.onFinishBuildChannel, message)
+    __$p$.mc.trigger(TypeMsg.onFinishBuildChannel, message)
   },
   onChannelFault: (message) => {
-    this.mc.trigger(TypeMsg.onChannelFault, message)
+    __$p$.mc.trigger(TypeMsg.onChannelFault, message)
   }
 }
 
 // 批量处理注册及接收方式
-var __private = AgentClientPrivate
-_.each(_.keys(TypeMsg), (eventType, key, list) => {
-  __private['register' + key] = (handler, one = false) => {
-    __private.mc.bind(eventType, handler, one)
+
+_.each(TypeMsg, (eventType, key, list) => {
+  __$p$['register' + key] = (handler, one = false) => {
+    __$p$.mc.bind(eventType, handler, one)
   }
-  __private['unregister' + key] = (handler) => {
-    __private.mc.unbind(eventType, handler)
+  __$p$['unregister' + key] = (handler) => {
+    __$p$.mc.unbind(eventType, handler)
   }
 })
 
-var AgentClient = Class.extend(AgentClientPrivate)
+
+var AgentClient = Class.extend(__$p$)
 
 //
 // -----------------------------------------------
