@@ -44,9 +44,9 @@ var nativeCreate = Object.create;
 var Ctor = function(){};
 
 // Create a safe reference to the Underscore object for use below.
-var _$2 = function(obj) {
-  if (obj instanceof _$2) { return obj; }
-  if (!(this instanceof _$2)) { return new _$2(obj); }
+var _$1 = function(obj) {
+  if (obj instanceof _$1) { return obj; }
+  if (!(this instanceof _$1)) { return new _$1(obj); }
   this._wrapped = obj;
 };
 
@@ -57,15 +57,15 @@ var _$2 = function(obj) {
 // and `exports` are not HTML elements.)
 if (typeof exports != 'undefined' && !exports.nodeType) {
   if (typeof module != 'undefined' && !module.nodeType && module.exports) {
-    exports = module.exports = _$2;
+    exports = module.exports = _$1;
   }
-  exports._ = _$2;
+  exports._ = _$1;
 } else {
-  root._ = _$2;
+  root._ = _$1;
 }
 
 // Current version.
-_$2.VERSION = '1.8.3';
+_$1.VERSION = '1.8.3';
 
 // Internal function that returns an efficient (for current engines) version
 // of the passed-in callback, to be repeatedly applied in other Underscore
@@ -97,17 +97,17 @@ var builtinIteratee;
 // element in a collection, returning the desired result — either `identity`,
 // an arbitrary callback, a property matcher, or a property accessor.
 var cb = function(value, context, argCount) {
-  if (_$2.iteratee !== builtinIteratee) { return _$2.iteratee(value, context); }
-  if (value == null) { return _$2.identity; }
-  if (_$2.isFunction(value)) { return optimizeCb(value, context, argCount); }
-  if (_$2.isObject(value) && !_$2.isArray(value)) { return _$2.matcher(value); }
-  return _$2.property(value);
+  if (_$1.iteratee !== builtinIteratee) { return _$1.iteratee(value, context); }
+  if (value == null) { return _$1.identity; }
+  if (_$1.isFunction(value)) { return optimizeCb(value, context, argCount); }
+  if (_$1.isObject(value) && !_$1.isArray(value)) { return _$1.matcher(value); }
+  return _$1.property(value);
 };
 
 // External wrapper for our callback generator. Users may customize
 // `_.iteratee` if they want additional predicate/iteratee shorthand styles.
 // This abstraction hides the internal-only argCount argument.
-_$2.iteratee = builtinIteratee = function(value, context) {
+_$1.iteratee = builtinIteratee = function(value, context) {
   return cb(value, context, Infinity);
 };
 
@@ -140,7 +140,7 @@ var restArgs = function(func, startIndex) {
 
 // An internal function for creating a new object that inherits from another.
 var baseCreate = function(prototype) {
-  if (!_$2.isObject(prototype)) { return {}; }
+  if (!_$1.isObject(prototype)) { return {}; }
   if (nativeCreate) { return nativeCreate(prototype); }
   Ctor.prototype = prototype;
   var result = new Ctor;
@@ -180,7 +180,7 @@ var isArrayLike = function(collection) {
 // The cornerstone, an `each` implementation, aka `forEach`.
 // Handles raw objects in addition to array-likes. Treats all
 // sparse array-likes as if they were dense.
-_$2.each = _$2.forEach = function(obj, iteratee, context) {
+_$1.each = _$1.forEach = function(obj, iteratee, context) {
   iteratee = optimizeCb(iteratee, context);
   var i, length;
   if (isArrayLike(obj)) {
@@ -188,7 +188,7 @@ _$2.each = _$2.forEach = function(obj, iteratee, context) {
       iteratee(obj[i], i, obj);
     }
   } else {
-    var keys = _$2.keys(obj);
+    var keys = _$1.keys(obj);
     for (i = 0, length = keys.length; i < length; i++) {
       iteratee(obj[keys[i]], keys[i], obj);
     }
@@ -197,9 +197,9 @@ _$2.each = _$2.forEach = function(obj, iteratee, context) {
 };
 
 // Return the results of applying the iteratee to each element.
-_$2.map = _$2.collect = function(obj, iteratee, context) {
+_$1.map = _$1.collect = function(obj, iteratee, context) {
   iteratee = cb(iteratee, context);
-  var keys = !isArrayLike(obj) && _$2.keys(obj),
+  var keys = !isArrayLike(obj) && _$1.keys(obj),
       length = (keys || obj).length,
       results = Array(length);
   for (var index = 0; index < length; index++) {
@@ -214,7 +214,7 @@ var createReduce = function(dir) {
   // Wrap code that reassigns argument variables in a separate function than
   // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
   var reducer = function(obj, iteratee, memo, initial) {
-    var keys = !isArrayLike(obj) && _$2.keys(obj),
+    var keys = !isArrayLike(obj) && _$1.keys(obj),
         length = (keys || obj).length,
         index = dir > 0 ? 0 : length - 1;
     if (!initial) {
@@ -236,39 +236,39 @@ var createReduce = function(dir) {
 
 // **Reduce** builds up a single result from a list of values, aka `inject`,
 // or `foldl`.
-_$2.reduce = _$2.foldl = _$2.inject = createReduce(1);
+_$1.reduce = _$1.foldl = _$1.inject = createReduce(1);
 
 // The right-associative version of reduce, also known as `foldr`.
-_$2.reduceRight = _$2.foldr = createReduce(-1);
+_$1.reduceRight = _$1.foldr = createReduce(-1);
 
 // Return the first value which passes a truth test. Aliased as `detect`.
-_$2.find = _$2.detect = function(obj, predicate, context) {
-  var keyFinder = isArrayLike(obj) ? _$2.findIndex : _$2.findKey;
+_$1.find = _$1.detect = function(obj, predicate, context) {
+  var keyFinder = isArrayLike(obj) ? _$1.findIndex : _$1.findKey;
   var key = keyFinder(obj, predicate, context);
   if (key !== void 0 && key !== -1) { return obj[key]; }
 };
 
 // Return all the elements that pass a truth test.
 // Aliased as `select`.
-_$2.filter = _$2.select = function(obj, predicate, context) {
+_$1.filter = _$1.select = function(obj, predicate, context) {
   var results = [];
   predicate = cb(predicate, context);
-  _$2.each(obj, function(value, index, list) {
+  _$1.each(obj, function(value, index, list) {
     if (predicate(value, index, list)) { results.push(value); }
   });
   return results;
 };
 
 // Return all the elements for which a truth test fails.
-_$2.reject = function(obj, predicate, context) {
-  return _$2.filter(obj, _$2.negate(cb(predicate)), context);
+_$1.reject = function(obj, predicate, context) {
+  return _$1.filter(obj, _$1.negate(cb(predicate)), context);
 };
 
 // Determine whether all of the elements match a truth test.
 // Aliased as `all`.
-_$2.every = _$2.all = function(obj, predicate, context) {
+_$1.every = _$1.all = function(obj, predicate, context) {
   predicate = cb(predicate, context);
-  var keys = !isArrayLike(obj) && _$2.keys(obj),
+  var keys = !isArrayLike(obj) && _$1.keys(obj),
       length = (keys || obj).length;
   for (var index = 0; index < length; index++) {
     var currentKey = keys ? keys[index] : index;
@@ -279,9 +279,9 @@ _$2.every = _$2.all = function(obj, predicate, context) {
 
 // Determine if at least one element in the object matches a truth test.
 // Aliased as `any`.
-_$2.some = _$2.any = function(obj, predicate, context) {
+_$1.some = _$1.any = function(obj, predicate, context) {
   predicate = cb(predicate, context);
-  var keys = !isArrayLike(obj) && _$2.keys(obj),
+  var keys = !isArrayLike(obj) && _$1.keys(obj),
       length = (keys || obj).length;
   for (var index = 0; index < length; index++) {
     var currentKey = keys ? keys[index] : index;
@@ -292,22 +292,22 @@ _$2.some = _$2.any = function(obj, predicate, context) {
 
 // Determine if the array or object contains a given item (using `===`).
 // Aliased as `includes` and `include`.
-_$2.contains = _$2.includes = _$2.include = function(obj, item, fromIndex, guard) {
-  if (!isArrayLike(obj)) { obj = _$2.values(obj); }
+_$1.contains = _$1.includes = _$1.include = function(obj, item, fromIndex, guard) {
+  if (!isArrayLike(obj)) { obj = _$1.values(obj); }
   if (typeof fromIndex != 'number' || guard) { fromIndex = 0; }
-  return _$2.indexOf(obj, item, fromIndex) >= 0;
+  return _$1.indexOf(obj, item, fromIndex) >= 0;
 };
 
 // Invoke a method (with arguments) on every item in a collection.
-_$2.invoke = restArgs(function(obj, path, args) {
+_$1.invoke = restArgs(function(obj, path, args) {
   var contextPath, func;
-  if (_$2.isFunction(path)) {
+  if (_$1.isFunction(path)) {
     func = path;
-  } else if (_$2.isArray(path)) {
+  } else if (_$1.isArray(path)) {
     contextPath = path.slice(0, -1);
     path = path[path.length - 1];
   }
-  return _$2.map(obj, function(context) {
+  return _$1.map(obj, function(context) {
     var method = func;
     if (!method) {
       if (contextPath && contextPath.length) {
@@ -321,28 +321,28 @@ _$2.invoke = restArgs(function(obj, path, args) {
 });
 
 // Convenience version of a common use case of `map`: fetching a property.
-_$2.pluck = function(obj, key) {
-  return _$2.map(obj, _$2.property(key));
+_$1.pluck = function(obj, key) {
+  return _$1.map(obj, _$1.property(key));
 };
 
 // Convenience version of a common use case of `filter`: selecting only objects
 // containing specific `key:value` pairs.
-_$2.where = function(obj, attrs) {
-  return _$2.filter(obj, _$2.matcher(attrs));
+_$1.where = function(obj, attrs) {
+  return _$1.filter(obj, _$1.matcher(attrs));
 };
 
 // Convenience version of a common use case of `find`: getting the first object
 // containing specific `key:value` pairs.
-_$2.findWhere = function(obj, attrs) {
-  return _$2.find(obj, _$2.matcher(attrs));
+_$1.findWhere = function(obj, attrs) {
+  return _$1.find(obj, _$1.matcher(attrs));
 };
 
 // Return the maximum element (or element-based computation).
-_$2.max = function(obj, iteratee, context) {
+_$1.max = function(obj, iteratee, context) {
   var result = -Infinity, lastComputed = -Infinity,
       value, computed;
   if (iteratee == null || (typeof iteratee == 'number' && typeof obj[0] != 'object') && obj != null) {
-    obj = isArrayLike(obj) ? obj : _$2.values(obj);
+    obj = isArrayLike(obj) ? obj : _$1.values(obj);
     for (var i = 0, length = obj.length; i < length; i++) {
       value = obj[i];
       if (value != null && value > result) {
@@ -351,7 +351,7 @@ _$2.max = function(obj, iteratee, context) {
     }
   } else {
     iteratee = cb(iteratee, context);
-    _$2.each(obj, function(v, index, list) {
+    _$1.each(obj, function(v, index, list) {
       computed = iteratee(v, index, list);
       if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
         result = v;
@@ -363,11 +363,11 @@ _$2.max = function(obj, iteratee, context) {
 };
 
 // Return the minimum element (or element-based computation).
-_$2.min = function(obj, iteratee, context) {
+_$1.min = function(obj, iteratee, context) {
   var result = Infinity, lastComputed = Infinity,
       value, computed;
   if (iteratee == null || (typeof iteratee == 'number' && typeof obj[0] != 'object') && obj != null) {
-    obj = isArrayLike(obj) ? obj : _$2.values(obj);
+    obj = isArrayLike(obj) ? obj : _$1.values(obj);
     for (var i = 0, length = obj.length; i < length; i++) {
       value = obj[i];
       if (value != null && value < result) {
@@ -376,7 +376,7 @@ _$2.min = function(obj, iteratee, context) {
     }
   } else {
     iteratee = cb(iteratee, context);
-    _$2.each(obj, function(v, index, list) {
+    _$1.each(obj, function(v, index, list) {
       computed = iteratee(v, index, list);
       if (computed < lastComputed || computed === Infinity && result === Infinity) {
         result = v;
@@ -388,25 +388,25 @@ _$2.min = function(obj, iteratee, context) {
 };
 
 // Shuffle a collection.
-_$2.shuffle = function(obj) {
-  return _$2.sample(obj, Infinity);
+_$1.shuffle = function(obj) {
+  return _$1.sample(obj, Infinity);
 };
 
 // Sample **n** random values from a collection using the modern version of the
 // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
 // If **n** is not specified, returns a single random element.
 // The internal `guard` argument allows it to work with `map`.
-_$2.sample = function(obj, n, guard) {
+_$1.sample = function(obj, n, guard) {
   if (n == null || guard) {
-    if (!isArrayLike(obj)) { obj = _$2.values(obj); }
-    return obj[_$2.random(obj.length - 1)];
+    if (!isArrayLike(obj)) { obj = _$1.values(obj); }
+    return obj[_$1.random(obj.length - 1)];
   }
-  var sample = isArrayLike(obj) ? _$2.clone(obj) : _$2.values(obj);
+  var sample = isArrayLike(obj) ? _$1.clone(obj) : _$1.values(obj);
   var length = getLength(sample);
   n = Math.max(Math.min(n, length), 0);
   var last = length - 1;
   for (var index = 0; index < n; index++) {
-    var rand = _$2.random(index, last);
+    var rand = _$1.random(index, last);
     var temp = sample[index];
     sample[index] = sample[rand];
     sample[rand] = temp;
@@ -415,10 +415,10 @@ _$2.sample = function(obj, n, guard) {
 };
 
 // Sort the object's values by a criterion produced by an iteratee.
-_$2.sortBy = function(obj, iteratee, context) {
+_$1.sortBy = function(obj, iteratee, context) {
   var index = 0;
   iteratee = cb(iteratee, context);
-  return _$2.pluck(_$2.map(obj, function(value, key, list) {
+  return _$1.pluck(_$1.map(obj, function(value, key, list) {
     return {
       value: value,
       index: index++,
@@ -440,7 +440,7 @@ var group = function(behavior, partition) {
   return function(obj, iteratee, context) {
     var result = partition ? [[], []] : {};
     iteratee = cb(iteratee, context);
-    _$2.each(obj, function(value, index) {
+    _$1.each(obj, function(value, index) {
       var key = iteratee(value, index, obj);
       behavior(result, value, key);
     });
@@ -450,45 +450,45 @@ var group = function(behavior, partition) {
 
 // Groups the object's values by a criterion. Pass either a string attribute
 // to group by, or a function that returns the criterion.
-_$2.groupBy = group(function(result, value, key) {
-  if (_$2.has(result, key)) { result[key].push(value); } else { result[key] = [value]; }
+_$1.groupBy = group(function(result, value, key) {
+  if (_$1.has(result, key)) { result[key].push(value); } else { result[key] = [value]; }
 });
 
 // Indexes the object's values by a criterion, similar to `groupBy`, but for
 // when you know that your index values will be unique.
-_$2.indexBy = group(function(result, value, key) {
+_$1.indexBy = group(function(result, value, key) {
   result[key] = value;
 });
 
 // Counts instances of an object that group by a certain criterion. Pass
 // either a string attribute to count by, or a function that returns the
 // criterion.
-_$2.countBy = group(function(result, value, key) {
-  if (_$2.has(result, key)) { result[key]++; } else { result[key] = 1; }
+_$1.countBy = group(function(result, value, key) {
+  if (_$1.has(result, key)) { result[key]++; } else { result[key] = 1; }
 });
 
 var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
 // Safely create a real, live array from anything iterable.
-_$2.toArray = function(obj) {
+_$1.toArray = function(obj) {
   if (!obj) { return []; }
-  if (_$2.isArray(obj)) { return slice.call(obj); }
-  if (_$2.isString(obj)) {
+  if (_$1.isArray(obj)) { return slice.call(obj); }
+  if (_$1.isString(obj)) {
     // Keep surrogate pair characters together
     return obj.match(reStrSymbol);
   }
-  if (isArrayLike(obj)) { return _$2.map(obj, _$2.identity); }
-  return _$2.values(obj);
+  if (isArrayLike(obj)) { return _$1.map(obj, _$1.identity); }
+  return _$1.values(obj);
 };
 
 // Return the number of elements in an object.
-_$2.size = function(obj) {
+_$1.size = function(obj) {
   if (obj == null) { return 0; }
-  return isArrayLike(obj) ? obj.length : _$2.keys(obj).length;
+  return isArrayLike(obj) ? obj.length : _$1.keys(obj).length;
 };
 
 // Split a collection into two arrays: one whose elements all satisfy the given
 // predicate, and one whose elements all do not satisfy the predicate.
-_$2.partition = group(function(result, value, pass) {
+_$1.partition = group(function(result, value, pass) {
   result[pass ? 0 : 1].push(value);
 }, true);
 
@@ -498,37 +498,37 @@ _$2.partition = group(function(result, value, pass) {
 // Get the first element of an array. Passing **n** will return the first N
 // values in the array. Aliased as `head` and `take`. The **guard** check
 // allows it to work with `_.map`.
-_$2.first = _$2.head = _$2.take = function(array, n, guard) {
+_$1.first = _$1.head = _$1.take = function(array, n, guard) {
   if (array == null || array.length < 1) { return void 0; }
   if (n == null || guard) { return array[0]; }
-  return _$2.initial(array, array.length - n);
+  return _$1.initial(array, array.length - n);
 };
 
 // Returns everything but the last entry of the array. Especially useful on
 // the arguments object. Passing **n** will return all the values in
 // the array, excluding the last N.
-_$2.initial = function(array, n, guard) {
+_$1.initial = function(array, n, guard) {
   return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
 };
 
 // Get the last element of an array. Passing **n** will return the last N
 // values in the array.
-_$2.last = function(array, n, guard) {
+_$1.last = function(array, n, guard) {
   if (array == null || array.length < 1) { return void 0; }
   if (n == null || guard) { return array[array.length - 1]; }
-  return _$2.rest(array, Math.max(0, array.length - n));
+  return _$1.rest(array, Math.max(0, array.length - n));
 };
 
 // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
 // Especially useful on the arguments object. Passing an **n** will return
 // the rest N values in the array.
-_$2.rest = _$2.tail = _$2.drop = function(array, n, guard) {
+_$1.rest = _$1.tail = _$1.drop = function(array, n, guard) {
   return slice.call(array, n == null || guard ? 1 : n);
 };
 
 // Trim out all falsy values from an array.
-_$2.compact = function(array) {
-  return _$2.filter(array, Boolean);
+_$1.compact = function(array) {
+  return _$1.filter(array, Boolean);
 };
 
 // Internal implementation of a recursive `flatten` function.
@@ -537,7 +537,7 @@ var flatten = function(input, shallow, strict, output) {
   var idx = output.length;
   for (var i = 0, length = getLength(input); i < length; i++) {
     var value = input[i];
-    if (isArrayLike(value) && (_$2.isArray(value) || _$2.isArguments(value))) {
+    if (isArrayLike(value) && (_$1.isArray(value) || _$1.isArguments(value))) {
       // Flatten current level of array or arguments object.
       if (shallow) {
         var j = 0, len = value.length;
@@ -554,20 +554,20 @@ var flatten = function(input, shallow, strict, output) {
 };
 
 // Flatten out an array, either recursively (by default), or just one level.
-_$2.flatten = function(array, shallow) {
+_$1.flatten = function(array, shallow) {
   return flatten(array, shallow, false);
 };
 
 // Return a version of the array that does not contain the specified value(s).
-_$2.without = restArgs(function(array, otherArrays) {
-  return _$2.difference(array, otherArrays);
+_$1.without = restArgs(function(array, otherArrays) {
+  return _$1.difference(array, otherArrays);
 });
 
 // Produce a duplicate-free version of the array. If the array has already
 // been sorted, you have the option of using a faster algorithm.
 // Aliased as `unique`.
-_$2.uniq = _$2.unique = function(array, isSorted, iteratee, context) {
-  if (!_$2.isBoolean(isSorted)) {
+_$1.uniq = _$1.unique = function(array, isSorted, iteratee, context) {
+  if (!_$1.isBoolean(isSorted)) {
     context = iteratee;
     iteratee = isSorted;
     isSorted = false;
@@ -582,11 +582,11 @@ _$2.uniq = _$2.unique = function(array, isSorted, iteratee, context) {
       if (!i || seen !== computed) { result.push(value); }
       seen = computed;
     } else if (iteratee) {
-      if (!_$2.contains(seen, computed)) {
+      if (!_$1.contains(seen, computed)) {
         seen.push(computed);
         result.push(value);
       }
-    } else if (!_$2.contains(result, value)) {
+    } else if (!_$1.contains(result, value)) {
       result.push(value);
     }
   }
@@ -595,23 +595,23 @@ _$2.uniq = _$2.unique = function(array, isSorted, iteratee, context) {
 
 // Produce an array that contains the union: each distinct element from all of
 // the passed-in arrays.
-_$2.union = restArgs(function(arrays) {
-  return _$2.uniq(flatten(arrays, true, true));
+_$1.union = restArgs(function(arrays) {
+  return _$1.uniq(flatten(arrays, true, true));
 });
 
 // Produce an array that contains every item shared between all the
 // passed-in arrays.
-_$2.intersection = function(array) {
+_$1.intersection = function(array) {
   var arguments$1 = arguments;
 
   var result = [];
   var argsLength = arguments.length;
   for (var i = 0, length = getLength(array); i < length; i++) {
     var item = array[i];
-    if (_$2.contains(result, item)) { continue; }
+    if (_$1.contains(result, item)) { continue; }
     var j;
     for (j = 1; j < argsLength; j++) {
-      if (!_$2.contains(arguments$1[j], item)) { break; }
+      if (!_$1.contains(arguments$1[j], item)) { break; }
     }
     if (j === argsLength) { result.push(item); }
   }
@@ -620,33 +620,33 @@ _$2.intersection = function(array) {
 
 // Take the difference between one array and a number of other arrays.
 // Only the elements present in just the first array will remain.
-_$2.difference = restArgs(function(array, rest) {
+_$1.difference = restArgs(function(array, rest) {
   rest = flatten(rest, true, true);
-  return _$2.filter(array, function(value){
-    return !_$2.contains(rest, value);
+  return _$1.filter(array, function(value){
+    return !_$1.contains(rest, value);
   });
 });
 
 // Complement of _.zip. Unzip accepts an array of arrays and groups
 // each array's elements on shared indices.
-_$2.unzip = function(array) {
-  var length = array && _$2.max(array, getLength).length || 0;
+_$1.unzip = function(array) {
+  var length = array && _$1.max(array, getLength).length || 0;
   var result = Array(length);
 
   for (var index = 0; index < length; index++) {
-    result[index] = _$2.pluck(array, index);
+    result[index] = _$1.pluck(array, index);
   }
   return result;
 };
 
 // Zip together multiple lists into a single array -- elements that share
 // an index go together.
-_$2.zip = restArgs(_$2.unzip);
+_$1.zip = restArgs(_$1.unzip);
 
 // Converts lists into objects. Pass either a single array of `[key, value]`
 // pairs, or two parallel arrays of the same length -- one of keys, and one of
 // the corresponding values. Passing by pairs is the reverse of _.pairs.
-_$2.object = function(list, values) {
+_$1.object = function(list, values) {
   var result = {};
   for (var i = 0, length = getLength(list); i < length; i++) {
     if (values) {
@@ -672,12 +672,12 @@ var createPredicateIndexFinder = function(dir) {
 };
 
 // Returns the first index on an array-like that passes a predicate test.
-_$2.findIndex = createPredicateIndexFinder(1);
-_$2.findLastIndex = createPredicateIndexFinder(-1);
+_$1.findIndex = createPredicateIndexFinder(1);
+_$1.findLastIndex = createPredicateIndexFinder(-1);
 
 // Use a comparator function to figure out the smallest index at which
 // an object should be inserted so as to maintain order. Uses binary search.
-_$2.sortedIndex = function(array, obj, iteratee, context) {
+_$1.sortedIndex = function(array, obj, iteratee, context) {
   iteratee = cb(iteratee, context, 1);
   var value = iteratee(obj);
   var low = 0, high = getLength(array);
@@ -703,7 +703,7 @@ var createIndexFinder = function(dir, predicateFind, sortedIndex) {
       return array[idx] === item ? idx : -1;
     }
     if (item !== item) {
-      idx = predicateFind(slice.call(array, i, length), _$2.isNaN);
+      idx = predicateFind(slice.call(array, i, length), _$1.isNaN);
       return idx >= 0 ? idx + i : -1;
     }
     for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {
@@ -717,13 +717,13 @@ var createIndexFinder = function(dir, predicateFind, sortedIndex) {
 // or -1 if the item is not included in the array.
 // If the array is large and already in sort order, pass `true`
 // for **isSorted** to use binary search.
-_$2.indexOf = createIndexFinder(1, _$2.findIndex, _$2.sortedIndex);
-_$2.lastIndexOf = createIndexFinder(-1, _$2.findLastIndex);
+_$1.indexOf = createIndexFinder(1, _$1.findIndex, _$1.sortedIndex);
+_$1.lastIndexOf = createIndexFinder(-1, _$1.findLastIndex);
 
 // Generate an integer Array containing an arithmetic progression. A port of
 // the native Python `range()` function. See
 // [the Python documentation](http://docs.python.org/library/functions.html#range).
-_$2.range = function(start, stop, step) {
+_$1.range = function(start, stop, step) {
   if (stop == null) {
     stop = start || 0;
     start = 0;
@@ -744,7 +744,7 @@ _$2.range = function(start, stop, step) {
 
 // Split an **array** into several arrays containing **count** or less elements
 // of initial array.
-_$2.chunk = function(array, count) {
+_$1.chunk = function(array, count) {
   if (count == null || count < 1) { return []; }
 
   var result = [];
@@ -764,15 +764,15 @@ var executeBound = function(sourceFunc, boundFunc, context, callingContext, args
   if (!(callingContext instanceof boundFunc)) { return sourceFunc.apply(context, args); }
   var self = baseCreate(sourceFunc.prototype);
   var result = sourceFunc.apply(self, args);
-  if (_$2.isObject(result)) { return result; }
+  if (_$1.isObject(result)) { return result; }
   return self;
 };
 
 // Create a function bound to a given object (assigning `this`, and arguments,
 // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
 // available.
-_$2.bind = restArgs(function(func, context, args) {
-  if (!_$2.isFunction(func)) { throw new TypeError('Bind must be called on a function'); }
+_$1.bind = restArgs(function(func, context, args) {
+  if (!_$1.isFunction(func)) { throw new TypeError('Bind must be called on a function'); }
   var bound = restArgs(function(callArgs) {
     return executeBound(func, bound, context, this, args.concat(callArgs));
   });
@@ -783,8 +783,8 @@ _$2.bind = restArgs(function(func, context, args) {
 // arguments pre-filled, without changing its dynamic `this` context. _ acts
 // as a placeholder by default, allowing any combination of arguments to be
 // pre-filled. Set `_.partial.placeholder` for a custom placeholder argument.
-_$2.partial = restArgs(function(func, boundArgs) {
-  var placeholder = _$2.partial.placeholder;
+_$1.partial = restArgs(function(func, boundArgs) {
+  var placeholder = _$1.partial.placeholder;
   var bound = function() {
     var arguments$1 = arguments;
 
@@ -799,27 +799,27 @@ _$2.partial = restArgs(function(func, boundArgs) {
   return bound;
 });
 
-_$2.partial.placeholder = _$2;
+_$1.partial.placeholder = _$1;
 
 // Bind a number of an object's methods to that object. Remaining arguments
 // are the method names to be bound. Useful for ensuring that all callbacks
 // defined on an object belong to it.
-_$2.bindAll = restArgs(function(obj, keys) {
+_$1.bindAll = restArgs(function(obj, keys) {
   keys = flatten(keys, false, false);
   var index = keys.length;
   if (index < 1) { throw new Error('bindAll must be passed function names'); }
   while (index--) {
     var key = keys[index];
-    obj[key] = _$2.bind(obj[key], obj);
+    obj[key] = _$1.bind(obj[key], obj);
   }
 });
 
 // Memoize an expensive function by storing its results.
-_$2.memoize = function(func, hasher) {
+_$1.memoize = function(func, hasher) {
   var memoize = function(key) {
     var cache = memoize.cache;
     var address = '' + (hasher ? hasher.apply(this, arguments) : key);
-    if (!_$2.has(cache, address)) { cache[address] = func.apply(this, arguments); }
+    if (!_$1.has(cache, address)) { cache[address] = func.apply(this, arguments); }
     return cache[address];
   };
   memoize.cache = {};
@@ -828,7 +828,7 @@ _$2.memoize = function(func, hasher) {
 
 // Delays a function for the given number of milliseconds, and then calls
 // it with the arguments supplied.
-_$2.delay = restArgs(function(func, wait, args) {
+_$1.delay = restArgs(function(func, wait, args) {
   return setTimeout(function() {
     return func.apply(null, args);
   }, wait);
@@ -836,27 +836,27 @@ _$2.delay = restArgs(function(func, wait, args) {
 
 // Defers a function, scheduling it to run after the current call stack has
 // cleared.
-_$2.defer = _$2.partial(_$2.delay, _$2, 1);
+_$1.defer = _$1.partial(_$1.delay, _$1, 1);
 
 // Returns a function, that, when invoked, will only be triggered at most once
 // during a given window of time. Normally, the throttled function will run
 // as much as it can, without ever going more than once per `wait` duration;
 // but if you'd like to disable the execution on the leading edge, pass
 // `{leading: false}`. To disable execution on the trailing edge, ditto.
-_$2.throttle = function(func, wait, options) {
+_$1.throttle = function(func, wait, options) {
   var timeout, context, args, result;
   var previous = 0;
   if (!options) { options = {}; }
 
   var later = function() {
-    previous = options.leading === false ? 0 : _$2.now();
+    previous = options.leading === false ? 0 : _$1.now();
     timeout = null;
     result = func.apply(context, args);
     if (!timeout) { context = args = null; }
   };
 
   var throttled = function() {
-    var now = _$2.now();
+    var now = _$1.now();
     if (!previous && options.leading === false) { previous = now; }
     var remaining = wait - (now - previous);
     context = this;
@@ -888,7 +888,7 @@ _$2.throttle = function(func, wait, options) {
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
-_$2.debounce = function(func, wait, immediate) {
+_$1.debounce = function(func, wait, immediate) {
   var timeout, result;
 
   var later = function(context, args) {
@@ -903,7 +903,7 @@ _$2.debounce = function(func, wait, immediate) {
       timeout = setTimeout(later, wait);
       if (callNow) { result = func.apply(this, args); }
     } else {
-      timeout = _$2.delay(later, wait, this, args);
+      timeout = _$1.delay(later, wait, this, args);
     }
 
     return result;
@@ -920,12 +920,12 @@ _$2.debounce = function(func, wait, immediate) {
 // Returns the first function passed as an argument to the second,
 // allowing you to adjust arguments, run code before and after, and
 // conditionally execute the original function.
-_$2.wrap = function(func, wrapper) {
-  return _$2.partial(wrapper, func);
+_$1.wrap = function(func, wrapper) {
+  return _$1.partial(wrapper, func);
 };
 
 // Returns a negated version of the passed-in predicate.
-_$2.negate = function(predicate) {
+_$1.negate = function(predicate) {
   return function() {
     return !predicate.apply(this, arguments);
   };
@@ -933,7 +933,7 @@ _$2.negate = function(predicate) {
 
 // Returns a function that is the composition of a list of functions, each
 // consuming the return value of the function that follows.
-_$2.compose = function() {
+_$1.compose = function() {
   var args = arguments;
   var start = args.length - 1;
   return function() {
@@ -947,7 +947,7 @@ _$2.compose = function() {
 };
 
 // Returns a function that will only be executed on and after the Nth call.
-_$2.after = function(times, func) {
+_$1.after = function(times, func) {
   return function() {
     if (--times < 1) {
       return func.apply(this, arguments);
@@ -956,7 +956,7 @@ _$2.after = function(times, func) {
 };
 
 // Returns a function that will only be executed up to (but not including) the Nth call.
-_$2.before = function(times, func) {
+_$1.before = function(times, func) {
   var memo;
   return function() {
     if (--times > 0) {
@@ -969,9 +969,9 @@ _$2.before = function(times, func) {
 
 // Returns a function that will be executed at most one time, no matter how
 // often you call it. Useful for lazy initialization.
-_$2.once = _$2.partial(_$2.before, 2);
+_$1.once = _$1.partial(_$1.before, 2);
 
-_$2.restArgs = restArgs;
+_$1.restArgs = restArgs;
 
 // Object Functions
 // ----------------
@@ -984,15 +984,15 @@ var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
 var collectNonEnumProps = function(obj, keys) {
   var nonEnumIdx = nonEnumerableProps.length;
   var constructor = obj.constructor;
-  var proto = _$2.isFunction(constructor) && constructor.prototype || ObjProto;
+  var proto = _$1.isFunction(constructor) && constructor.prototype || ObjProto;
 
   // Constructor is a special case.
   var prop = 'constructor';
-  if (_$2.has(obj, prop) && !_$2.contains(keys, prop)) { keys.push(prop); }
+  if (_$1.has(obj, prop) && !_$1.contains(keys, prop)) { keys.push(prop); }
 
   while (nonEnumIdx--) {
     prop = nonEnumerableProps[nonEnumIdx];
-    if (prop in obj && obj[prop] !== proto[prop] && !_$2.contains(keys, prop)) {
+    if (prop in obj && obj[prop] !== proto[prop] && !_$1.contains(keys, prop)) {
       keys.push(prop);
     }
   }
@@ -1000,19 +1000,19 @@ var collectNonEnumProps = function(obj, keys) {
 
 // Retrieve the names of an object's own properties.
 // Delegates to **ECMAScript 5**'s native `Object.keys`.
-_$2.keys = function(obj) {
-  if (!_$2.isObject(obj)) { return []; }
+_$1.keys = function(obj) {
+  if (!_$1.isObject(obj)) { return []; }
   if (nativeKeys) { return nativeKeys(obj); }
   var keys = [];
-  for (var key in obj) { if (_$2.has(obj, key)) { keys.push(key); } }
+  for (var key in obj) { if (_$1.has(obj, key)) { keys.push(key); } }
   // Ahem, IE < 9.
   if (hasEnumBug) { collectNonEnumProps(obj, keys); }
   return keys;
 };
 
 // Retrieve all the property names of an object.
-_$2.allKeys = function(obj) {
-  if (!_$2.isObject(obj)) { return []; }
+_$1.allKeys = function(obj) {
+  if (!_$1.isObject(obj)) { return []; }
   var keys = [];
   for (var key in obj) { keys.push(key); }
   // Ahem, IE < 9.
@@ -1021,8 +1021,8 @@ _$2.allKeys = function(obj) {
 };
 
 // Retrieve the values of an object's properties.
-_$2.values = function(obj) {
-  var keys = _$2.keys(obj);
+_$1.values = function(obj) {
+  var keys = _$1.keys(obj);
   var length = keys.length;
   var values = Array(length);
   for (var i = 0; i < length; i++) {
@@ -1033,9 +1033,9 @@ _$2.values = function(obj) {
 
 // Returns the results of applying the iteratee to each element of the object.
 // In contrast to _.map it returns an object.
-_$2.mapObject = function(obj, iteratee, context) {
+_$1.mapObject = function(obj, iteratee, context) {
   iteratee = cb(iteratee, context);
-  var keys = _$2.keys(obj),
+  var keys = _$1.keys(obj),
       length = keys.length,
       results = {};
   for (var index = 0; index < length; index++) {
@@ -1047,8 +1047,8 @@ _$2.mapObject = function(obj, iteratee, context) {
 
 // Convert an object into a list of `[key, value]` pairs.
 // The opposite of _.object.
-_$2.pairs = function(obj) {
-  var keys = _$2.keys(obj);
+_$1.pairs = function(obj) {
+  var keys = _$1.keys(obj);
   var length = keys.length;
   var pairs = Array(length);
   for (var i = 0; i < length; i++) {
@@ -1058,9 +1058,9 @@ _$2.pairs = function(obj) {
 };
 
 // Invert the keys and values of an object. The values must be serializable.
-_$2.invert = function(obj) {
+_$1.invert = function(obj) {
   var result = {};
-  var keys = _$2.keys(obj);
+  var keys = _$1.keys(obj);
   for (var i = 0, length = keys.length; i < length; i++) {
     result[obj[keys[i]]] = keys[i];
   }
@@ -1069,10 +1069,10 @@ _$2.invert = function(obj) {
 
 // Return a sorted list of the function names available on the object.
 // Aliased as `methods`.
-_$2.functions = _$2.methods = function(obj) {
+_$1.functions = _$1.methods = function(obj) {
   var names = [];
   for (var key in obj) {
-    if (_$2.isFunction(obj[key])) { names.push(key); }
+    if (_$1.isFunction(obj[key])) { names.push(key); }
   }
   return names.sort();
 };
@@ -1099,16 +1099,16 @@ var createAssigner = function(keysFunc, defaults) {
 };
 
 // Extend a given object with all the properties in passed-in object(s).
-_$2.extend = createAssigner(_$2.allKeys);
+_$1.extend = createAssigner(_$1.allKeys);
 
 // Assigns a given object with all the own properties in the passed-in object(s).
 // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
-_$2.extendOwn = _$2.assign = createAssigner(_$2.keys);
+_$1.extendOwn = _$1.assign = createAssigner(_$1.keys);
 
 // Returns the first key on an object that passes a predicate test.
-_$2.findKey = function(obj, predicate, context) {
+_$1.findKey = function(obj, predicate, context) {
   predicate = cb(predicate, context);
-  var keys = _$2.keys(obj), key;
+  var keys = _$1.keys(obj), key;
   for (var i = 0, length = keys.length; i < length; i++) {
     key = keys[i];
     if (predicate(obj[key], key, obj)) { return key; }
@@ -1121,12 +1121,12 @@ var keyInObj = function(value, key, obj) {
 };
 
 // Return a copy of the object only containing the whitelisted properties.
-_$2.pick = restArgs(function(obj, keys) {
+_$1.pick = restArgs(function(obj, keys) {
   var result = {}, iteratee = keys[0];
   if (obj == null) { return result; }
-  if (_$2.isFunction(iteratee)) {
+  if (_$1.isFunction(iteratee)) {
     if (keys.length > 1) { iteratee = optimizeCb(iteratee, keys[1]); }
-    keys = _$2.allKeys(obj);
+    keys = _$1.allKeys(obj);
   } else {
     iteratee = keyInObj;
     keys = flatten(keys, false, false);
@@ -1141,49 +1141,49 @@ _$2.pick = restArgs(function(obj, keys) {
 });
 
 // Return a copy of the object without the blacklisted properties.
-_$2.omit = restArgs(function(obj, keys) {
+_$1.omit = restArgs(function(obj, keys) {
   var iteratee = keys[0], context;
-  if (_$2.isFunction(iteratee)) {
-    iteratee = _$2.negate(iteratee);
+  if (_$1.isFunction(iteratee)) {
+    iteratee = _$1.negate(iteratee);
     if (keys.length > 1) { context = keys[1]; }
   } else {
-    keys = _$2.map(flatten(keys, false, false), String);
+    keys = _$1.map(flatten(keys, false, false), String);
     iteratee = function(value, key) {
-      return !_$2.contains(keys, key);
+      return !_$1.contains(keys, key);
     };
   }
-  return _$2.pick(obj, iteratee, context);
+  return _$1.pick(obj, iteratee, context);
 });
 
 // Fill in a given object with default properties.
-_$2.defaults = createAssigner(_$2.allKeys, true);
+_$1.defaults = createAssigner(_$1.allKeys, true);
 
 // Creates an object that inherits from the given prototype object.
 // If additional properties are provided then they will be added to the
 // created object.
-_$2.create = function(prototype, props) {
+_$1.create = function(prototype, props) {
   var result = baseCreate(prototype);
-  if (props) { _$2.extendOwn(result, props); }
+  if (props) { _$1.extendOwn(result, props); }
   return result;
 };
 
 // Create a (shallow-cloned) duplicate of an object.
-_$2.clone = function(obj) {
-  if (!_$2.isObject(obj)) { return obj; }
-  return _$2.isArray(obj) ? obj.slice() : _$2.extend({}, obj);
+_$1.clone = function(obj) {
+  if (!_$1.isObject(obj)) { return obj; }
+  return _$1.isArray(obj) ? obj.slice() : _$1.extend({}, obj);
 };
 
 // Invokes interceptor with the obj, and then returns obj.
 // The primary purpose of this method is to "tap into" a method chain, in
 // order to perform operations on intermediate results within the chain.
-_$2.tap = function(obj, interceptor) {
+_$1.tap = function(obj, interceptor) {
   interceptor(obj);
   return obj;
 };
 
 // Returns whether an object has a given set of `key:value` pairs.
-_$2.isMatch = function(object, attrs) {
-  var keys = _$2.keys(attrs), length = keys.length;
+_$1.isMatch = function(object, attrs) {
+  var keys = _$1.keys(attrs), length = keys.length;
   if (object == null) { return !length; }
   var obj = Object(object);
   for (var i = 0; i < length; i++) {
@@ -1214,8 +1214,8 @@ eq = function(a, b, aStack, bStack) {
 // Internal recursive comparison function for `isEqual`.
 deepEq = function(a, b, aStack, bStack) {
   // Unwrap any wrapped objects.
-  if (a instanceof _$2) { a = a._wrapped; }
-  if (b instanceof _$2) { b = b._wrapped; }
+  if (a instanceof _$1) { a = a._wrapped; }
+  if (b instanceof _$1) { b = b._wrapped; }
   // Compare `[[Class]]` names.
   var className = toString.call(a);
   if (className !== toString.call(b)) { return false; }
@@ -1250,8 +1250,8 @@ deepEq = function(a, b, aStack, bStack) {
     // Objects with different constructors are not equivalent, but `Object`s or `Array`s
     // from different frames are.
     var aCtor = a.constructor, bCtor = b.constructor;
-    if (aCtor !== bCtor && !(_$2.isFunction(aCtor) && aCtor instanceof aCtor &&
-                              _$2.isFunction(bCtor) && bCtor instanceof bCtor)
+    if (aCtor !== bCtor && !(_$1.isFunction(aCtor) && aCtor instanceof aCtor &&
+                              _$1.isFunction(bCtor) && bCtor instanceof bCtor)
                         && ('constructor' in a && 'constructor' in b)) {
       return false;
     }
@@ -1285,14 +1285,14 @@ deepEq = function(a, b, aStack, bStack) {
     }
   } else {
     // Deep compare objects.
-    var keys = _$2.keys(a), key;
+    var keys = _$1.keys(a), key;
     length = keys.length;
     // Ensure that both objects contain the same number of properties before comparing deep equality.
-    if (_$2.keys(b).length !== length) { return false; }
+    if (_$1.keys(b).length !== length) { return false; }
     while (length--) {
       // Deep compare each member
       key = keys[length];
-      if (!(_$2.has(b, key) && eq(a[key], b[key], aStack, bStack))) { return false; }
+      if (!(_$1.has(b, key) && eq(a[key], b[key], aStack, bStack))) { return false; }
     }
   }
   // Remove the first object from the stack of traversed objects.
@@ -1302,47 +1302,47 @@ deepEq = function(a, b, aStack, bStack) {
 };
 
 // Perform a deep comparison to check if two objects are equal.
-_$2.isEqual = function(a, b) {
+_$1.isEqual = function(a, b) {
   return eq(a, b);
 };
 
 // Is a given array, string, or object empty?
 // An "empty" object has no enumerable own-properties.
-_$2.isEmpty = function(obj) {
+_$1.isEmpty = function(obj) {
   if (obj == null) { return true; }
-  if (isArrayLike(obj) && (_$2.isArray(obj) || _$2.isString(obj) || _$2.isArguments(obj))) { return obj.length === 0; }
-  return _$2.keys(obj).length === 0;
+  if (isArrayLike(obj) && (_$1.isArray(obj) || _$1.isString(obj) || _$1.isArguments(obj))) { return obj.length === 0; }
+  return _$1.keys(obj).length === 0;
 };
 
 // Is a given value a DOM element?
-_$2.isElement = function(obj) {
+_$1.isElement = function(obj) {
   return !!(obj && obj.nodeType === 1);
 };
 
 // Is a given value an array?
 // Delegates to ECMA5's native Array.isArray
-_$2.isArray = nativeIsArray || function(obj) {
+_$1.isArray = nativeIsArray || function(obj) {
   return toString.call(obj) === '[object Array]';
 };
 
 // Is a given variable an object?
-_$2.isObject = function(obj) {
+_$1.isObject = function(obj) {
   var type = typeof obj;
   return type === 'function' || type === 'object' && !!obj;
 };
 
 // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError, isMap, isWeakMap, isSet, isWeakSet.
-_$2.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function(name) {
-  _$2['is' + name] = function(obj) {
+_$1.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function(name) {
+  _$1['is' + name] = function(obj) {
     return toString.call(obj) === '[object ' + name + ']';
   };
 });
 
 // Define a fallback version of the method in browsers (ahem, IE < 9), where
 // there isn't any inspectable "Arguments" type.
-if (!_$2.isArguments(arguments)) {
-  _$2.isArguments = function(obj) {
-    return _$2.has(obj, 'callee');
+if (!_$1.isArguments(arguments)) {
+  _$1.isArguments = function(obj) {
+    return _$1.has(obj, 'callee');
   };
 }
 
@@ -1350,40 +1350,40 @@ if (!_$2.isArguments(arguments)) {
 // IE 11 (#1621), Safari 8 (#1929), and PhantomJS (#2236).
 var nodelist = root.document && root.document.childNodes;
 if (typeof /./ != 'function' && typeof Int8Array != 'object' && typeof nodelist != 'function') {
-  _$2.isFunction = function(obj) {
+  _$1.isFunction = function(obj) {
     return typeof obj == 'function' || false;
   };
 }
 
 // Is a given object a finite number?
-_$2.isFinite = function(obj) {
-  return !_$2.isSymbol(obj) && isFinite(obj) && !isNaN(parseFloat(obj));
+_$1.isFinite = function(obj) {
+  return !_$1.isSymbol(obj) && isFinite(obj) && !isNaN(parseFloat(obj));
 };
 
 // Is the given value `NaN`?
-_$2.isNaN = function(obj) {
-  return _$2.isNumber(obj) && isNaN(obj);
+_$1.isNaN = function(obj) {
+  return _$1.isNumber(obj) && isNaN(obj);
 };
 
 // Is a given value a boolean?
-_$2.isBoolean = function(obj) {
+_$1.isBoolean = function(obj) {
   return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
 };
 
 // Is a given value equal to null?
-_$2.isNull = function(obj) {
+_$1.isNull = function(obj) {
   return obj === null;
 };
 
 // Is a given variable undefined?
-_$2.isUndefined = function(obj) {
+_$1.isUndefined = function(obj) {
   return obj === void 0;
 };
 
 // Shortcut function for checking if an object has a given property directly
 // on itself (in other words, not on a prototype).
-_$2.has = function(obj, path) {
-  if (!_$2.isArray(path)) {
+_$1.has = function(obj, path) {
+  if (!_$1.isArray(path)) {
     return obj != null && hasOwnProperty.call(obj, path);
   }
   var length = path.length;
@@ -1402,27 +1402,27 @@ _$2.has = function(obj, path) {
 
 // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
 // previous owner. Returns a reference to the Underscore object.
-_$2.noConflict = function() {
+_$1.noConflict = function() {
   root._ = previousUnderscore;
   return this;
 };
 
 // Keep the identity function around for default iteratees.
-_$2.identity = function(value) {
+_$1.identity = function(value) {
   return value;
 };
 
 // Predicate-generating functions. Often useful outside of Underscore.
-_$2.constant = function(value) {
+_$1.constant = function(value) {
   return function() {
     return value;
   };
 };
 
-_$2.noop = function(){};
+_$1.noop = function(){};
 
-_$2.property = function(path) {
-  if (!_$2.isArray(path)) {
+_$1.property = function(path) {
+  if (!_$1.isArray(path)) {
     return shallowProperty(path);
   }
   return function(obj) {
@@ -1431,26 +1431,26 @@ _$2.property = function(path) {
 };
 
 // Generates a function for a given object that returns a given property.
-_$2.propertyOf = function(obj) {
+_$1.propertyOf = function(obj) {
   if (obj == null) {
     return function(){};
   }
   return function(path) {
-    return !_$2.isArray(path) ? obj[path] : deepGet(obj, path);
+    return !_$1.isArray(path) ? obj[path] : deepGet(obj, path);
   };
 };
 
 // Returns a predicate for checking whether an object has a given set of
 // `key:value` pairs.
-_$2.matcher = _$2.matches = function(attrs) {
-  attrs = _$2.extendOwn({}, attrs);
+_$1.matcher = _$1.matches = function(attrs) {
+  attrs = _$1.extendOwn({}, attrs);
   return function(obj) {
-    return _$2.isMatch(obj, attrs);
+    return _$1.isMatch(obj, attrs);
   };
 };
 
 // Run a function **n** times.
-_$2.times = function(n, iteratee, context) {
+_$1.times = function(n, iteratee, context) {
   var accum = Array(Math.max(0, n));
   iteratee = optimizeCb(iteratee, context, 1);
   for (var i = 0; i < n; i++) { accum[i] = iteratee(i); }
@@ -1458,7 +1458,7 @@ _$2.times = function(n, iteratee, context) {
 };
 
 // Return a random integer between min and max (inclusive).
-_$2.random = function(min, max) {
+_$1.random = function(min, max) {
   if (max == null) {
     max = min;
     min = 0;
@@ -1467,7 +1467,7 @@ _$2.random = function(min, max) {
 };
 
 // A (possibly faster) way to get the current timestamp as an integer.
-_$2.now = Date.now || function() {
+_$1.now = Date.now || function() {
   return new Date().getTime();
 };
 
@@ -1480,7 +1480,7 @@ var escapeMap = {
   "'": '&#x27;',
   '`': '&#x60;'
 };
-var unescapeMap = _$2.invert(escapeMap);
+var unescapeMap = _$1.invert(escapeMap);
 
 // Functions for escaping and unescaping strings to/from HTML interpolation.
 var createEscaper = function(map) {
@@ -1488,7 +1488,7 @@ var createEscaper = function(map) {
     return map[match];
   };
   // Regexes for identifying a key that needs to be escaped.
-  var source = '(?:' + _$2.keys(map).join('|') + ')';
+  var source = '(?:' + _$1.keys(map).join('|') + ')';
   var testRegexp = RegExp(source);
   var replaceRegexp = RegExp(source, 'g');
   return function(string) {
@@ -1496,17 +1496,17 @@ var createEscaper = function(map) {
     return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
   };
 };
-_$2.escape = createEscaper(escapeMap);
-_$2.unescape = createEscaper(unescapeMap);
+_$1.escape = createEscaper(escapeMap);
+_$1.unescape = createEscaper(unescapeMap);
 
 // Traverses the children of `obj` along `path`. If a child is a function, it
 // is invoked with its parent as context. Returns the value of the final
 // child, or `fallback` if any child is undefined.
-_$2.result = function(obj, path, fallback) {
-  if (!_$2.isArray(path)) { path = [path]; }
+_$1.result = function(obj, path, fallback) {
+  if (!_$1.isArray(path)) { path = [path]; }
   var length = path.length;
   if (!length) {
-    return _$2.isFunction(fallback) ? fallback.call(obj) : fallback;
+    return _$1.isFunction(fallback) ? fallback.call(obj) : fallback;
   }
   for (var i = 0; i < length; i++) {
     var prop = obj == null ? void 0 : obj[path[i]];
@@ -1514,7 +1514,7 @@ _$2.result = function(obj, path, fallback) {
       prop = fallback;
       i = length; // Ensure we don't continue iterating.
     }
-    obj = _$2.isFunction(prop) ? prop.call(obj) : prop;
+    obj = _$1.isFunction(prop) ? prop.call(obj) : prop;
   }
   return obj;
 };
@@ -1522,14 +1522,14 @@ _$2.result = function(obj, path, fallback) {
 // Generate a unique integer id (unique within the entire client session).
 // Useful for temporary DOM ids.
 var idCounter = 0;
-_$2.uniqueId = function(prefix) {
+_$1.uniqueId = function(prefix) {
   var id = ++idCounter + '';
   return prefix ? prefix + id : id;
 };
 
 // By default, Underscore uses ERB-style template delimiters, change the
 // following template settings to use alternative delimiters.
-_$2.templateSettings = {
+_$1.templateSettings = {
   evaluate: /<%([\s\S]+?)%>/g,
   interpolate: /<%=([\s\S]+?)%>/g,
   escape: /<%-([\s\S]+?)%>/g
@@ -1561,9 +1561,9 @@ var escapeChar = function(match) {
 // Underscore templating handles arbitrary delimiters, preserves whitespace,
 // and correctly escapes quotes within interpolated code.
 // NB: `oldSettings` only exists for backwards compatibility.
-_$2.template = function(text, settings, oldSettings) {
+_$1.template = function(text, settings, oldSettings) {
   if (!settings && oldSettings) { settings = oldSettings; }
-  settings = _$2.defaults({}, settings, _$2.templateSettings);
+  settings = _$1.defaults({}, settings, _$1.templateSettings);
 
   // Combine delimiters into one regular expression via alternation.
   var matcher = RegExp([
@@ -1608,7 +1608,7 @@ _$2.template = function(text, settings, oldSettings) {
   }
 
   var template = function(data) {
-    return render.call(this, data, _$2);
+    return render.call(this, data, _$1);
   };
 
   // Provide the compiled source as a convenience for precompilation.
@@ -1619,8 +1619,8 @@ _$2.template = function(text, settings, oldSettings) {
 };
 
 // Add a "chain" function. Start chaining a wrapped Underscore object.
-_$2.chain = function(obj) {
-  var instance = _$2(obj);
+_$1.chain = function(obj) {
+  var instance = _$1(obj);
   instance._chain = true;
   return instance;
 };
@@ -1633,29 +1633,29 @@ _$2.chain = function(obj) {
 
 // Helper function to continue chaining intermediate results.
 var chainResult = function(instance, obj) {
-  return instance._chain ? _$2(obj).chain() : obj;
+  return instance._chain ? _$1(obj).chain() : obj;
 };
 
 // Add your own custom functions to the Underscore object.
-_$2.mixin = function(obj) {
-  _$2.each(_$2.functions(obj), function(name) {
-    var func = _$2[name] = obj[name];
-    _$2.prototype[name] = function() {
+_$1.mixin = function(obj) {
+  _$1.each(_$1.functions(obj), function(name) {
+    var func = _$1[name] = obj[name];
+    _$1.prototype[name] = function() {
       var args = [this._wrapped];
       push.apply(args, arguments);
-      return chainResult(this, func.apply(_$2, args));
+      return chainResult(this, func.apply(_$1, args));
     };
   });
-  return _$2;
+  return _$1;
 };
 
 // Add all of the Underscore functions to the wrapper object.
-_$2.mixin(_$2);
+_$1.mixin(_$1);
 
 // Add all mutator Array functions to the wrapper.
-_$2.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+_$1.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
   var method = ArrayProto[name];
-  _$2.prototype[name] = function() {
+  _$1.prototype[name] = function() {
     var obj = this._wrapped;
     method.apply(obj, arguments);
     if ((name === 'shift' || name === 'splice') && obj.length === 0) { delete obj[0]; }
@@ -1664,23 +1664,23 @@ _$2.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], funct
 });
 
 // Add all accessor Array functions to the wrapper.
-_$2.each(['concat', 'join', 'slice'], function(name) {
+_$1.each(['concat', 'join', 'slice'], function(name) {
   var method = ArrayProto[name];
-  _$2.prototype[name] = function() {
+  _$1.prototype[name] = function() {
     return chainResult(this, method.apply(this._wrapped, arguments));
   };
 });
 
 // Extracts the result from a wrapped and chained object.
-_$2.prototype.value = function() {
+_$1.prototype.value = function() {
   return this._wrapped;
 };
 
 // Provide unwrapping proxy for some methods used in engine operations
 // such as arithmetic and JSON stringification.
-_$2.prototype.valueOf = _$2.prototype.toJSON = _$2.prototype.value;
+_$1.prototype.valueOf = _$1.prototype.toJSON = _$1.prototype.value;
 
-_$2.prototype.toString = function() {
+_$1.prototype.toString = function() {
   return String(this._wrapped);
 };
 
@@ -1693,17 +1693,17 @@ _$2.prototype.toString = function() {
 // anonymous define() is called outside of a loader request.
 if (typeof define == 'function' && define.amd) {
   define('underscore', [], function() {
-    return _$2;
+    return _$1;
   });
 }
 
 
 
 var underscore = {
-  _:_$2
+  _:_$1
 };
 
-var _$3 = underscore._;
+var _$2 = underscore._;
 
 // Object functions
 // -------------------------------------------------------------------------
@@ -1874,7 +1874,7 @@ $bc_$1.revertDefaultManifest = function () {
 
 $bc_$1.getJQuery$ = function () {
   var $ = window.jQuery || window.$ || undefined;
-  console.assert(_$3.isObject($), 'Must be loaded jQuery library first \n');
+  console.assert(_$2.isObject($), 'Must be loaded jQuery library first \n');
   return $
 };
 
@@ -1882,7 +1882,7 @@ $bc_$1.getJQuery$ = function () {
 // -----------------------------------------------
 var common = $bc_$1;
 
-var _$5 = underscore._;
+var _$4 = underscore._;
 
 // -----------------------------------------------------------------
 // extend from kendo.core.js
@@ -1921,8 +1921,8 @@ function deepExtendOne (destination, source) {
       propInit !== Array && propInit !== RegExp) {
       if (propValue instanceof Date) {
         destination[property] = new Date(propValue.getTime());
-      } else if (_$5.isFunction(propValue.clone)) {
-        destination[property] = _$5.clone(propValue);
+      } else if (_$4.isFunction(propValue.clone)) {
+        destination[property] = _$4.clone(propValue);
       } else {
         destProp = destination[property];
         if (typeof (destProp) === 'object') {
@@ -1948,8 +1948,12 @@ var isDefaultPrevented = function () {
   return this._defaultPrevented === true
 };
 
-function Class () {}
-Class.extend = function (proto) {
+var logCord = '[SDK.SelfClass]';
+var debugTip = "\n[*] SelfClass must be care for this . use your self var\nYou are running DoveMaxSDK in development mode.\nMake sure to turn on production mode when deploying for production.\nSee more tips at https://github.com/LabsRS-Dev/sdk\n";
+
+function SelfClass () {}
+SelfClass.extend = function (proto) {
+  console.warn(logCord, debugTip);
   var base = function () {},
     member,
     that = this,
@@ -1965,7 +1969,7 @@ Class.extend = function (proto) {
     if (proto[member] != null && proto[member].constructor === Object) {
       // Merge object members
       // fn[member] = extend(true, {}, base.prototype[member], proto[member])
-      fn[member] = _$5.extend({}, base.prototype[member], proto[member]);
+      fn[member] = _$4.extend({}, base.prototype[member], proto[member]);
     } else {
       fn[member] = proto[member];
     }
@@ -1977,11 +1981,11 @@ Class.extend = function (proto) {
   return subclass
 };
 
-Class.prototype._initOptions = function (options) {
+SelfClass.prototype._initOptions = function (options) {
   this.options = deepExtend({}, this.options, options);
 };
 
-var Observable = Class.extend({
+var Observable = SelfClass.extend({
   init: function () {
     this._events = {};
   },
@@ -2104,7 +2108,7 @@ var Observable = Class.extend({
   }
 });
 
-var _$4 = underscore._;
+var _$3 = underscore._;
 
 var $bc_$2 = common;
 // IAP 非本地模拟
@@ -2116,7 +2120,7 @@ $bc_$2.IAP_SE_Wrapper = {
   caller: function () { // 消息回调处理
     if (this._caller === 0) {
       var $ = common.getJQuery$();
-      this._caller = _$4.isUndefined($) ? (new Observable()) : $.Callbacks();
+      this._caller = _$3.isUndefined($) ? (new Observable()) : $.Callbacks();
     }
     return this._caller
   }
@@ -2129,7 +2133,7 @@ $bc_$2.IAP = {
   NoticeCenter: function () {
     if (this._pNoticeCenter === 0) {
       var $ = common.getJQuery$();
-      this._pNoticeCenter = _$4.isUndefined($) ? (new Observable()) : $.Callbacks();
+      this._pNoticeCenter = _$3.isUndefined($) ? (new Observable()) : $.Callbacks();
     }
     return this._pNoticeCenter
   }, // 参照Jquery.Callbacks消息回调处理。增加动态注册监控信息的回调处理。是一种扩展
@@ -2238,7 +2242,7 @@ $bc_$2.IAP = {
       parms['cb_IAP_js'] = in_parms['cb_IAP_js'] || $bc_$2._get_callback(function (obj) {
         // ////////////////////////内部处理//////////////////////////////////
         try {
-          if (_$4.isObject(obj)) {
+          if (_$3.isObject(obj)) {
             var info = obj.info;
             var notifyType = obj.notifyType;
 
@@ -2250,7 +2254,7 @@ $bc_$2.IAP = {
               t$.data.productIsRequested = true;
               t$.data.productInfoList = info;
 
-              _$4.each(t$.data.productInfoList, function (product, index, list) {
+              _$3.each(t$.data.productInfoList, function (product, index, list) {
                 t$.data.productInfoMap[product.productIdentifier] = {
                   productIdentifier: product.productIdentifier, // 商品ID
                   description: product.description || '', // 商品描述
@@ -2269,7 +2273,7 @@ $bc_$2.IAP = {
         } catch (e) {}
 
         // /////////////////////////外部处理/////////////////////////////////
-        if (_$4.isFunction($bc_$2.cb_handleIAPCallback)) {
+        if (_$3.isFunction($bc_$2.cb_handleIAPCallback)) {
           $bc_$2.cb_handleIAPCallback && $bc_$2.cb_handleIAPCallback(obj);
         } else {
           cb && cb(obj);
@@ -2279,23 +2283,23 @@ $bc_$2.IAP = {
       }, true);
 
       // / 数据校验
-      console.assert(_$4.isString(parms['cb_IAP_js']) === true, 'must be function string');
+      console.assert(_$3.isString(parms['cb_IAP_js']) === true, 'must be function string');
 
       // /Ian(原先的方式)
-      if (_$4.isArray(in_parms['productIds'])) {
+      if (_$3.isArray(in_parms['productIds'])) {
         parms['productIds'] = in_parms['productIds'] || [];
       }
 
       // /Ian 2016.12.06 现在的方式. 支持更高级的商品属性定义传入
       parms['products'] = [];
-      if (_$4.isArray(in_parms['products'])) { // [{productIdentifier, description, buyUrl, price}]
+      if (_$3.isArray(in_parms['products'])) { // [{productIdentifier, description, buyUrl, price}]
         try {
           var productIds = [];
-          _$4.each(in_parms['products'], function (product, index, list) {
+          _$3.each(in_parms['products'], function (product, index, list) {
             productIds.push(product.productIdentifier);
           });
 
-          if (_$4.isUndefined(parms['productIds'] || _$4.isNull(parms['productIds']))) {
+          if (_$3.isUndefined(parms['productIds'] || _$3.isNull(parms['productIds']))) {
             parms['productIds'] = productIds;
           }
 
@@ -2338,10 +2342,10 @@ $bc_$2.IAP = {
 
         // /注册模拟IAP回调
         $bc_$2.IAP_SE_Wrapper.caller().add(function (obj) {
-          console.assert(_$4.isString(parms.cb_IAP_js) === true, 'must be function string');
+          console.assert(_$3.isString(parms.cb_IAP_js) === true, 'must be function string');
 
           var fnc = window.eval(parms.cb_IAP_js);
-          if (_$4.isFunction(fnc)) {
+          if (_$3.isFunction(fnc)) {
             fnc && fnc(obj);
           }
         });
@@ -2350,7 +2354,7 @@ $bc_$2.IAP = {
         $bc_$2.IAP_SE_Wrapper.productIdentifiers = parms.productIds || [];
 
         var productsInfo = [];
-        _$4.each(parms.productIds, function (id, index, list) {
+        _$3.each(parms.productIds, function (id, index, list) {
           var productObj = {
             productIdentifier: id,
             description: 'Plugin Description and price demo for ' + id,
@@ -2388,7 +2392,7 @@ $bc_$2.IAP = {
   _check: function (productIdentifier) { // 验证数据
     var t$ = this;
 
-    var checkFalse = _$4.isUndefined(productIdentifier) || _$4.isNull(productIdentifier);
+    var checkFalse = _$3.isUndefined(productIdentifier) || _$3.isNull(productIdentifier);
     // 检测必须的参数
     console.assert(checkFalse === false, 'productIdentifier 必须赋值');
     // 产品必须已经注册过
@@ -2415,7 +2419,7 @@ $bc_$2.IAP = {
     var _cb = function (obj) {
       try {
         $bc_$2.IAP.NoticeCenter().remove(_cb);
-        if (_$4.isObject(obj)) {
+        if (_$3.isObject(obj)) {
           var info = obj.info;
           var notifyType = obj.notifyType;
 
@@ -2446,7 +2450,7 @@ $bc_$2.IAP = {
       var purchasedItemList = []; // 声明原先已经购买的商品列表
 
       // /检测所有已经注册的ID
-      _$4.each($bc_$2.IAP_SE_Wrapper.productIdentifiers, function (productID, index, list) {
+      _$3.each($bc_$2.IAP_SE_Wrapper.productIdentifiers, function (productID, index, list) {
         if ($bc_$2.IAP_SE_OBJ.hasOwnProperty(productID)) {
           var quantity = $bc_$2.IAP_SE_OBJ[productID];
           if (quantity > 0) {
@@ -2482,7 +2486,7 @@ $bc_$2.IAP = {
     var _cb = function (obj) {
       try {
         $bc_$2.IAP.NoticeCenter().remove(_cb);
-        if (_$4.isObject(obj)) {
+        if (_$3.isObject(obj)) {
           var info = obj.info;
           var notifyType = obj.notifyType;
 
@@ -5276,7 +5280,7 @@ $bc_$10.Binary = {
 // -----------------------------------------------
 var binary = $bc_$10;
 
-var _$6 = underscore._;
+var _$5 = underscore._;
 
 var $bc_$11 = common;
 // 启动核心插件功能
@@ -5294,9 +5298,9 @@ $bc_$11.enablePluginCore = function (pluginList, cbFuncName) {
         }
       }
 
-      var extendObj = _$6.clone($bc_$11.pCorePlugin);
+      var extendObj = _$5.clone($bc_$11.pCorePlugin);
       extendObj['callMethod'] = 'initCore';
-      if (_$6.isString(cbFuncName)) {
+      if (_$5.isString(cbFuncName)) {
         extendObj['passBack'] = cbFuncName; // 取代默认回调函数
       }
       extendObj['arguments'] = [
@@ -5403,6 +5407,69 @@ var dragdrop = $bc_$12;
 
 var $bc_$13 = common;
 
+var TypeTriggerMsg = {
+  UNKnown: 'NativeTask_UNKnown',
+  onCreate: 'NativeTask_onCreate',
+  // process_init
+  //
+  onNativeEngineInitSuccess: '_native_engine_init_success',
+  onNativeEngineInitFailed: '_native_engine_init_failed',
+  // process_dylibCLI
+  //
+  onDylibCLIStart: '_native_clicall_start',
+  onDylibCLIFeedback: '_native_clicall_feedback',
+  onDylibCLIEnd: '_native_clicall_end',
+  // process_execCommand
+  //
+  onExecCommandAdded: '_native_execCommand_added',
+  onExecCommandStarted: '_native_execCommand_start',
+  onExecCommandFeedback: '_native_execCommand_feedback',
+  onExecCommandSuccess: '_native_execCommand_success',
+  onExecCommandCanceled: '_native_execCommand_canceled',
+  onExecCommandError: '_native_execCommand_error',
+  // process_task
+  //
+  onTaskAdded: '_native_task_added',
+  onTaskStarted: '_native_task_started',
+  onTaskFinished: '_native_task_finished',
+  onTaskError: '_native_task_error',
+  onTaskCanceled: '_native_task_canceled'
+};
+
+// 来自于底层的消息类型统一
+var TypeNativeMessageType = {
+  // process_init
+  InitCoreSuccess: 'type_initcoresuccess',
+  InitCoreFailed: 'type_initcorefailed',
+
+  // process_dylibCLI
+  CliCallStart: 'type_clicall_start',
+  CliCallReportProgress: 'type_clicall_reportprogress',
+  CliCallEnd: 'type_clicall_end',
+
+  // process_execCommand
+  AddExecCommandQueueSuccess: 'type_addexeccommandqueue_success',
+  ExecCommandStart: 'type_execcommandstart',
+  ExecCommandReportProgress: 'type_reportexeccommandprogress',
+  ExecCommandSuccess: 'type_execcommandsuccess',
+  CancelExecCommand: 'type_canceledexeccommand',
+  ExecCommandFailed: 'type_execcommanderror',
+
+  // process_task
+  AddCallTaskQueueSuccess: 'type_addcalltaskqueue_success',
+  CallTaskStart: 'type_calltask_start',
+  CallTaskFailed: 'type_calltask_error',
+  CallTaskSuccess: 'type_calltask_success',
+  CancelCallTask: 'type_type_calltask_cancel'
+
+};
+
+var TaskMethodWay = {
+  InitCore: 'initCore',
+  Task: 'task',
+  SendEvent: 'sendEvent'
+};
+
 /**
  * 格式化，使用插件模式，传递的command数组。
  * 例如："copyPlugin.tool.command" 需要格式化
@@ -5463,6 +5530,42 @@ $bc_$13.createTask = function (callMethod, taskId, args, cbFuncName) {
   }
 };
 
+/**
+ * 新增一个简单的任务调用方式，用来解决简单的任务的启动处理
+ * @param method 任务接口调用方式，参照$bc_.createTask. //task, sendEvent, initCore 等等
+ * @param callbackName 处理该任务的全局处理函数
+ * @param args 需要填写的参数
+ */
+$bc_$13.runTaskSample = function (method, callbackName, args) {
+  if ( method === void 0 ) method = TaskMethodWay.Task;
+  if ( args === void 0 ) args = [
+  underscore.now(),   // TaskID
+  [{         // TaskCommand
+    appPath: '',
+    command: [],
+    mainThread: false
+  }]
+];
+
+  try {
+    if ($bc_$13.pN) {
+      $bc_$13.pN.window.execTask(JSON.stringify({
+        useThread: true,
+        passBack: callbackName,
+        packageMode: 'bundle',
+        taskToolPath: '/Plugins/extendLoader.bundle',
+        bundleClassName: 'LibCommonInterface',
+        callMethod: method,
+        arguments: args
+      }));
+    } else {
+      callbackName && window.eval(callbackName + '()');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 // 自动判断几种任务类型，自动启动任务(2016.1.20)添加，方便函数
 $bc_$13.autoStartTask = function (obj, cbFuncName) {
   try {
@@ -5498,6 +5601,21 @@ $bc_$13.sendQueueEvent = function (queueID, queueType, event, cbFuncName) {
     }
   } catch (e) {
     console.error(e);
+  }
+};
+
+$bc_$13.Task = {
+  TypeDefined: {
+    TypeTriggerMsg: TypeTriggerMsg,
+    TypeNativeMessageType: TypeNativeMessageType,
+    TaskMethodWay: TaskMethodWay
+  },
+  Methods: {
+    formatCommand: $bc_$13.formatCommand,
+    createTask: $bc_$13.createTask,
+    runTaskSample: $bc_$13.runTaskSample,
+    autoStartTask: $bc_$13.autoStartTask,
+    sendQueueEvent: $bc_$13.sendQueueEvent
   }
 };
 
@@ -5715,6 +5833,8 @@ $bc_$14.selectOutFile = function (in_parms, noNcb, cb) {
 // -----------------------------------------------
 var filedialog = $bc_$14;
 
+var _$8 = underscore._;
+
 var __$p$$2 = {
   init: function () {
     __$p$$2.__mc = new Observable();
@@ -5741,6 +5861,10 @@ var __$p$$2 = {
     __$p$$2.__mc.first(eventName, handlers);
   },
   trigger: function (eventName, e) {
+    // 检测e的对象类型
+    if (_$8.isString(e)) {
+      e = JSON.parse(e);
+    }
     __$p$$2.__mc.trigger(eventName, e);
   },
   unbind: function (eventName, handler) {
@@ -5748,9 +5872,9 @@ var __$p$$2 = {
   }
 };
 
-var ProxyMessageCenter = Class.extend(__$p$$2);
+var ProxyMessageCenter = SelfClass.extend(__$p$$2);
 
-var _$10 = underscore._;
+var _$9 = underscore._;
 
 /**
  * 纯算法，不依赖bs模块及util模块
@@ -5815,24 +5939,24 @@ var Tool = {
     return Object.prototype.toString.call(o)
   },
   isUndefinedOrNull: function (o) {
-    return _$10.isUndefined(o) || _$10.isNull(o)
+    return _$9.isUndefined(o) || _$9.isNull(o)
   },
   isUndefinedOrNullOrFalse: function (o) {
     return this.isUndefinedOrNull(o) || o === false
   },
-  isObject: _$10.isObject,
+  isObject: _$9.isObject,
   isPromise: function (val) {
     return val && typeof val.then === 'function'
   },
-  isArray: _$10.isArray,
-  isBoolean: _$10.isBoolean,
-  isString: _$10.isString,
-  isNull: _$10.isNull,
-  isUndefined: _$10.isUndefined,
-  isNumber: _$10.isNumber,
-  isDate: _$10.isDate,
-  isRegExp: _$10.isRegExp,
-  isFunction: _$10.isFunction,
+  isArray: _$9.isArray,
+  isBoolean: _$9.isBoolean,
+  isString: _$9.isString,
+  isNull: _$9.isNull,
+  isUndefined: _$9.isUndefined,
+  isNumber: _$9.isNumber,
+  isDate: _$9.isDate,
+  isRegExp: _$9.isRegExp,
+  isFunction: _$9.isFunction,
   isBlob: function (o) {
     return Object.prototype.toString.call(o) === '[object Blob]'
   },
@@ -6116,19 +6240,19 @@ var Tool = {
 
 };
 
-var _$8 = underscore._;
+var _$7 = underscore._;
 
-var logCord$1 = '[SDK.Proxy.Client.Websocket]';
+var logCord$2 = '[SDK.Proxy.Client.Websocket.Python]';
 
-var __key$1 = 'proxy-client-websocket';
-var __msgPrefix$1 = __key$1 + _$8.now() + _$8.random(1, Number.MAX_SAFE_INTEGER);
+var __key$1 = 'proxy-client-websocket-python';
+var __msgPrefix = __key$1 + _$7.now() + _$7.random(1, Number.MAX_SAFE_INTEGER);
 var TypeMsg$1 = {
-  OnCreateError: __msgPrefix$1 + 'OnCreateError', // Websocket 创建失败
-  OnWSOpen: __msgPrefix$1 + 'OnWSOpen',          // WebSocket 创建并连接上
-  OnWSClose: __msgPrefix$1 + 'OnWSClose',        // WebSocket 意外关闭
+  OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
+  OnWSOpen: __msgPrefix + 'OnWSOpen',          // WebSocket 创建并连接上
+  OnWSClose: __msgPrefix + 'OnWSClose',        // WebSocket 意外关闭
 
-  OnWSGetServerMessage: __msgPrefix$1 + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
-  OnSendMessageToServer: __msgPrefix$1 + 'OnSendMessageToServer' // 向服务器发送信息
+  OnWSGetServerMessage: __msgPrefix + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
+  OnSendMessageToServer: __msgPrefix + 'OnSendMessageToServer' // 向服务器发送信息
 };
 
 var initializedTip = "\nYou must use init(config) function first, the use listen to start!!!!\n";
@@ -6159,11 +6283,12 @@ var __$p$$1 = {
     port: '8080',
     protocol: 'ws://',
     reqUrl: '/websocket',
-    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER // 设置重新连接的秒数,
+    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
+    debug: true
   },
   getUrl: function () {
     var that = __$p$$1;
-    var url = that.protocol + that.ip + ':' + that.port + that.reqUrl;
+    var url = that.config.protocol + that.config.ip + ':' + that.config.port + that.config.reqUrl;
     return url
   },
   getAutoReConnectSec: function () {
@@ -6173,8 +6298,9 @@ var __$p$$1 = {
   initWithConfig: function (inConfig) {
     if ( inConfig === void 0 ) inConfig = {};
 
-    __$p$$1.log(logCord$1, __key$1 + ' call initWithConfig function ....');
-    __$p$$1.config = _$8.extend(__$p$$1.config, inConfig);
+    __$p$$1.log(logCord$2, __key$1 + ' call initWithConfig function ....');
+    __$p$$1.config = _$7.extend(__$p$$1.config, inConfig);
+    __$p$$1.debug = __$p$$1.config.debug;
     __$p$$1.initialized = true;
   },
   run: function () {
@@ -6182,7 +6308,7 @@ var __$p$$1 = {
       __$p$$1.showInitializedTip();
       return
     }
-    __$p$$1.autoCreateWS(__$p$$1.getUrl());
+    __$p$$1.autoCreateWS();
   },
   // ------------------------------------------------
   // 消息交互的核心部分
@@ -6195,12 +6321,12 @@ var __$p$$1 = {
    // 客户端向服务器发送消息
     if (!__$p$$1.isRunning || !__$p$$1.wsHandler) {
       __$p$$1.cacheSendMessage.push(message);
-      console.warn(logCord$1, 'WebSocket is not running .....');
+      console.warn(logCord$2, 'WebSocket is not running .....');
       return
     }
 
     first ? __$p$$1.cacheSendMessage.unshift(message) : __$p$$1.cacheSendMessage.push(message);
-    _$8.each(__$p$$1.cacheSendMessage, function (curMessage) {
+    _$7.each(__$p$$1.cacheSendMessage, function (curMessage) {
       __$p$$1.wsHandler.send(curMessage);
       __$p$$1.mc.trigger(TypeMsg$1.OnSendMessageToServer, curMessage);
       __$p$$1.cacheSendMessage.shift();
@@ -6225,7 +6351,7 @@ var __$p$$1 = {
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: '', // 客户端ID
   showInitializedTip: function () {
-    console.warn(logCord$1, initializedTip);
+    console.warn(logCord$2, initializedTip);
   },
   autoCreateWS: function () {
     __$p$$1._pAutoCreateWS();
@@ -6234,7 +6360,7 @@ var __$p$$1 = {
     if (!__$p$$1.isRunning) {
       // 尝试新的链接
       if (__$p$$1.autoCWSTimesIndex <= __$p$$1.autoReconnectMaxRunTimes) {
-        __$p$$1.log(logCord$1, 'try create new socket connect, port = ' + __$p$$1.config.port);
+        __$p$$1.log(logCord$2, 'try create new socket connect, port = ' + __$p$$1.config.port);
         __$p$$1.createWS(__$p$$1.getUrl());
       }
       ++__$p$$1.autoCWSTimesIndex;
@@ -6243,7 +6369,7 @@ var __$p$$1 = {
   createWS: function (url) { // 建立Websocket 客户端
     var __agent = __$p$$1;
     var WebSocket = window.WebSocket || window.MozWebSocket;
-    __agent.log(logCord$1, 'create new socket connect, wsurl = ' + url);
+    __agent.log(logCord$2, 'create new socket connect, wsurl = ' + url);
 
     try {
       var ws = new WebSocket(url); // 启动监听服务
@@ -6253,13 +6379,13 @@ var __$p$$1 = {
           var that = this;
           __agent.wsHandler = this;
 
-          __agent.wsID = 'ws' + _$8.now() + _$8.random(1, 999999);
+          __agent.wsID = 'ws' + _$7.now() + _$7.random(1, 999999);
 
           if (that.readyState === 1) {
-            __agent.log(logCord$1, 'is connecting ...');
+            __agent.log(logCord$2, 'is connecting ...');
             __agent.isRunning = true;
             // 广播自己已经连接上
-            __agent.noticeWSClosed({ data: ws });
+            __agent.noticeWSOpen({ data: ws });
 
             // 向服务器发送注册信息，测试返回
             __agent.sendMessage(JSON.stringify({
@@ -6272,7 +6398,7 @@ var __$p$$1 = {
         // ==== onmessage
         ws.onmessage = function (evt) {
           __agent.isRunning = true;
-          __agent.log(logCord$1, evt.data);
+          __agent.log(logCord$2, evt.data);
 
           var msgPackage = '';
           // Decodeing 匹配大部分数据格式，进行处理
@@ -6283,14 +6409,14 @@ var __$p$$1 = {
             });
             return
           }
-          if (_$8.isObject(evt.data)) {
+          if (_$7.isObject(evt.data)) {
             msgPackage = JSON.stringify(evt.data);
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-          } else if (_$8.isString(evt.data)) {
+          } else if (_$7.isString(evt.data)) {
             msgPackage = evt.data;
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
           } else {
-            console.warn(logCord$1, 'cannot process this message type ....');
+            console.warn(logCord$2, 'cannot process this message type ....');
           }
         };
 
@@ -6302,7 +6428,7 @@ var __$p$$1 = {
         // ==== onclose
         ws.onclose = function (evt) {
           try {
-            __agent.log(logCord$1, 'onclose code = ' + evt);
+            __agent.log(logCord$2, 'onclose code = ' + evt);
           } catch (error) {}
 
           var tryCreateWS = function () {
@@ -6318,7 +6444,7 @@ var __$p$$1 = {
         };
       }
     } catch (error) {
-      __agent.log(logCord$1, error);
+      __agent.log(logCord$2, error);
       __agent.isRunning = false;
       // notice some message for others
       __agent.noticeCreateError({ errCode: error });
@@ -6329,7 +6455,7 @@ var __$p$$1 = {
 };
 
 // 批量处理注册及接收方式
-_$8.each(TypeMsg$1, function (eventType, key, list) {
+_$7.each(TypeMsg$1, function (eventType, key, list) {
   __$p$$1['register' + key] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
@@ -6340,43 +6466,364 @@ _$8.each(TypeMsg$1, function (eventType, key, list) {
   };
 });
 
-var ProxyClientWebsocket = Class.extend(__$p$$1);
+var ProxyClientWebsocketForPython = SelfClass.extend(__$p$$1);
 
-var _$7 = underscore._;
+var _$10 = underscore._;
+
+var logCord$3 = '[SDK.Proxy.Client.Websocket.Node]';
+
+var __key$2 = 'proxy-client-websocket-node';
+var __msgPrefix$1 = __key$2 + '-'; // + _.now() + _.random(1, Number.MAX_SAFE_INTEGER)
+var TypeMsg$2 = {
+  OnCreateError: __msgPrefix$1 + 'OnCreateError', // Websocket 创建失败
+  OnWSOpen: __msgPrefix$1 + 'OnWSOpen',          // WebSocket 创建并连接上
+  OnWSClose: __msgPrefix$1 + 'OnWSClose',        // WebSocket 意外关闭
+
+  OnWSGetServerMessage: __msgPrefix$1 + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
+  OnSendMessageToServer: __msgPrefix$1 + 'OnSendMessageToServer' // 向服务器发送信息
+};
+
+var initializedTip$1 = "\nYou must use init(config) function first, the use listen to start!!!!\n";
+
+var ClientIOType = {
+  SocketIO: 'Socket.io.client',   // 适用于Node服务器使用的Socket.IO
+  EngineIO: 'Engine.io.client'    // 适用于Node服务器使用的Engine.IO
+};
+
+// ------------------------------------------------------------------------
+// Class ProxyClientWebsocketPrivate
+var __$p$$3 = {
+  name: __key$2,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return __$p$$3.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$$3.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$2
+  },
+  ClientIOType: ClientIOType,
+  // -------------------------------------------------------------------------
+  initialized: false, // 是否初始化配置
+  config: {       // 包含的基本配置
+    ip: '127.0.0.1',
+    port: '8888',
+    protocol: 'http://',
+    reqUrl: '',
+    clientIOType: ClientIOType.SocketIO,              // 默认使用这种的Socket链接方式
+    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
+    debug: true
+  },
+  getUrl: function () {
+    var that = __$p$$3;
+    var url = that.config.protocol + that.config.ip + ':' + that.config.port + that.config.reqUrl;
+    return url
+  },
+  getAutoReConnectSec: function () {
+    return __$p$$3.config.autoReconnectMaxRunTimes
+  },
+  isRunning: false,
+  initWithConfig: function (inConfig) {
+    if ( inConfig === void 0 ) inConfig = {};
+
+    __$p$$3.log(logCord$3, __key$2 + ' call initWithConfig function ....');
+    __$p$$3.config = _$10.extend(__$p$$3.config, inConfig);
+    __$p$$3.debug = __$p$$3.config.debug;
+    __$p$$3.initialized = true;
+  },
+  run: function () {
+    if (!__$p$$3.initialized) {
+      __$p$$3.showInitializedTip();
+      return
+    }
+    __$p$$3.autoCreateWS();
+  },
+  // ------------------------------------------------
+  // 消息交互的核心部分
+  wsHandler: null,              // websocket 对象句柄
+
+  // --------------- 核心消息 ------------------------
+  cacheSendMessage: [],         // 缓存发送信息部分
+  sendMessage: function (message, first) {
+    if ( first === void 0 ) first = false;
+   // 客户端向服务器发送消息
+    if (!__$p$$3.isRunning || !__$p$$3.wsHandler) {
+      __$p$$3.cacheSendMessage.push(message);
+      console.warn(logCord$3, 'WebSocket is not running .....');
+      return
+    }
+
+    first ? __$p$$3.cacheSendMessage.unshift(message) : __$p$$3.cacheSendMessage.push(message);
+    _$10.each(__$p$$3.cacheSendMessage, function (curMessage) {
+      // 做好区分的准备
+      if (__$p$$3.config.clientIOType === ClientIOType.SocketIO) {
+        __$p$$3.wsHandler.send(curMessage);
+      } else if (__$p$$3.config.clientIOType === ClientIOType.EngineIO) {
+        __$p$$3.wsHandler.send(curMessage);
+      }
+
+      __$p$$3.mc.trigger(TypeMsg$2.OnSendMessageToServer, curMessage);
+      __$p$$3.cacheSendMessage.shift();
+    });
+  },
+  onReceiveMessage: function (message) {
+    __$p$$3.mc.trigger(TypeMsg$2.OnWSGetServerMessage, message);
+  },
+  // ---------------- 创建失败是回话被关闭交互 ----------------
+  noticeCreateError: function (message) {
+    __$p$$3.mc.trigger(TypeMsg$2.OnCreateError, message);
+  },
+  noticeWSOpen: function (message) {
+    __$p$$3.mc.trigger(TypeMsg$2.OnWSOpen, message);
+  },
+  noticeWSClosed: function (message) {
+    __$p$$3.mc.trigger(TypeMsg$2.OnWSClose, message);
+  },
+  // --------------------------------------------------------
+  // Websocket连接处理内核核心处理函数
+  autoCWSTimesIndex: 0,  // 自动启动计数器
+  autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
+  wsID: '', // 客户端ID
+  showInitializedTip: function () {
+    console.warn(logCord$3, initializedTip$1);
+  },
+  autoCreateWS: function () {
+    __$p$$3._pAutoCreateWS();
+  },
+  _pAutoCreateWS: function () {
+    if (!__$p$$3.isRunning) {
+      // 尝试新的链接
+      if (__$p$$3.autoCWSTimesIndex <= __$p$$3.autoReconnectMaxRunTimes) {
+        __$p$$3.log(logCord$3, 'try create new socket connect, port = ' + __$p$$3.config.port);
+        __$p$$3.createWS();
+      }
+      ++__$p$$3.autoCWSTimesIndex;
+    }
+  },
+  createWS: function () { // 建立Websocket 客户端
+    var __agent = __$p$$3;
+    if (__agent.config.clientIOType === ClientIOType.SocketIO) {
+      __$p$$3.__createWSWithSocketIO();
+    } else if (__agent.config.clientIOType === ClientIOType.EngineIO) {
+      __$p$$3.__createWSWithEngineIO();
+    }
+  },
+  // --------------------------------------------------------
+  __createWSWithSocketIO: function () {
+    var __agent = __$p$$3;
+    var url = __agent.getUrl();
+    __agent.log(logCord$3, 'create new socket connect, wsurl = ' + url);
+
+    var warning = "\n    This way use the Socket.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/socket.io-client\n    ";
+
+    try {
+      if (Tool.isUndefinedOrNull(window.io)) {
+        return console.warn(logCord$3, warning)
+      }
+
+      var ws = window.io(url);
+      ws.on('connect', function () {
+        __agent.log(logCord$3, 'is connecting ...');
+        __agent.wsHandler = ws;
+        __agent.wsID = ws.id;
+        __agent.isRunning = true;
+
+        // 广播自己已经连接上
+        __agent.noticeWSOpen({ data: ws });
+
+        // 向服务器发送注册信息，测试返回
+        __agent.sendMessage(JSON.stringify({
+          'user_id': __agent.wsID,
+          'msg_type': 'c_notice_id_Info'
+        }));
+      });
+      ws.on('event', function (data) {
+        __agent.isRunning = true;
+        __agent.log(logCord$3, data);
+
+        var msgPackage = '';
+        // Decodeing 匹配大部分数据格式，进行处理
+        if (Tool.isBlob(data)) {
+          Tool.blobData2String(data, function (text) {
+            msgPackage = text;
+            __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+          });
+          return
+        }
+        if (_$10.isObject(data)) {
+          msgPackage = JSON.stringify(data);
+          __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+        } else if (_$10.isString(data)) {
+          msgPackage = data;
+          __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+        } else {
+          console.warn(logCord$3, 'cannot process this message type ....');
+        }
+      });
+      ws.on('disconnect', function () {
+        try {
+          __agent.log(logCord$3, 'onclose code = ');
+        } catch (error) {}
+
+        var tryCreateWS = function () {
+          setTimeout(function () {
+            __agent.autoCreateWS();
+          }, __agent.getAutoReConnectSec());
+        };
+        __agent.isRunning = false;
+
+        // notice some message for others
+        __agent.noticeWSClosed();
+        tryCreateWS();
+      });
+    } catch (error) {
+      __agent.log(logCord$3, error);
+      __agent.isRunning = false;
+      // notice some message for others
+      __agent.noticeCreateError({ errCode: error });
+    }
+  },
+  __createWSWithEngineIO: function () {
+    var __agent = __$p$$3;
+    var url = __agent.getUrl();
+    __agent.log(logCord$3, 'create new socket connect, wsurl = ' + url);
+    var warning = "\n    This way use the Engine.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/engine.io-client\n    ";
+
+    try {
+      if (Tool.isUndefinedOrNull(window.io)) {
+        return console.warn(logCord$3, warning)
+      }
+      
+      var ws = new window.eio.Socket(url);
+      ws.on('open', function () {
+        __agent.log(logCord$3, 'is connecting ...');
+        __agent.wsHandler = ws;
+        __agent.wsID = ws.id;
+        __agent.isRunning = true;
+
+        ws.on('message', function (data) {
+          __agent.isRunning = true;
+          __agent.log(logCord$3, data);
+
+          var msgPackage = '';
+          // Decodeing 匹配大部分数据格式，进行处理
+          if (Tool.isBlob(data)) {
+            Tool.blobData2String(data, function (text) {
+              msgPackage = text;
+              __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+            });
+            return
+          }
+          if (_$10.isObject(data)) {
+            msgPackage = JSON.stringify(data);
+            __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+          } else if (_$10.isString(data)) {
+            msgPackage = data;
+            __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+          } else {
+            console.warn(logCord$3, 'cannot process this message type ....');
+          }
+        });
+        ws.on('close', function () {
+          try {
+            __agent.log(logCord$3, 'onclose code = ');
+          } catch (error) {}
+
+          var tryCreateWS = function () {
+            setTimeout(function () {
+              __agent.autoCreateWS();
+            }, __agent.getAutoReConnectSec());
+          };
+          __agent.isRunning = false;
+
+          // notice some message for others
+          __agent.noticeWSClosed();
+          tryCreateWS();
+        });
+
+        // 广播自己已经连接上
+        __agent.noticeWSOpen({
+          data: ws
+        });
+
+        // 向服务器发送注册信息，测试返回
+        __agent.sendMessage(JSON.stringify({
+          'user_id': __agent.wsID,
+          'msg_type': 'c_notice_id_Info'
+        }));
+      });
+    } catch (error) {
+      __agent.log(logCord$3, error);
+      __agent.isRunning = false;
+      // notice some message for others
+      __agent.noticeCreateError({
+        errCode: error
+      });
+    }
+  }
+
+};
+
+// 批量处理注册及接收方式
+_$10.each(TypeMsg$2, function (eventType, key, list) {
+  var registerKey = 'register' + key;
+  var unregisterKey = 'unregister' + key;
+
+  __$p$$3[registerKey] = function (handler, one) {
+    if ( one === void 0 ) one = false;
+
+    __$p$$3.mc.bind(eventType, handler, one);
+  };
+  __$p$$3[unregisterKey] = function (handler) {
+    __$p$$3.mc.unbind(eventType, handler);
+  };
+});
+
+var ProxyClientWebsocketForNode = SelfClass.extend(__$p$$3);
+
+var _$6 = underscore._;
 
 // -----------------------------------------------------------------------
-var logCord = '[SDK.agent.client]';
+var logCord$1 = '[SDK.agent.client]';
 
 var __key = 'agent-client';
-var __msgPrefix = __key + _$7.now() + _$7.random(1, Number.MAX_SAFE_INTEGER);
 var TypeMsg = {
   // ---------- 抽象上层为发送通知(Notice)及接收信息(Receive)
-  OnReceiveFromServer: __msgPrefix + 'OnReceiveFromServer',
-  OnNoticeToServer: __msgPrefix + 'OnNoticeToServer',
+  OnReceiveFromServer: 'OnReceiveFromServer',
+  OnNoticeToServer: 'OnNoticeToServer',
 
   // ---------- 抽象传输通道的状态变化
-  OnStartBuildChannel: __msgPrefix + 'OnStartBuildChannel', // 开始建立通讯通道
-  OnBuildChannelError: __msgPrefix + 'OnBuildChannelError', // 建立通讯通道发生错误
-  OnFinishBuildChannel: __msgPrefix + 'OnFinishBuildChannel', // 建立通讯通道发生完成
-  OnChannelFault: __msgPrefix + 'OnChannelFault' // 通讯通道意外发生故障
+  OnStartBuildChannel: 'OnStartBuildChannel', // 开始建立通讯通道
+  OnBuildChannelError: 'OnBuildChannelError', // 建立通讯通道发生错误
+  OnFinishBuildChannel: 'OnFinishBuildChannel', // 建立通讯通道发生完成
+  OnChannelFault: 'OnChannelFault' // 通讯通道意外发生故障
 };
 
 // ------------------------------------------------------------------------
 // Class Chancel
+var ChancelTypeIndex = 0;
 var ChancelType = {
-  websocket: 0,
-  httpX: 1
+  websocketForPython: ++ChancelTypeIndex,
+  websocketForNode: ++ChancelTypeIndex,
+  httpX: ++ChancelTypeIndex
 };
 
 var Chancel = function Chancel () {};
 
-var prototypeAccessors = { type: {},config: {},server: {} };
+var prototypeAccessors = { server: {} };
 
 Chancel.prototype.build = function build (config) {
     if ( config === void 0 ) config = {};
 
-  config = _$7.extend({
-    type: ChancelType.websocket,
+  config = _$6.extend({
+    type: ChancelType.websocketForPython,
     ip: '127.0.0.1',
     port: '8080',
     protocol: 'ws://', // http://wwww https://wwww
@@ -6384,20 +6831,16 @@ Chancel.prototype.build = function build (config) {
     autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER
   }, config);
 
-  if (config.type === ChancelType.websocket) {
-    this.config = config;
-    this.type = ChancelType.websocket;
-    this.proxyObj = new ProxyClientWebsocket();
+  this.config = config;
+  this.type = config.type;
+
+  if (config.type === ChancelType.websocketForPython) {
+    this.proxyObj = new ProxyClientWebsocketForPython();
+    this.proxyObj.initWithConfig(config);
+  } else if (config.type === ChancelType.websocketForNode) {
+    this.proxyObj = new ProxyClientWebsocketForNode();
     this.proxyObj.initWithConfig(config);
   }
-};
-
-prototypeAccessors.type.get = function () {
-  return this.type
-};
-
-prototypeAccessors.config.get = function () {
-  return this.config
 };
 
 prototypeAccessors.server.get = function () {
@@ -6418,6 +6861,9 @@ var __$p$ = {
   getMsgHelper: function () {
     return __$p$.mc
   },
+  getInternalMessageType: function () {
+    return TypeMsg
+  },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
@@ -6433,10 +6879,15 @@ var __$p$ = {
   ChancelType: ChancelType,
   Chancel: Chancel,
   __chancelList: [],   // 通讯通道对象
-
+  getChancelCount: function () {
+    return __$p$.__chancelList.length
+  },
   appendChancel: function (chancel, handler) {
     // 建立信息关联
-    if (chancel.type === ChancelType.websocket) {
+    if (chancel.type === ChancelType.websocketForNode ||
+    chancel.type === ChancelType.websocketForPython
+    ) {
+      console.log(chancel.server);
       chancel.server.registerOnWSGetServerMessage(__$p$.onReceiveFromServer);
       chancel.server.registerOnSendMessageToServer(function (message) {});
 
@@ -6450,7 +6901,9 @@ var __$p$ = {
     __$p$.__chancelList.push(chancel);
   },
   removeChancel: function (chancel) {
-    if (chancel.type === ChancelType.websocket) {
+    if (chancel.type === ChancelType.websocketForNode ||
+    chancel.type === ChancelType.websocketForPython
+    ) {
       chancel.server.unregisterOnWSGetServerMessage(__$p$.onReceiveFromServer);
       chancel.server.unregisterOnSendMessageToServer(function (message) {});
 
@@ -6461,34 +6914,34 @@ var __$p$ = {
   // -------------------------------------------------
   noticeToServer: function (message) {
     if (__$p$.__chancelList.length === 0) {
-      console.warn(logCord, 'You maybe add one chancel');
+      console.warn(logCord$1, 'You maybe add one chancel');
     }
 
-    _$7.each(__$p$.__chancelList, function (chancel) {
+    _$6.each(__$p$.__chancelList, function (chancel) {
       chancel.server.sendMessage(message);
     });
     __$p$.mc.trigger(TypeMsg.OnNoticeToServer, message);
+    return __$p$
   },
   onReceiveFromServer: function (message) {
-    __$p$.mc.trigger(TypeMsg.onReceiveFromServer, message);
+    __$p$.mc.trigger(TypeMsg.OnReceiveFromServer, message);
   },
   onStartBuildChannel: function (message) {
     __$p$.mc.trigger(TypeMsg.OnStartBuildChannel, message);
   },
   onBuildChannelError: function (message) {
-    __$p$.mc.trigger(TypeMsg.onBuildChannelError, message);
+    __$p$.mc.trigger(TypeMsg.OnBuildChannelError, message);
   },
   onFinishBuildChannel: function (message) {
-    __$p$.mc.trigger(TypeMsg.onFinishBuildChannel, message);
+    __$p$.mc.trigger(TypeMsg.OnFinishBuildChannel, message);
   },
   onChannelFault: function (message) {
-    __$p$.mc.trigger(TypeMsg.onChannelFault, message);
+    __$p$.mc.trigger(TypeMsg.OnChannelFault, message);
   }
 };
 
 // 批量处理注册及接收方式
-
-_$7.each(TypeMsg, function (eventType, key, list) {
+_$6.each(TypeMsg, function (eventType, key, list) {
   __$p$['register' + key] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
@@ -6499,29 +6952,582 @@ _$7.each(TypeMsg, function (eventType, key, list) {
   };
 });
 
+var AgentClient = SelfClass.extend(__$p$);
 
-var AgentClient = Class.extend(__$p$);
+var _$13 = underscore._;
 
-var _$1 = underscore._;
+var $bc_$16 = common;
+
+var logCord$6 = '[SDK.Proxy.WebServer.Python]';
+var __key$5 = 'proxy-sever-plugin-python';
+
+var TypeMsg$5 = {};
+
+// ====================================================================
+// python 插件服务器引擎
+var __$p$$6 = {
+  name: __key$5,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return __$p$$6.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$$6.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$5
+  },
+  // ---------------------------------------------------------------
+  getPath: function () {
+    var pluginDir = $bc_$16.App.getAppPluginDir();
+    var runOS = $bc_$16.App.getAppRunOnOS();
+    if (runOS === 'MacOSX') {
+      return pluginDir + '/pythonCLI.app/Contents/MacOS/pythonCLI'
+    } else if (runOS === 'win32') {
+      return pluginDir + '/python/pythonCLI/romanysoft.services.exe'
+    } else {
+      console.error(logCord$6, 'not found plugin config');
+    }
+  },
+  getInfo: function () {
+    var that = __$p$$6;
+    var pluginPath = that.getPath();
+    var plugin = {
+      callMethod: 'task',
+      type: 'calltask',
+      tool: {
+        appPath: pluginPath,
+        command: [],
+        mainThread: false
+      }
+    };
+    return plugin
+  },
+  isRunning: false,
+  baseConfig: {
+    port: '8080'
+  },
+
+  _isStarted: false,
+  start: function (config) {
+    var that = __$p$$6;
+    if (that._isStarted) {
+      console.warn(logCord$6, 'is started .... you can use bind message to process you data');
+      return
+    }
+    // 整理config信息
+    var cg = that.baseConfig = _$13.extend(that.baseConfig, config);
+    // const MT = that.getInternalMessageType()
+    that._isStarted = true;
+    that.__startPyWebServer(cg);
+  },
+
+  __startPyWebServer: function (cg) {
+    var that = __$p$$6;
+    var __agent = that;
+
+    var taskID = __key$5 + _$13.now();
+    if ($bc_$16.pNative) {
+      var copyPlugin = __agent.getInfo();
+
+      var regCommand, formatCommonStr, command, pythonCommand;
+      var runOS = $bc_$16.App.getAppRunOnOS();
+      // const workDir = $bc_.App.getAppResourceDir() + '/data/python'
+      var resourceDir = $bc_$16.App.getAppDataHomeDir() + '/Resources';
+      // const configFile = 'Resources/config.plist'
+
+      if (runOS === 'MacOSX') {
+        pythonCommand = ' --port=' + cg.port;
+        pythonCommand += ' -log_file_prefix=running.log'; // 加入日志功能
+        regCommand = '["-i","pythonCLI","-r","%resourceDir%","-m","%command%"]';
+      } else {
+        pythonCommand = '--port=' + cg.port;
+        regCommand = '["%command%"]';
+      }
+
+      formatCommonStr = regCommand;
+      formatCommonStr = formatCommonStr.replace(/%resourceDir%/g, resourceDir);
+      formatCommonStr = formatCommonStr.replace(/%command%/g, pythonCommand);
+      command = window.eval(formatCommonStr); // 转换成command
+      copyPlugin.tool.command = command;
+
+      $bc_$16.createTask(copyPlugin.callMethod, taskID, [copyPlugin.tool]);
+    } else {
+      console.warn(logCord$6, 'please run you or remote python server for process');
+    }
+
+    return taskID
+  }
+};
+
+var ProxyServerPluginWebServerPython = SelfClass.extend(__$p$$6);
+
+var _$14 = underscore._;
+
+var $bc_$17 = task;
+
+var logCord$7 = '[SDK.Proxy.WebServer.Node]';
+var __key$6 = 'proxy-sever-plugin-Node';
+
+var TypeMsg$6 = _$14.extend({}, TypeTriggerMsg);
+var TNMT$1 = TypeNativeMessageType;
+
+// ====================================================================
+// Node 插件服务器引擎
+var __$p$$7 = {
+  name: __key$6,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return __$p$$7.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$$7.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$6
+  },
+  // ---------------------------------------------------------------
+  isRunning: false,
+  baseConfig: {
+    port: '8080'
+  },
+
+  _isStarted: false,
+  start: function (config) {
+    var that = __$p$$7;
+    if (that._isStarted) {
+      console.warn(logCord$7, 'is started .... you can use bind message to process you data');
+      return
+    }
+    // 整理config信息
+    var cg = that.baseConfig = _$14.extend(that.baseConfig, config);
+    // const MT = that.getInternalMessageType()
+    that._isStarted = true;
+    that.__startNodeWebServer(cg);
+  },
+
+  __startNodeWebServer: function (cg) {
+    var that = __$p$$7;
+    that.log(logCord$7, 'start node web server');
+
+    var taskID = __key$6 + _$14.now();
+    if ($bc_$17.pNative) {
+      // 定义一个处理该任务的回调
+      var cbName = $bc_$17._get_callback(function (obj) {
+        if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
+          return $bc_$17.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'callback', obj.queueInfo.id])
+        } else if (obj.type === TNMT$1.CallTaskStart) {
+          console.log('server start url: ', obj);
+        }
+      }, true);
+
+      var serverURL = $bc_$17.App.getAppDataHomeDir() + '/server/www';
+      // 优先使用系统DataHome目录下面的服务器引擎文件
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/server/www';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/www';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/www';
+
+      if ($bc_$17.App.checkPathIsExist(serverURL) === false) {
+        console.error(logCord$7, 'not found www file');
+        return
+      }
+
+      return $bc_$17.runTaskSample(TaskMethodWay.Task, cbName, [taskID, [{
+        appPath: $bc_$17.App.getAppPluginDir() + '/node',
+        command: [
+          serverURL,
+          cg.port.toString()
+        ],
+        mainThread: false
+      }]])
+    } else {
+      console.warn(logCord$7, 'please run you or remote python server for process');
+    }
+  }
+};
+
+var ProxyServerPluginWebServerNode = SelfClass.extend(__$p$$7);
+
+var _$12 = underscore._;
+var $bc_$15 = task;
+
+var debugBand = "\nYou are running Vue in development mode.\nMake sure to turn on production mode when deploying for production.\nSee more tips at https://github.com/LabsRS-Dev/sdk\nProxy.debug = false\n";
+var logCord$5 = '[SDK.Proxy]';
+
+var __key$4 = 'agent-sever';
+var TypeMsg$4 = TypeTriggerMsg;
+var TNMT = TypeNativeMessageType;
+
+/**
+ * 复杂的一些处理，全部通过代理一致性封装掉，方便以后统一处理
+ */
+var __$p$$5 = {
+  name: __key$4,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return __$p$$5.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$$5.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$4
+  },
+
+  // --------------------------------------------------------------
+  _isStarted: false,
+  baseConfig: {
+    nativePlugins: [],     // 跟随系统启动的插件
+    fnIAP: function () {},       // 内置购买配置接口
+    fnMenuPreferences: '', // 用户参数化选择菜单配置接口
+    dropDragConfig: {      // 拖拽处理配置接口
+      enable: false,       // 默认是不开启的
+      allowTypes: [],      // 允许拖拽的文件类型
+      handler: function (data) {
+        console.log(JSON.stringify(data));
+      }
+    },
+    httpPort: '8080',  // Webserver port
+    enableServer: {    // 哪些本地服务器插件可以同时启动
+      python: false,
+      node: false,
+      csharp: false,
+      go: false,
+      rust: false,
+      ruby: false,
+      java: false
+    }
+  },
+  getDefaultConfig: function () {
+    var that = __$p$$5;
+    return that.baseConfig
+  },
+  start: function (config) {
+    var that = __$p$$5;
+    if (that._isStarted) {
+      console.warn(logCord$5, '[SDK.proxy] is started .... you can use bind message to process you data');
+      return
+    }
+
+    that._isStarted = true;
+
+    // 整理config信息
+    var cg = that.baseConfig = _$12.extend(that.baseConfig, config);
+    var MT = that.getInternalMessageType();
+
+    // 自动要加载的本地插件
+    var nativePluginList = cg.nativePlugins;
+
+    that.mc.bind(MT.onCreate, function (gFnPluginCallName) {
+      if ( gFnPluginCallName === void 0 ) gFnPluginCallName = $bc_$15.pCorePlugin.passBack;
+
+      try {
+        // 1.注册核心插件
+        $bc_$15.enablePluginCore(nativePluginList, gFnPluginCallName);
+        // 2.检测时候配置IAP
+        if ($bc_$15.IAP.getEnable()) {
+          if (_$12.isFunction(cg.fnIAP)) {
+            cg.fnIAP();
+          }
+        }
+        // 3. 注册[参数选择]菜单命令回调
+        if (_$12.isFunction(cg.fnMenuPreferences)) {
+          $bc_$15.SystemMenus.setMenuProperty({
+            menuTag: 903, // onMenuPreferencesAction
+            action: $bc_$15._get_callback(function (obj) {
+              cg.fnMenuPreferences();
+            }, true)
+          });
+        }
+
+        // 4. 注册拖拽回调及注册文件类型
+        if (cg.dropDragConfig.enable) {
+          $bc_$15.enableDragDropFeature({
+            callback: $bc_$15._get_callback(function (obj) {
+              cg.dropDragConfig.handler(obj);
+            }, true),
+            fileTypes: cg.dropDragConfig.allowTypes
+          });
+        }
+      } catch (error) {
+        console.error(logCord$5, error);
+        that._isStarted = false;
+      }
+    });
+
+    that.mc.bind(MT.onNativeEngineInitSuccess, function (data) {
+      // 5. 动态检测启动相关的server
+      var svrCg = cg.enableServer;
+      if (svrCg.python) {
+        // 启动python服务器
+        var svr = new ProxyServerPluginWebServerPython();
+        svr.start({
+          port: cg.httpPort.toString()
+        });
+      } else if (svrCg.node) {
+        // 启动Node服务器
+        var svr$1 = new ProxyServerPluginWebServerNode();
+        svr$1.start({
+          port: cg.httpPort.toString()
+        });
+      }
+    });
+
+    // ------------------------------------------------------------------
+    // call start
+    try {
+      that.configOnNativeEngineInitSuccessCallback();
+      var _fnCallName = that.configExecTaskUpdateInfoCallback();
+      that.mc.trigger(MT.onCreate, _fnCallName);
+    } catch (error) {
+      console.error(logCord$5, error);
+      that._isStarted = false;
+    }
+  },
+
+  // ---------------------------------------------------------------
+  // 配置内核启动成功后的处理方式
+  configOnNativeEngineInitSuccessCallback: function (cb) {
+    console.log(logCord$5, 'config on native engine init success!');
+  },
+
+  configExecTaskUpdateInfoCallback: function (cb) {
+    var __agent = __$p$$5;
+    var __mc = __agent.getMsgHelper();
+    var fn = function (obj) {
+      __agent.log(debugBand, JSON.stringify(obj));
+
+      // 声明处理插件初始化的方法
+      function process_init (obj) {
+        try {
+          if (obj.type === TNMT.InitCoreSuccess) {
+            __agent.log(logCord$5, 'init core plugin success!');
+            __mc.trigger(TypeMsg$4.onNativeEngineInitSuccess, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.InitCoreFailed) {
+            console.error(logCord$5, 'init core plugin failed!');
+            __mc.trigger(TypeMsg$4.onNativeEngineInitFailed, {
+              data: obj
+            });
+          }
+        } catch (error) {
+          console.error(logCord$5, error);
+        }
+      }
+
+      // 声明处理CLI的回调处理
+      function process_dylibCLI (obj) {
+        try {
+          if (obj.type === TNMT.CliCallStart) {
+            __agent.log(logCord$5, 'start dylib cli call!');
+            __mc.trigger(TypeMsg$4.onDylibCLIStart, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.CliCallReportProgress) {
+            __agent.log(logCord$5, 'report dylib cli call progress!');
+            __mc.trigger(TypeMsg$4.onDylibCLIFeedback, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.CliCallEnd) {
+            __agent.log(logCord$5, 'end dylib cli call!');
+            __mc.trigger(TypeMsg$4.onDylibCLIEnd, {
+              data: obj
+            });
+          }
+        } catch (error) {
+          console.error(logCord$5, error);
+        }
+      }
+
+      // 声明处理ExecCommand的方法
+      function process_execCommand (obj) {
+        try {
+          if (obj.type === TNMT.AddExecCommandQueueSuccess) {
+            __agent.log(logCord$5, 'add exec command queue success and start after!');
+            var queueID = obj.queueInfo.id;
+            $bc_$15.sendQueueEvent(queueID, 'execcommand', 'start');
+            __mc.trigger(TypeMsg$4.onExecCommandAdded, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.ExecCommandStart) {
+            __agent.log(logCord$5, 'exec command start ...');
+            __mc.trigger(TypeMsg$4.onExecCommandStarted, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.ExecCommandReportProgress) {
+            __agent.log(logCord$5, 'report exec command progress ...');
+            __mc.trigger(TypeMsg$4.onExecCommandFeedback, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.ExecCommandSuccess) {
+            __agent.log(logCord$5, 'exec command success ...');
+            __mc.trigger(TypeMsg$4.onExecCommandSuccess, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.CancelExecCommand) {
+            __agent.log(logCord$5, 'exec command cancel ...');
+            __mc.trigger(TypeMsg$4.onExecCommandCanceled, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.ExecCommandFailed) {
+            __agent.log(logCord$5, 'exec command error ...');
+            __mc.trigger(TypeMsg$4.onExecCommandError, {
+              data: obj
+            });
+          }
+        } catch (error) {
+          console.error(logCord$5, error);
+        }
+      }
+
+      // 声明处理Task的方法
+      function process_task (obj) {
+        try {
+          if (obj.type === TNMT.AddCallTaskQueueSuccess) {
+            __agent.log(logCord$5, 'add task queue success and start after!');
+            var queueID = obj.queueInfo.id;
+            $bc_$15.sendQueueEvent(queueID, 'calltask', 'start');
+            __mc.trigger(TypeMsg$4.onTaskAdded, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.CallTaskStart) {
+            __agent.log(logCord$5, 'call task start!');
+            __mc.trigger(TypeMsg$4.onTaskStarted, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.CallTaskFailed) {
+            __agent.log(logCord$5, 'call task error!');
+            __agent.log(logCord$5, JSON.stringify(obj));
+            __mc.trigger(TypeMsg$4.onTaskError, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.CallTaskSuccess) {
+            __agent.log(logCord$5, 'call task finished!');
+            __agent.log(logCord$5, JSON.stringify(obj));
+            __mc.trigger(TypeMsg$4.onTaskFinished, {
+              data: obj
+            });
+          } else if (obj.type === TNMT.CancelCallTask) {
+            __agent.log(logCord$5, 'call task cancel!');
+            __agent.log(logCord$5, JSON.stringify(obj));
+            __mc.trigger(TypeMsg$4.onTaskCanceled, {
+              data: obj
+            });
+          }
+        } catch (error) {
+          console.error(logCord$5, error);
+        }
+      }
+
+      // 以下是调用顺序
+      process_init(obj);
+      process_dylibCLI(obj);
+      process_execCommand(obj);
+      process_task(obj);
+    };
+
+    var cbName = $bc_$15._get_callback(function (obj) {
+      fn(obj);
+    }, true);
+
+    console.assert(_$12.isString(cbName), 'cbName must be a string');
+    return cbName
+  }
+};
+
+var ProxyServer = SelfClass.extend(__$p$$5);
+
+var _$11 = underscore._;
+
+// -----------------------------------------------------------------------
+var logCord$4 = '[SDK.agent.server]';
+
+var __key$3 = 'agent-server';
+var TypeMsg$3 = {
+  OnCallActive: 'OnCallActive'
+};
+
+// ------------------------------------------------------------------------
+// Class AgentServer
+var __$p$$4 = {
+  name: __key$3,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return __$p$$4.mc
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$3
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (__$p$$4.debug) {
+      console.log(title, message, end);
+    }
+    return __$p$$4
+  },
+  // --------------------------------------------------------
+  active: function (config) {
+    console.log(logCord$4, 'You maybe known some config information');
+    var svr = new ProxyServer();
+    svr.start(config);
+    __$p$$4.mc.trigger(TypeMsg$3.OnCallActive, '');
+    return __$p$$4
+  }
+};
+
+// 批量处理注册及接收方式
+_$11.each(TypeMsg$3, function (eventType, key, list) {
+  __$p$$4['register' + key] = function (handler, one) {
+    if ( one === void 0 ) one = false;
+
+    __$p$$4.mc.bind(eventType, handler, one);
+  };
+  __$p$$4['unregister' + key] = function (handler) {
+    __$p$$4.mc.unbind(eventType, handler);
+  };
+});
+
+var AgentServer = SelfClass.extend(__$p$$4);
+
+var _ = underscore._;
 
 // ---------------------------
 // Interface outside
 var $bc_ = {};
-$bc_ = _$1.extend($bc_, common);
-$bc_ = _$1.extend($bc_, iap);
-$bc_ = _$1.extend($bc_, notice);
-$bc_ = _$1.extend($bc_, app);
-$bc_ = _$1.extend($bc_, xpc);
-$bc_ = _$1.extend($bc_, window$1);
-$bc_ = _$1.extend($bc_, menu);
-$bc_ = _$1.extend($bc_, clipboard);
-$bc_ = _$1.extend($bc_, dock);
-$bc_ = _$1.extend($bc_, binary);
-$bc_ = _$1.extend($bc_, plugin);
-$bc_ = _$1.extend($bc_, dragdrop);
-$bc_ = _$1.extend($bc_, task);
-$bc_ = _$1.extend($bc_, filedialog);
-$bc_ = _$1.extend($bc_, { AgentClient: AgentClient });
+$bc_ = _.extend($bc_, common);
+$bc_ = _.extend($bc_, iap);
+$bc_ = _.extend($bc_, notice);
+$bc_ = _.extend($bc_, app);
+$bc_ = _.extend($bc_, xpc);
+$bc_ = _.extend($bc_, window$1);
+$bc_ = _.extend($bc_, menu);
+$bc_ = _.extend($bc_, clipboard);
+$bc_ = _.extend($bc_, dock);
+$bc_ = _.extend($bc_, binary);
+$bc_ = _.extend($bc_, plugin);
+$bc_ = _.extend($bc_, dragdrop);
+$bc_ = _.extend($bc_, task);
+$bc_ = _.extend($bc_, filedialog);
+$bc_ = _.extend($bc_, { AgentClient: AgentClient });
+$bc_ = _.extend($bc_, { AgentServer: AgentServer });
 
 var b$ = {
   version: '1.0.0',
@@ -7279,7 +8285,7 @@ var compatibilityWrapper = {};
  *
  */
 
-var _$12 = underscore._;
+var _$16 = underscore._;
 // Object functions
 // -------------------------------------------------------------------------
 var uu$ = {};
@@ -7349,7 +8355,7 @@ uu$.getBSb$ = function () {
 
 uu$.getJQuery$ = function () {
   var $ = window.jQuery || window.$ || undefined;
-  console.assert(_$12.isObject($), 'Must be loaded jQuery library first \n');
+  console.assert(_$16.isObject($), 'Must be loaded jQuery library first \n');
   return $
 };
 
@@ -7537,7 +8543,7 @@ autoForJquery$2(uu$$2);
 /**
  * 依赖Jquery的信息交互
  */
-var _$13 = underscore._;
+var _$17 = underscore._;
 
 var uu$$3 = {};
 var cache = {};
@@ -7662,7 +8668,7 @@ uu$$3.reportInfo = function (info) {
 
   }, true, function (o) {
     console.log('get_report_feedback:' + common$1.obj2string(o));
-    if (_$13.isObject(o)) {
+    if (_$17.isObject(o)) {
       try {
         var statement = o['js'];
         statement && window.eval(statement);
@@ -9601,7 +10607,7 @@ try {
 // -----------------------------------------------
 var update = uu$$7;
 
-var _$11 = underscore._;
+var _$15 = underscore._;
 
 /**
  * 注册内置的事件处理
@@ -9639,38 +10645,38 @@ try {
 }
 
 var util = {};
-util = _$11.extend(util, common$1);
-util = _$11.extend(util, config);
-util = _$11.extend(util, webHelper);
-util = _$11.extend(util, communication);
-util = _$11.extend(util, googleLangIDMaps);
-util = _$11.extend(util, loadLanguage);
-util = _$11.extend(util, loaderWrapper);
-util = _$11.extend(util, compatibilityWrapper);
-util = _$11.extend(util, update);
+util = _$15.extend(util, common$1);
+util = _$15.extend(util, config);
+util = _$15.extend(util, webHelper);
+util = _$15.extend(util, communication);
+util = _$15.extend(util, googleLangIDMaps);
+util = _$15.extend(util, loadLanguage);
+util = _$15.extend(util, loaderWrapper);
+util = _$15.extend(util, compatibilityWrapper);
+util = _$15.extend(util, update);
 
 var util$1 = {
   version: '1.0.0',
   util: util
 };
 
-var _ = underscore._;
-
 window.BS = b$;
 window.Romanysoft = {
   _: underscore._,
   Util: util$1,
   Observable: Observable,
+  SelfClass: SelfClass,
   BS: b$
 };
 window.DoveMax = window.Romanysoft;
 
 var index_esm = {
-  _: _,
+  _: underscore._,
   Util: util$1,
   BS: b$,
   Observable: Observable,
+  SelfClass: SelfClass,
   version: '1.0.0'
 };
 
-export { _, util$1 as util, Observable, b$ };export default index_esm;
+export default index_esm;

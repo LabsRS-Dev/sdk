@@ -64,8 +64,17 @@ var isDefaultPrevented = function () {
   return this._defaultPrevented === true
 }
 
-function Class () {}
-Class.extend = function (proto) {
+const logCord = '[SDK.SelfClass]'
+const debugTip = `
+[*] SelfClass must be care for this . use your self var
+You are running DoveMaxSDK in development mode.
+Make sure to turn on production mode when deploying for production.
+See more tips at https://github.com/LabsRS-Dev/sdk
+`
+
+function SelfClass () {}
+SelfClass.extend = function (proto) {
+  console.warn(logCord, debugTip)
   var base = function () {},
     member,
     that = this,
@@ -93,11 +102,11 @@ Class.extend = function (proto) {
   return subclass
 }
 
-Class.prototype._initOptions = function (options) {
+SelfClass.prototype._initOptions = function (options) {
   this.options = deepExtend({}, this.options, options)
 }
 
-var Observable = Class.extend({
+var Observable = SelfClass.extend({
   init: function () {
     this._events = {}
   },
@@ -175,6 +184,10 @@ var Observable = Class.extend({
       length
 
     if (events) {
+      if (_.isString(e)) {
+        console.error('e must be {}, not string ')
+      }
+
       e = e || {}
 
       e.sender = that
@@ -221,6 +234,6 @@ var Observable = Class.extend({
 })
 
 export {
-   Class,
+   SelfClass,
    Observable
 }

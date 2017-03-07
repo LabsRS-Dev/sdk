@@ -1,4 +1,4 @@
-import { Observable, Class } from '../observable'
+import { Observable, SelfClass } from '../observable'
 import underscore from '../underscore'
 var _ = underscore._
 
@@ -24,6 +24,17 @@ var __$p$ = {
     __$p$.__mc.first(eventName, handlers)
   },
   trigger: function (eventName, e) {
+    // 检测e的对象类型
+    if (_.isString(e)) {
+      try {
+        e = JSON.parse(e)
+      } catch (err) {
+        __$p$.log('found err:', err)
+        e = {
+          data: e
+        }
+      }
+    }
     __$p$.__mc.trigger(eventName, e)
   },
   unbind: function (eventName, handler) {
@@ -31,7 +42,7 @@ var __$p$ = {
   }
 }
 
-var ProxyMessageCenter = Class.extend(__$p$)
+var ProxyMessageCenter = SelfClass.extend(__$p$)
 //
 // -----------------------------------------------
 export {

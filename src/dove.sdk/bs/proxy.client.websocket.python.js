@@ -1,13 +1,13 @@
 import { ProxyMessageCenter } from './proxy'
-import { Class } from '../observable'
+import { SelfClass } from '../observable'
 import underscore from '../underscore'
 import { Tool } from '../include'
 const _ = underscore._
 
-const logCord = '[SDK.Proxy.Client.Websocket]'
+const logCord = '[SDK.Proxy.Client.Websocket.Python]'
 
-const __key = 'proxy-client-websocket'
-const __msgPrefix = __key + _.now() + _.random(1, Number.MAX_SAFE_INTEGER)
+const __key = 'proxy-client-websocket-python'
+const __msgPrefix = __key + '-' + _.now() + _.random(1, Number.MAX_SAFE_INTEGER) + '-'
 const TypeMsg = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
   OnWSOpen: __msgPrefix + 'OnWSOpen',          // WebSocket 创建并连接上
@@ -45,11 +45,12 @@ var __$p$ = {
     port: '8080',
     protocol: 'ws://',
     reqUrl: '/websocket',
-    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER // 设置重新连接的秒数,
+    autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
+    debug: true
   },
   getUrl: function () {
     var that = __$p$
-    var url = that.protocol + that.ip + ':' + that.port + that.reqUrl
+    var url = that.config.protocol + that.config.ip + ':' + that.config.port + that.config.reqUrl
     return url
   },
   getAutoReConnectSec: () => {
@@ -59,6 +60,7 @@ var __$p$ = {
   initWithConfig: function (inConfig = {}) {
     __$p$.log(logCord, __key + ' call initWithConfig function ....')
     __$p$.config = _.extend(__$p$.config, inConfig)
+    __$p$.debug = __$p$.config.debug
     __$p$.initialized = true
   },
   run: function () {
@@ -66,7 +68,7 @@ var __$p$ = {
       __$p$.showInitializedTip()
       return
     }
-    __$p$.autoCreateWS(__$p$.getUrl())
+    __$p$.autoCreateWS()
   },
   // ------------------------------------------------
   // 消息交互的核心部分
@@ -141,7 +143,7 @@ var __$p$ = {
             __agent.log(logCord, 'is connecting ...')
             __agent.isRunning = true
             // 广播自己已经连接上
-            __agent.noticeWSClosed({ data: ws })
+            __agent.noticeWSOpen({ data: ws })
 
             // 向服务器发送注册信息，测试返回
             __agent.sendMessage(JSON.stringify({
@@ -220,12 +222,12 @@ _.each(TypeMsg, (eventType, key, list) => {
   }
 })
 
-var ProxyClientWebsocket = Class.extend(__$p$)
+var ProxyClientWebsocketForPython = SelfClass.extend(__$p$)
 
 // -----------------------------------------------------------------------
 // 统一的Client Websocket 处理, 用来与后台服务器的交互处理
 //
 // -----------------------------------------------
 export {
-  ProxyClientWebsocket
+  ProxyClientWebsocketForPython
 }

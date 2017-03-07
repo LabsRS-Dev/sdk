@@ -15,6 +15,7 @@ import { dragdrop } from './dragdrop'
 import { task } from './task'
 import { filedialog } from './filedialog'
 import { AgentClient } from './agent.client'
+import { AgentServer } from './agent.server'
 
 var _ = underscore._
 
@@ -36,6 +37,7 @@ $bc_ = _.extend($bc_, dragdrop)
 $bc_ = _.extend($bc_, task)
 $bc_ = _.extend($bc_, filedialog)
 $bc_ = _.extend($bc_, { AgentClient: AgentClient })
+$bc_ = _.extend($bc_, { AgentServer: AgentServer })
 
 export default {
   version: '__VERSION__',
