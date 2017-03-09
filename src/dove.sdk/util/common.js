@@ -3,11 +3,14 @@
  *
  */
 
-import underscore from '../underscore'
 import { Tool } from '../include'
+import b$ from '../bs/index'
+import underscore from '../underscore'
+
 var _ = underscore._
 // Object functions
 // -------------------------------------------------------------------------
+const logCord = '[SDK.Util.common]'
 var uu$ = {}
 uu$.RTYUtils = {
   find: Tool.find,
@@ -62,12 +65,10 @@ uu$.getMyDateStr = function (format = 'yyyy/MM/dd hh:mm:ss') {
 }
 
 uu$.getBSb$ = function () {
-  var b$ = null
-  if (!common.RTYUtils.isUndefinedOrNullOrFalse(window.BS)) {
-    if (!common.RTYUtils.isUndefinedOrNullOrFalse(window.BS.b$)) {
-      b$ = window.BS.b$
-    }
+  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(b$)) {
+    console.warn(logCord, 'cannot found b$')
   }
+
   return b$
 }
 

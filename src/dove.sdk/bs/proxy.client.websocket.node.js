@@ -1,7 +1,8 @@
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
-import underscore from '../underscore'
 import { Tool } from '../include'
+import underscore from '../underscore'
+
 const _ = underscore._
 
 const logCord = '[SDK.Proxy.Client.Websocket.Node]'
@@ -197,6 +198,8 @@ var __$p$ = {
         } else if (_.isString(data)) {
           msgPackage = data
           __agent.onReceiveMessage(msgPackage) // 按接口要求，尽量回传字符串
+        } else if (_.isNull(data)) {
+          console.warn(logCord, 'cannot process null data obj ....')
         } else {
           console.warn(logCord, 'cannot process this message type ....')
         }
@@ -240,7 +243,6 @@ var __$p$ = {
       if (Tool.isUndefinedOrNull(window.io)) {
         return console.warn(logCord, warning)
       }
-      
       var ws = new window.eio.Socket(url)
       ws.on('open', () => {
         __agent.log(logCord, 'is connecting ...')

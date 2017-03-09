@@ -1,4 +1,3 @@
-
 import { common } from './common'
 import { communication } from './communication'
 import { loaderWrapper } from './loaderWrapper'
@@ -83,15 +82,16 @@ uu$.checkStartInfo = function (info) {
 }
 
 // 检测在线补丁包
-uu$.checkPatches = function (info) {
-  loaderWrapper.RTY_3rd_Ensure.ensure({
-    js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
-  }, function () {})
-}
+// uu$.checkPatches = function (info) {
+//   loaderWrapper.RTY_3rd_Ensure.ensure({
+//     js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
+//   }, function () {})
+// }
 
 // 内核加入自启动部分代码
 try {
   var $ = common.getJQuery$()
+  var b$ = common.getBSb$()
   if ($) {
     $(document).ready(function () {
       console.log(
@@ -99,10 +99,15 @@ try {
 
       // / 默认添加提示新版本
       setTimeout(function () {
-        uu$.checkUpdate()
         uu$.checkStartInfo()
-        uu$.checkPatches()
-      }, 3000)
+
+        if (b$.App.getSandboxEnable() && b$.App.getAppRunOnOS() === 'MacOSX') {
+          console.log('------------- common app starting .... -------')
+        } else {
+          uu$.checkUpdate()
+          // uu$.checkPatches()
+        }
+      }, 35 * 1000) // 35sec
     })
   }
 } catch (e) {

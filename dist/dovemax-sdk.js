@@ -6690,6 +6690,8 @@ var __$p$$3 = {
         } else if (_$10.isString(data)) {
           msgPackage = data;
           __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+        } else if (_$10.isNull(data)) {
+          console.warn(logCord$3, 'cannot process null data obj ....');
         } else {
           console.warn(logCord$3, 'cannot process this message type ....');
         }
@@ -6730,7 +6732,6 @@ var __$p$$3 = {
       if (Tool.isUndefinedOrNull(window.io)) {
         return console.warn(logCord$3, warning)
       }
-      
       var ws = new window.eio.Socket(url);
       ws.on('open', function () {
         __agent.log(logCord$3, 'is connecting ...');
@@ -7172,6 +7173,12 @@ var __$p$$7 = {
       serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/server/www';
       serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/www';
       serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/www';
+
+      // 检测是否使用了www.js 作为
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppDataHomeDir() + '/server/www.js';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/server/www.js';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/www.js';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/www.js';
 
       if ($bc_$17.App.checkPathIsExist(serverURL) === false) {
         console.error(logCord$7, 'not found www file');
@@ -8332,6 +8339,7 @@ var compatibilityWrapper = {};
 var _$16 = underscore._;
 // Object functions
 // -------------------------------------------------------------------------
+var logCord$8 = '[SDK.Util.common]';
 var uu$ = {};
 uu$.RTYUtils = {
   find: Tool.find,
@@ -8388,12 +8396,10 @@ uu$.getMyDateStr = function (format) {
 };
 
 uu$.getBSb$ = function () {
-  var b$ = null;
-  if (!common$1.RTYUtils.isUndefinedOrNullOrFalse(window.BS)) {
-    if (!common$1.RTYUtils.isUndefinedOrNullOrFalse(window.BS.b$)) {
-      b$ = window.BS.b$;
-    }
+  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(b$)) {
+    console.warn(logCord$8, 'cannot found b$');
   }
+
   return b$
 };
 
@@ -10615,15 +10621,16 @@ uu$$7.checkStartInfo = function (info) {
 };
 
 // 检测在线补丁包
-uu$$7.checkPatches = function (info) {
-  loaderWrapper.RTY_3rd_Ensure.ensure({
-    js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
-  }, function () {});
-};
+// uu$.checkPatches = function (info) {
+//   loaderWrapper.RTY_3rd_Ensure.ensure({
+//     js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
+//   }, function () {})
+// }
 
 // 内核加入自启动部分代码
 try {
   var $ = common$1.getJQuery$();
+  var b$$1 = common$1.getBSb$();
   if ($) {
     $(document).ready(function () {
       console.log(
@@ -10631,10 +10638,15 @@ try {
 
       // / 默认添加提示新版本
       setTimeout(function () {
-        uu$$7.checkUpdate();
         uu$$7.checkStartInfo();
-        uu$$7.checkPatches();
-      }, 3000);
+
+        if (b$$1.App.getSandboxEnable() && b$$1.App.getAppRunOnOS() === 'MacOSX') {
+          console.log('------------- common app starting .... -------');
+        } else {
+          uu$$7.checkUpdate();
+          // uu$.checkPatches()
+        }
+      }, 35 * 1000); // 35sec
     });
   }
 } catch (e) {

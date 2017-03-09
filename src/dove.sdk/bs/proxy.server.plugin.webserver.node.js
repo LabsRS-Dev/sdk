@@ -1,7 +1,9 @@
-import { task, TypeTriggerMsg, TypeNativeMessageType, TaskMethodWay } from './task'
+import { TaskMethodWay, TypeNativeMessageType, TypeTriggerMsg, task } from './task'
+
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
 import underscore from '../underscore'
+
 var _ = underscore._
 
 var $bc_ = task
@@ -69,6 +71,12 @@ var __$p$ = {
       serverURL = $bc_.App.checkPathIsExist(serverURL) ? serverURL : $bc_.App.getAppResourceDir() + '/public/server/www'
       serverURL = $bc_.App.checkPathIsExist(serverURL) ? serverURL : $bc_.App.getAppResourceDir() + '/public/www'
       serverURL = $bc_.App.checkPathIsExist(serverURL) ? serverURL : $bc_.App.getAppResourceDir() + '/www'
+
+      // 检测是否使用了www.js 作为
+      serverURL = $bc_.App.checkPathIsExist(serverURL) ? serverURL : $bc_.App.getAppDataHomeDir() + '/server/www.js'
+      serverURL = $bc_.App.checkPathIsExist(serverURL) ? serverURL : $bc_.App.getAppResourceDir() + '/public/server/www.js'
+      serverURL = $bc_.App.checkPathIsExist(serverURL) ? serverURL : $bc_.App.getAppResourceDir() + '/public/www.js'
+      serverURL = $bc_.App.checkPathIsExist(serverURL) ? serverURL : $bc_.App.getAppResourceDir() + '/www.js'
 
       if ($bc_.App.checkPathIsExist(serverURL) === false) {
         console.error(logCord, 'not found www file')
