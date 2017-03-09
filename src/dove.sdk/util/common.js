@@ -3,8 +3,8 @@
  *
  */
 
+import BS from '../bs/index'
 import { Tool } from '../include'
-import b$ from '../bs/index'
 import underscore from '../underscore'
 
 var _ = underscore._
@@ -65,11 +65,12 @@ uu$.getMyDateStr = function (format = 'yyyy/MM/dd hh:mm:ss') {
 }
 
 uu$.getBSb$ = function () {
-  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(b$)) {
+  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(BS.b$)) {
     console.warn(logCord, 'cannot found b$')
+    return null
   }
 
-  return b$
+  return BS.b$
 }
 
 uu$.getJQuery$ = function () {

@@ -6819,6 +6819,11 @@ _$10.each(TypeMsg$2, function (eventType, key, list) {
 
 var ProxyClientWebsocketForNode = SelfClass.extend(__$p$$3);
 
+// -----------------------------------------------------------------------
+// 统一的Client Websocket 处理, 用来与后台服务器的交互处理
+//
+// -----------------------------------------------
+
 var _$6 = underscore._;
 
 // -----------------------------------------------------------------------
@@ -7580,7 +7585,7 @@ $bc_ = _.extend($bc_, filedialog);
 $bc_ = _.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _.extend($bc_, { AgentServer: AgentServer });
 
-var b$ = {
+var BS = {
   version: '1.0.0',
   b$: $bc_
 };
@@ -8396,11 +8401,12 @@ uu$.getMyDateStr = function (format) {
 };
 
 uu$.getBSb$ = function () {
-  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(b$)) {
+  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(BS.b$)) {
     console.warn(logCord$8, 'cannot found b$');
+    return null
   }
 
-  return b$
+  return BS.b$
 };
 
 uu$.getJQuery$ = function () {
@@ -10630,7 +10636,7 @@ uu$$7.checkStartInfo = function (info) {
 // 内核加入自启动部分代码
 try {
   var $ = common$1.getJQuery$();
-  var b$$1 = common$1.getBSb$();
+  var b$ = common$1.getBSb$();
   if ($) {
     $(document).ready(function () {
       console.log(
@@ -10640,7 +10646,7 @@ try {
       setTimeout(function () {
         uu$$7.checkStartInfo();
 
-        if (b$$1.App.getSandboxEnable() && b$$1.App.getAppRunOnOS() === 'MacOSX') {
+        if (b$.App.getSandboxEnable() && b$.App.getAppRunOnOS() === 'MacOSX') {
           console.log('------------- common app starting .... -------');
         } else {
           uu$$7.checkUpdate();
@@ -10709,20 +10715,20 @@ var util$1 = {
   util: util
 };
 
-window.BS = b$;
+window.BS = BS;
 window.Romanysoft = {
   _: underscore._,
   Util: util$1,
   Observable: Observable,
   SelfClass: SelfClass,
-  BS: b$
+  BS: BS
 };
 window.DoveMax = window.Romanysoft;
 
 var index = {
   _: underscore._,
   Util: util$1,
-  BS: b$,
+  BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
   version: '1.0.0'
