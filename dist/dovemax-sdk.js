@@ -1996,6 +1996,10 @@ var Observable = SelfClass.extend({
     this._events = {};
   },
 
+  getMetaDataEvents: function () {
+    return this._events
+  },
+
   bind: function (eventName, handlers, one) {
     var that = this,
       idx,
@@ -5859,6 +5863,9 @@ var __$p$$2 = {
     }
   },
 
+  getEvents: function () {
+    return __$p$$2.__mc.getMetaDataEvents()
+  },
   bind: function (eventName, handlers, one) {
     if ( one === void 0 ) one = false;
 
@@ -6263,9 +6270,9 @@ var Tool = {
 
 var _$7 = underscore._;
 
-var logCord$2 = '[SDK.Proxy.Client.Websocket.Python]';
+var logCord$2 = '[SDK.Proxy.Client.Websocket.Node]';
 
-var __key$1 = 'proxy-client-websocket-python';
+var __key$1 = 'proxy-client-websocket-node';
 var __msgPrefix = __key$1 + '-' + _$7.now() + _$7.random(1, Number.MAX_SAFE_INTEGER) + '-';
 var TypeMsg$1 = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
@@ -6277,6 +6284,11 @@ var TypeMsg$1 = {
 };
 
 var initializedTip = "\nYou must use init(config) function first, the use listen to start!!!!\n";
+
+var ClientIOType = {
+  SocketIO: 'Socket.io.client',   // 适用于Node服务器使用的Socket.IO
+  EngineIO: 'Engine.io.client'    // 适用于Node服务器使用的Engine.IO
+};
 
 // ------------------------------------------------------------------------
 // Class ProxyClientWebsocketPrivate
@@ -6297,14 +6309,25 @@ var __$p$$1 = {
   getInternalMessageType: function () {
     return TypeMsg$1
   },
+  ClientIOType: ClientIOType,
+  // ------------------ log -------------------------------------------------
+  _traceLogEventsCount: function () {
+    var _events = __$p$$1.mc.getEvents();
+    __$p$$1.log(logCord$2, ' _events count = ' + _$7.keys(_events).length);
+  },
+  _traceLogCacheSendMessageCount: function () {
+    __$p$$1.log(logCord$2, ' cacheMessage count = ' + __$p$$1.cacheSendMessage.length);
+  },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
   config: {       // 包含的基本配置
     ip: '127.0.0.1',
-    port: '8080',
-    protocol: 'ws://',
-    reqUrl: '/websocket',
+    port: '8888',
+    protocol: 'http://',
+    reqUrl: '',
+    clientIOType: ClientIOType.SocketIO,              // 默认使用这种的Socket链接方式
     autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
+    customSendEventDefine: 'sendMsgEvent',            // 定义核心交互的事件类型
     debug: true
   },
   getUrl: function () {
@@ -6347,30 +6370,44 @@ var __$p$$1 = {
     }
 
     first ? __$p$$1.cacheSendMessage.unshift(message) : __$p$$1.cacheSendMessage.push(message);
+
+    __$p$$1._traceLogCacheSendMessageCount();
     _$7.each(__$p$$1.cacheSendMessage, function (curMessage) {
-      __$p$$1.wsHandler.send(curMessage);
+      // 做好区分的准备
+      if (__$p$$1.config.clientIOType === ClientIOType.SocketIO) {
+        __$p$$1.wsHandler.send(__$p$$1.config.customSendEventDefine, curMessage);
+      } else if (__$p$$1.config.clientIOType === ClientIOType.EngineIO) {
+        __$p$$1.wsHandler.send(curMessage);
+      }
+
+      __$p$$1._traceLogEventsCount();
       __$p$$1.mc.trigger(TypeMsg$1.OnSendMessageToServer, curMessage);
       __$p$$1.cacheSendMessage.shift();
     });
+    __$p$$1._traceLogCacheSendMessageCount();
   },
   onReceiveMessage: function (message) {
+    __$p$$1._traceLogEventsCount();
     __$p$$1.mc.trigger(TypeMsg$1.OnWSGetServerMessage, message);
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: function (message) {
+    __$p$$1._traceLogEventsCount();
     __$p$$1.mc.trigger(TypeMsg$1.OnCreateError, message);
   },
   noticeWSOpen: function (message) {
+    __$p$$1._traceLogEventsCount();
     __$p$$1.mc.trigger(TypeMsg$1.OnWSOpen, message);
   },
   noticeWSClosed: function (message) {
+    __$p$$1._traceLogEventsCount();
     __$p$$1.mc.trigger(TypeMsg$1.OnWSClose, message);
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
   autoCWSTimesIndex: 0,  // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
-  wsID: '', // 客户端ID
+  wsID: _$7.uniqueId(__key$1), // 客户端唯一ID
   showInitializedTip: function () {
     console.warn(logCord$2, initializedTip);
   },
@@ -6382,74 +6419,140 @@ var __$p$$1 = {
       // 尝试新的链接
       if (__$p$$1.autoCWSTimesIndex <= __$p$$1.autoReconnectMaxRunTimes) {
         __$p$$1.log(logCord$2, 'try create new socket connect, port = ' + __$p$$1.config.port);
-        __$p$$1.createWS(__$p$$1.getUrl());
+        __$p$$1.createWS();
       }
       ++__$p$$1.autoCWSTimesIndex;
     }
   },
-  createWS: function (url) { // 建立Websocket 客户端
+  createWS: function () { // 建立Websocket 客户端
     var __agent = __$p$$1;
-    var WebSocket = window.WebSocket || window.MozWebSocket;
+    if (__agent.config.clientIOType === ClientIOType.SocketIO) {
+      __$p$$1.__createWSWithSocketIO();
+    } else if (__agent.config.clientIOType === ClientIOType.EngineIO) {
+      __$p$$1.__createWSWithEngineIO();
+    }
+  },
+  // --------------------------------------------------------
+  __createWSWithSocketIO: function () {
+    var __agent = __$p$$1;
+    var url = __agent.getUrl();
     __agent.log(logCord$2, 'create new socket connect, wsurl = ' + url);
 
+    var warning = "\n    This way use the Socket.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/socket.io-client\n    ";
+
     try {
-      var ws = new WebSocket(url); // 启动监听服务
-      if (ws) {
-        // ==== onopen
-        ws.onopen = function (evt) {
-          var that = this;
-          __agent.wsHandler = this;
+      if (Tool.isUndefinedOrNull(window.io)) {
+        return console.warn(logCord$2, warning)
+      }
 
-          __agent.wsID = 'ws' + _$7.now() + _$7.random(1, 999999);
+      var ws = window.io(url);
+      ws.on('connect', function () {
+        __agent.log(logCord$2, 'is connecting ...');
+        __agent.wsHandler = ws;
+        __agent.isRunning = true;
 
-          if (that.readyState === 1) {
-            __agent.log(logCord$2, 'is connecting ...');
-            __agent.isRunning = true;
-            // 广播自己已经连接上
-            __agent.noticeWSOpen({ data: ws });
+        // 广播自己已经连接上
+        __agent.noticeWSOpen({ data: ws });
 
-            // 向服务器发送注册信息，测试返回
-            __agent.sendMessage(JSON.stringify({
-              'user_id': __agent.wsID,
-              'msg_type': 'c_notice_id_Info'
-            }));
-          }
+        // 向服务器发送注册信息，测试返回
+        __agent.sendMessage(JSON.stringify({
+          'user_id': __agent.wsID,
+          'msg_type': 'c_notice_id_Info'
+        }));
+      });
+      ws.on('message', function (event, data) {
+        __agent.log(logCord$2, event, data);
+        __agent.isRunning = true;
+
+        var msgPackage = '';
+        // Decodeing 匹配大部分数据格式，进行处理
+        if (Tool.isBlob(data)) {
+          Tool.blobData2String(data, function (text) {
+            msgPackage = text;
+            __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+          });
+          return
+        }
+        if (_$7.isObject(data)) {
+          msgPackage = JSON.stringify(data);
+          __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+        } else if (_$7.isString(data)) {
+          msgPackage = data;
+          __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
+        } else if (_$7.isNull(data)) {
+          console.warn(logCord$2, 'cannot process null data obj ....');
+        } else {
+          console.warn(logCord$2, 'cannot process this message type ....');
+        }
+      });
+      ws.on('event', function (data) {
+        __agent.log(logCord$2, 'on ws.on("event")');
+      });
+      ws.on('disconnect', function () {
+        try {
+          __agent.log(logCord$2, 'onclose code = ');
+        } catch (error) {}
+
+        var tryCreateWS = function () {
+          setTimeout(function () {
+            __agent.autoCreateWS();
+          }, __agent.getAutoReConnectSec());
         };
+        __agent.isRunning = false;
 
-        // ==== onmessage
-        ws.onmessage = function (evt) {
+        // notice some message for others
+        __agent.noticeWSClosed();
+        tryCreateWS();
+      });
+    } catch (error) {
+      __agent.log(logCord$2, error);
+      __agent.isRunning = false;
+      // notice some message for others
+      __agent.noticeCreateError({ errCode: error });
+    }
+  },
+  __createWSWithEngineIO: function () {
+    var __agent = __$p$$1;
+    var url = __agent.getUrl();
+    __agent.log(logCord$2, 'create new socket connect, wsurl = ' + url);
+    var warning = "\n    This way use the Engine.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/engine.io-client\n    ";
+
+    try {
+      if (Tool.isUndefinedOrNull(window.io)) {
+        return console.warn(logCord$2, warning)
+      }
+      var ws = new window.eio.Socket(url);
+      ws.on('open', function () {
+        __agent.log(logCord$2, 'is connecting ...');
+        __agent.wsHandler = ws;
+        __agent.isRunning = true;
+
+        ws.on('message', function (data) {
           __agent.isRunning = true;
-          __agent.log(logCord$2, evt.data);
+          __agent.log(logCord$2, data);
 
           var msgPackage = '';
           // Decodeing 匹配大部分数据格式，进行处理
-          if (Tool.isBlob(evt.data)) {
-            Tool.blobData2String(evt.data, function (text) {
+          if (Tool.isBlob(data)) {
+            Tool.blobData2String(data, function (text) {
               msgPackage = text;
               __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
             });
             return
           }
-          if (_$7.isObject(evt.data)) {
-            msgPackage = JSON.stringify(evt.data);
+          if (_$7.isObject(data)) {
+            msgPackage = JSON.stringify(data);
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-          } else if (_$7.isString(evt.data)) {
-            msgPackage = evt.data;
+          } else if (_$7.isString(data)) {
+            msgPackage = data;
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
           } else {
             console.warn(logCord$2, 'cannot process this message type ....');
           }
-        };
-
-        // ===== onerror = function (evt) {
-        ws.onerror = function (evt) {
-
-        };
-
-        // ==== onclose
-        ws.onclose = function (evt) {
+        });
+        ws.on('close', function () {
           try {
-            __agent.log(logCord$2, 'onclose code = ' + evt);
+            __agent.log(logCord$2, 'onclose code = ');
           } catch (error) {}
 
           var tryCreateWS = function () {
@@ -6460,34 +6563,49 @@ var __$p$$1 = {
           __agent.isRunning = false;
 
           // notice some message for others
-          __agent.noticeWSClosed({ errCode: evt.code });
+          __agent.noticeWSClosed();
           tryCreateWS();
-        };
-      }
+        });
+
+        // 广播自己已经连接上
+        __agent.noticeWSOpen({
+          data: ws
+        });
+
+        // 向服务器发送注册信息，测试返回
+        __agent.sendMessage(JSON.stringify({
+          'user_id': __agent.wsID,
+          'msg_type': 'c_notice_id_Info'
+        }));
+      });
     } catch (error) {
       __agent.log(logCord$2, error);
       __agent.isRunning = false;
       // notice some message for others
-      __agent.noticeCreateError({ errCode: error });
+      __agent.noticeCreateError({
+        errCode: error
+      });
     }
   }
-  // --------------------------------------------------------
 
 };
 
 // 批量处理注册及接收方式
 _$7.each(TypeMsg$1, function (eventType, key, list) {
-  __$p$$1['register' + key] = function (handler, one) {
+  var registerKey = 'register' + key;
+  var unregisterKey = 'unregister' + key;
+
+  __$p$$1[registerKey] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
     __$p$$1.mc.bind(eventType, handler, one);
   };
-  __$p$$1['unregister' + key] = function (handler) {
+  __$p$$1[unregisterKey] = function (handler) {
     __$p$$1.mc.unbind(eventType, handler);
   };
 });
 
-var ProxyClientWebsocketForPython = SelfClass.extend(__$p$$1);
+var ProxyClientWebsocketForNode = SelfClass.extend(__$p$$1);
 
 // -----------------------------------------------------------------------
 // 统一的Client Websocket 处理, 用来与后台服务器的交互处理
@@ -6496,9 +6614,9 @@ var ProxyClientWebsocketForPython = SelfClass.extend(__$p$$1);
 
 var _$10 = underscore._;
 
-var logCord$3 = '[SDK.Proxy.Client.Websocket.Node]';
+var logCord$3 = '[SDK.Proxy.Client.Websocket.Python]';
 
-var __key$2 = 'proxy-client-websocket-node';
+var __key$2 = 'proxy-client-websocket-python';
 var __msgPrefix$1 = __key$2 + '-' + _$10.now() + _$10.random(1, Number.MAX_SAFE_INTEGER) + '-';
 var TypeMsg$2 = {
   OnCreateError: __msgPrefix$1 + 'OnCreateError', // Websocket 创建失败
@@ -6510,11 +6628,6 @@ var TypeMsg$2 = {
 };
 
 var initializedTip$1 = "\nYou must use init(config) function first, the use listen to start!!!!\n";
-
-var ClientIOType = {
-  SocketIO: 'Socket.io.client',   // 适用于Node服务器使用的Socket.IO
-  EngineIO: 'Engine.io.client'    // 适用于Node服务器使用的Engine.IO
-};
 
 // ------------------------------------------------------------------------
 // Class ProxyClientWebsocketPrivate
@@ -6535,17 +6648,22 @@ var __$p$$3 = {
   getInternalMessageType: function () {
     return TypeMsg$2
   },
-  ClientIOType: ClientIOType,
+  // ------------------ log -------------------------------------------------
+  _traceLogEventsCount: function () {
+    var _events = __$p$$3.mc.getEvents();
+    __$p$$3.log(logCord$3, ' _events count = ' + _$10.keys(_events).length);
+  },
+  _traceLogCacheSendMessageCount: function () {
+    __$p$$3.log(logCord$3, ' cacheMessage count = ' + __$p$$3.cacheSendMessage.length);
+  },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
   config: {       // 包含的基本配置
     ip: '127.0.0.1',
-    port: '8888',
-    protocol: 'http://',
-    reqUrl: '',
-    clientIOType: ClientIOType.SocketIO,              // 默认使用这种的Socket链接方式
+    port: '8080',
+    protocol: 'ws://',
+    reqUrl: '/websocket',
     autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
-    customSendEventDefine: 'sendMsgEvent',            // 定义核心交互的事件类型
     debug: true
   },
   getUrl: function () {
@@ -6588,36 +6706,39 @@ var __$p$$3 = {
     }
 
     first ? __$p$$3.cacheSendMessage.unshift(message) : __$p$$3.cacheSendMessage.push(message);
-    _$10.each(__$p$$3.cacheSendMessage, function (curMessage) {
-      // 做好区分的准备
-      if (__$p$$3.config.clientIOType === ClientIOType.SocketIO) {
-        __$p$$3.wsHandler.send(__$p$$3.config.customSendEventDefine, curMessage);
-      } else if (__$p$$3.config.clientIOType === ClientIOType.EngineIO) {
-        __$p$$3.wsHandler.send(curMessage);
-      }
 
+    __$p$$3._traceLogCacheSendMessageCount();
+    _$10.each(__$p$$3.cacheSendMessage, function (curMessage) {
+      __$p$$3.wsHandler.send(curMessage);
+
+      __$p$$3._traceLogEventsCount();
       __$p$$3.mc.trigger(TypeMsg$2.OnSendMessageToServer, curMessage);
       __$p$$3.cacheSendMessage.shift();
     });
+    __$p$$3._traceLogCacheSendMessageCount();
   },
   onReceiveMessage: function (message) {
+    __$p$$3._traceLogEventsCount();
     __$p$$3.mc.trigger(TypeMsg$2.OnWSGetServerMessage, message);
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: function (message) {
+    __$p$$3._traceLogEventsCount();
     __$p$$3.mc.trigger(TypeMsg$2.OnCreateError, message);
   },
   noticeWSOpen: function (message) {
+    __$p$$3._traceLogEventsCount();
     __$p$$3.mc.trigger(TypeMsg$2.OnWSOpen, message);
   },
   noticeWSClosed: function (message) {
+    __$p$$3._traceLogEventsCount();
     __$p$$3.mc.trigger(TypeMsg$2.OnWSClose, message);
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
   autoCWSTimesIndex: 0,  // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
-  wsID: '', // 客户端ID
+  wsID: _$10.uniqueId(__key$2), // 客户端唯一ID
   showInitializedTip: function () {
     console.warn(logCord$3, initializedTip$1);
   },
@@ -6629,142 +6750,72 @@ var __$p$$3 = {
       // 尝试新的链接
       if (__$p$$3.autoCWSTimesIndex <= __$p$$3.autoReconnectMaxRunTimes) {
         __$p$$3.log(logCord$3, 'try create new socket connect, port = ' + __$p$$3.config.port);
-        __$p$$3.createWS();
+        __$p$$3.createWS(__$p$$3.getUrl());
       }
       ++__$p$$3.autoCWSTimesIndex;
     }
   },
-  createWS: function () { // 建立Websocket 客户端
+  createWS: function (url) { // 建立Websocket 客户端
     var __agent = __$p$$3;
-    if (__agent.config.clientIOType === ClientIOType.SocketIO) {
-      __$p$$3.__createWSWithSocketIO();
-    } else if (__agent.config.clientIOType === ClientIOType.EngineIO) {
-      __$p$$3.__createWSWithEngineIO();
-    }
-  },
-  // --------------------------------------------------------
-  __createWSWithSocketIO: function () {
-    var __agent = __$p$$3;
-    var url = __agent.getUrl();
+    var WebSocket = window.WebSocket || window.MozWebSocket;
     __agent.log(logCord$3, 'create new socket connect, wsurl = ' + url);
 
-    var warning = "\n    This way use the Socket.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/socket.io-client\n    ";
-
     try {
-      if (Tool.isUndefinedOrNull(window.io)) {
-        return console.warn(logCord$3, warning)
-      }
+      var ws = new WebSocket(url); // 启动监听服务
+      if (ws) {
+        // ==== onopen
+        ws.onopen = function (evt) {
+          var that = this;
+          __agent.wsHandler = this;
 
-      var ws = window.io(url);
-      ws.on('connect', function () {
-        __agent.log(logCord$3, 'is connecting ...');
-        __agent.wsHandler = ws;
-        __agent.wsID = ws.id;
-        __agent.isRunning = true;
+          if (that.readyState === 1) {
+            __agent.log(logCord$3, 'is connecting ...');
+            __agent.isRunning = true;
+            // 广播自己已经连接上
+            __agent.noticeWSOpen({ data: ws });
 
-        // 广播自己已经连接上
-        __agent.noticeWSOpen({ data: ws });
-
-        // 向服务器发送注册信息，测试返回
-        __agent.sendMessage(JSON.stringify({
-          'user_id': __agent.wsID,
-          'msg_type': 'c_notice_id_Info'
-        }));
-      });
-      ws.on('message', function (event, data) {
-        __agent.log(logCord$3, event, data);
-        __agent.isRunning = true;
-
-        var msgPackage = '';
-        // Decodeing 匹配大部分数据格式，进行处理
-        if (Tool.isBlob(data)) {
-          Tool.blobData2String(data, function (text) {
-            msgPackage = text;
-            __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-          });
-          return
-        }
-        if (_$10.isObject(data)) {
-          msgPackage = JSON.stringify(data);
-          __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-        } else if (_$10.isString(data)) {
-          msgPackage = data;
-          __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-        } else if (_$10.isNull(data)) {
-          console.warn(logCord$3, 'cannot process null data obj ....');
-        } else {
-          console.warn(logCord$3, 'cannot process this message type ....');
-        }
-      });
-      ws.on('event', function (data) {
-        __agent.log(logCord$3, 'on ws.on("event")');
-      });
-      ws.on('disconnect', function () {
-        try {
-          __agent.log(logCord$3, 'onclose code = ');
-        } catch (error) {}
-
-        var tryCreateWS = function () {
-          setTimeout(function () {
-            __agent.autoCreateWS();
-          }, __agent.getAutoReConnectSec());
+            // 向服务器发送注册信息，测试返回
+            __agent.sendMessage(JSON.stringify({
+              'user_id': __agent.wsID,
+              'msg_type': 'c_notice_id_Info'
+            }));
+          }
         };
-        __agent.isRunning = false;
 
-        // notice some message for others
-        __agent.noticeWSClosed();
-        tryCreateWS();
-      });
-    } catch (error) {
-      __agent.log(logCord$3, error);
-      __agent.isRunning = false;
-      // notice some message for others
-      __agent.noticeCreateError({ errCode: error });
-    }
-  },
-  __createWSWithEngineIO: function () {
-    var __agent = __$p$$3;
-    var url = __agent.getUrl();
-    __agent.log(logCord$3, 'create new socket connect, wsurl = ' + url);
-    var warning = "\n    This way use the Engine.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/engine.io-client\n    ";
-
-    try {
-      if (Tool.isUndefinedOrNull(window.io)) {
-        return console.warn(logCord$3, warning)
-      }
-      var ws = new window.eio.Socket(url);
-      ws.on('open', function () {
-        __agent.log(logCord$3, 'is connecting ...');
-        __agent.wsHandler = ws;
-        __agent.wsID = ws.id;
-        __agent.isRunning = true;
-
-        ws.on('message', function (data) {
+        // ==== onmessage
+        ws.onmessage = function (evt) {
           __agent.isRunning = true;
-          __agent.log(logCord$3, data);
+          __agent.log(logCord$3, evt.data);
 
           var msgPackage = '';
           // Decodeing 匹配大部分数据格式，进行处理
-          if (Tool.isBlob(data)) {
-            Tool.blobData2String(data, function (text) {
+          if (Tool.isBlob(evt.data)) {
+            Tool.blobData2String(evt.data, function (text) {
               msgPackage = text;
               __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
             });
             return
           }
-          if (_$10.isObject(data)) {
-            msgPackage = JSON.stringify(data);
+          if (_$10.isObject(evt.data)) {
+            msgPackage = JSON.stringify(evt.data);
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-          } else if (_$10.isString(data)) {
-            msgPackage = data;
+          } else if (_$10.isString(evt.data)) {
+            msgPackage = evt.data;
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
           } else {
             console.warn(logCord$3, 'cannot process this message type ....');
           }
-        });
-        ws.on('close', function () {
+        };
+
+        // ===== onerror = function (evt) {
+        ws.onerror = function (evt) {
+
+        };
+
+        // ==== onclose
+        ws.onclose = function (evt) {
           try {
-            __agent.log(logCord$3, 'onclose code = ');
+            __agent.log(logCord$3, 'onclose code = ' + evt);
           } catch (error) {}
 
           var tryCreateWS = function () {
@@ -6775,49 +6826,34 @@ var __$p$$3 = {
           __agent.isRunning = false;
 
           // notice some message for others
-          __agent.noticeWSClosed();
+          __agent.noticeWSClosed({ errCode: evt.code });
           tryCreateWS();
-        });
-
-        // 广播自己已经连接上
-        __agent.noticeWSOpen({
-          data: ws
-        });
-
-        // 向服务器发送注册信息，测试返回
-        __agent.sendMessage(JSON.stringify({
-          'user_id': __agent.wsID,
-          'msg_type': 'c_notice_id_Info'
-        }));
-      });
+        };
+      }
     } catch (error) {
       __agent.log(logCord$3, error);
       __agent.isRunning = false;
       // notice some message for others
-      __agent.noticeCreateError({
-        errCode: error
-      });
+      __agent.noticeCreateError({ errCode: error });
     }
   }
+  // --------------------------------------------------------
 
 };
 
 // 批量处理注册及接收方式
 _$10.each(TypeMsg$2, function (eventType, key, list) {
-  var registerKey = 'register' + key;
-  var unregisterKey = 'unregister' + key;
-
-  __$p$$3[registerKey] = function (handler, one) {
+  __$p$$3['register' + key] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
     __$p$$3.mc.bind(eventType, handler, one);
   };
-  __$p$$3[unregisterKey] = function (handler) {
+  __$p$$3['unregister' + key] = function (handler) {
     __$p$$3.mc.unbind(eventType, handler);
   };
 });
 
-var ProxyClientWebsocketForNode = SelfClass.extend(__$p$$3);
+var ProxyClientWebsocketForPython = SelfClass.extend(__$p$$3);
 
 // -----------------------------------------------------------------------
 // 统一的Client Websocket 处理, 用来与后台服务器的交互处理
@@ -6908,8 +6944,14 @@ var __$p$ = {
       console.log(title, message, end);
     }
   },
+  // ------------------ log -------------------------------------------------
+  _traceLogEventsCount: function () {
+    var _events = __$p$.mc.getEvents();
+    __$p$.log(logCord$1, ' _events count = ' + _$6.keys(_events).length);
+  },
   // --------------------------------------------------------
   init: function () {
+    __$p$.debug = true;
   },
   // --------------- 信息交互 通道建立 ------------------------
   ChancelType: ChancelType,
@@ -6956,42 +6998,48 @@ var __$p$ = {
     _$6.each(__$p$.__chancelList, function (chancel) {
       chancel.server.sendMessage(message);
     });
+    __$p$._traceLogEventsCount();
     __$p$.mc.trigger(TypeMsg.OnNoticeToServer, message);
     return __$p$
   },
   onReceiveFromServer: function (message) {
+    __$p$._traceLogEventsCount();
     __$p$.mc.trigger(TypeMsg.OnReceiveFromServer, message);
   },
   onStartBuildChannel: function (message) {
+    __$p$._traceLogEventsCount();
     __$p$.mc.trigger(TypeMsg.OnStartBuildChannel, message);
   },
   onBuildChannelError: function (message) {
+    __$p$._traceLogEventsCount();
     __$p$.mc.trigger(TypeMsg.OnBuildChannelError, message);
   },
   onFinishBuildChannel: function (message) {
+    __$p$._traceLogEventsCount();
     __$p$.mc.trigger(TypeMsg.OnFinishBuildChannel, message);
   },
   onChannelFault: function (message) {
+    __$p$._traceLogEventsCount();
     __$p$.mc.trigger(TypeMsg.OnChannelFault, message);
   }
 };
 
 // 批量处理注册及接收方式
 _$6.each(TypeMsg, function (eventType, key, list) {
-  __$p$['register' + key] = function (handler, one) {
+  var registerKey = 'register' + key;
+  var unregisterKey = 'unregister' + key;
+
+  __$p$[registerKey] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
     __$p$.mc.bind(eventType, handler, one);
   };
-  __$p$['unregister' + key] = function (handler) {
+  __$p$[unregisterKey] = function (handler) {
     __$p$.mc.unbind(eventType, handler);
   };
 });
 
 var AgentClient = SelfClass.extend(__$p$);
-
-//
-// -----------------------------------------------
 
 var _$13 = underscore._;
 

@@ -111,6 +111,10 @@ var Observable = SelfClass.extend({
     this._events = {}
   },
 
+  getMetaDataEvents: function () {
+    return this._events
+  },
+
   bind: function (eventName, handlers, one) {
     var that = this,
       idx,

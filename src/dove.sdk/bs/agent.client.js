@@ -1,8 +1,9 @@
-import { ProxyClientWebsocketForPython } from './proxy.client.websocket.python'
 import { ProxyClientWebsocketForNode } from './proxy.client.websocket.node'
+import { ProxyClientWebsocketForPython } from './proxy.client.websocket.python'
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
 import underscore from '../underscore'
+
 var _ = underscore._
 
 // -----------------------------------------------------------------------
@@ -79,8 +80,14 @@ var __$p$ = {
       console.log(title, message, end)
     }
   },
+  // ------------------ log -------------------------------------------------
+  _traceLogEventsCount: function () {
+    const _events = __$p$.mc.getEvents()
+    __$p$.log(logCord, ' _events count = ' + _.keys(_events).length)
+  },
   // --------------------------------------------------------
   init: () => {
+    __$p$.debug = true
   },
   // --------------- 信息交互 通道建立 ------------------------
   ChancelType: ChancelType,
@@ -127,32 +134,41 @@ var __$p$ = {
     _.each(__$p$.__chancelList, (chancel) => {
       chancel.server.sendMessage(message)
     })
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnNoticeToServer, message)
     return __$p$
   },
   onReceiveFromServer: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnReceiveFromServer, message)
   },
   onStartBuildChannel: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnStartBuildChannel, message)
   },
   onBuildChannelError: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnBuildChannelError, message)
   },
   onFinishBuildChannel: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnFinishBuildChannel, message)
   },
   onChannelFault: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnChannelFault, message)
   }
 }
 
 // 批量处理注册及接收方式
 _.each(TypeMsg, (eventType, key, list) => {
-  __$p$['register' + key] = (handler, one = false) => {
+  var registerKey = 'register' + key
+  var unregisterKey = 'unregister' + key
+
+  __$p$[registerKey] = (handler, one = false) => {
     __$p$.mc.bind(eventType, handler, one)
   }
-  __$p$['unregister' + key] = (handler) => {
+  __$p$[unregisterKey] = (handler) => {
     __$p$.mc.unbind(eventType, handler)
   }
 })

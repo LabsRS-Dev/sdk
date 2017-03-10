@@ -45,6 +45,14 @@ var __$p$ = {
     return TypeMsg
   },
   ClientIOType: ClientIOType,
+  // ------------------ log -------------------------------------------------
+  _traceLogEventsCount: function () {
+    const _events = __$p$.mc.getEvents()
+    __$p$.log(logCord, ' _events count = ' + _.keys(_events).length)
+  },
+  _traceLogCacheSendMessageCount: function () {
+    __$p$.log(logCord, ' cacheMessage count = ' + __$p$.cacheSendMessage.length)
+  },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
   config: {       // 包含的基本配置
@@ -93,6 +101,8 @@ var __$p$ = {
     }
 
     first ? __$p$.cacheSendMessage.unshift(message) : __$p$.cacheSendMessage.push(message)
+
+    __$p$._traceLogCacheSendMessageCount()
     _.each(__$p$.cacheSendMessage, (curMessage) => {
       // 做好区分的准备
       if (__$p$.config.clientIOType === ClientIOType.SocketIO) {
@@ -101,28 +111,34 @@ var __$p$ = {
         __$p$.wsHandler.send(curMessage)
       }
 
+      __$p$._traceLogEventsCount()
       __$p$.mc.trigger(TypeMsg.OnSendMessageToServer, curMessage)
       __$p$.cacheSendMessage.shift()
     })
+    __$p$._traceLogCacheSendMessageCount()
   },
   onReceiveMessage: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnWSGetServerMessage, message)
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnCreateError, message)
   },
   noticeWSOpen: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnWSOpen, message)
   },
   noticeWSClosed: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnWSClose, message)
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
   autoCWSTimesIndex: 0,  // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
-  wsID: '', // 客户端ID
+  wsID: _.uniqueId(__key), // 客户端唯一ID
   showInitializedTip: () => {
     console.warn(logCord, initializedTip)
   },
@@ -167,7 +183,6 @@ var __$p$ = {
       ws.on('connect', () => {
         __agent.log(logCord, 'is connecting ...')
         __agent.wsHandler = ws
-        __agent.wsID = ws.id
         __agent.isRunning = true
 
         // 广播自己已经连接上
@@ -247,7 +262,6 @@ var __$p$ = {
       ws.on('open', () => {
         __agent.log(logCord, 'is connecting ...')
         __agent.wsHandler = ws
-        __agent.wsID = ws.id
         __agent.isRunning = true
 
         ws.on('message', (data) => {

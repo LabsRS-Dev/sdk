@@ -1,5 +1,7 @@
 import { Observable, SelfClass } from '../observable'
+
 import underscore from '../underscore'
+
 var _ = underscore._
 
 var __$p$ = {
@@ -14,6 +16,9 @@ var __$p$ = {
     }
   },
 
+  getEvents: () => {
+    return __$p$.__mc.getMetaDataEvents()
+  },
   bind: function (eventName, handlers, one = false) {
     __$p$.__mc.bind(eventName, handlers, one)
   },

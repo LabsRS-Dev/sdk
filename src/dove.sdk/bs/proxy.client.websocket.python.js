@@ -1,7 +1,8 @@
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
-import underscore from '../underscore'
 import { Tool } from '../include'
+import underscore from '../underscore'
+
 const _ = underscore._
 
 const logCord = '[SDK.Proxy.Client.Websocket.Python]'
@@ -37,6 +38,14 @@ var __$p$ = {
   },
   getInternalMessageType: function () {
     return TypeMsg
+  },
+  // ------------------ log -------------------------------------------------
+  _traceLogEventsCount: function () {
+    const _events = __$p$.mc.getEvents()
+    __$p$.log(logCord, ' _events count = ' + _.keys(_events).length)
+  },
+  _traceLogCacheSendMessageCount: function () {
+    __$p$.log(logCord, ' cacheMessage count = ' + __$p$.cacheSendMessage.length)
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
@@ -84,30 +93,39 @@ var __$p$ = {
     }
 
     first ? __$p$.cacheSendMessage.unshift(message) : __$p$.cacheSendMessage.push(message)
+
+    __$p$._traceLogCacheSendMessageCount()
     _.each(__$p$.cacheSendMessage, (curMessage) => {
       __$p$.wsHandler.send(curMessage)
+
+      __$p$._traceLogEventsCount()
       __$p$.mc.trigger(TypeMsg.OnSendMessageToServer, curMessage)
       __$p$.cacheSendMessage.shift()
     })
+    __$p$._traceLogCacheSendMessageCount()
   },
   onReceiveMessage: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnWSGetServerMessage, message)
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnCreateError, message)
   },
   noticeWSOpen: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnWSOpen, message)
   },
   noticeWSClosed: (message) => {
+    __$p$._traceLogEventsCount()
     __$p$.mc.trigger(TypeMsg.OnWSClose, message)
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
   autoCWSTimesIndex: 0,  // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
-  wsID: '', // 客户端ID
+  wsID: _.uniqueId(__key), // 客户端唯一ID
   showInitializedTip: () => {
     console.warn(logCord, initializedTip)
   },
@@ -136,8 +154,6 @@ var __$p$ = {
         ws.onopen = function (evt) {
           var that = this
           __agent.wsHandler = this
-
-          __agent.wsID = 'ws' + _.now() + _.random(1, 999999)
 
           if (that.readyState === 1) {
             __agent.log(logCord, 'is connecting ...')
