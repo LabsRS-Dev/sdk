@@ -6,27 +6,26 @@ var _ = underscore._
 
 var __$p$ = {
   init: function () {
-    __$p$.__mc = new Observable()
+    this.__mc = new Observable()
   },
-
   debugLog: false,
-  log: (title, message, end = '') => {
-    if (__$p$.debugLog) {
+  log: function (title, message, end = '') {
+    if (this.debugLog) {
       console.log(title, message, end)
     }
   },
 
-  getEvents: () => {
-    return __$p$.__mc.getMetaDataEvents()
+  getEvents: function () {
+    return this.__mc.getMetaDataEvents()
   },
   bind: function (eventName, handlers, one = false) {
-    __$p$.__mc.bind(eventName, handlers, one)
+    this.__mc.bind(eventName, handlers, one)
   },
   one: function (eventNames, handlers) {
-    __$p$.__mc.one(eventNames, handlers)
+    this.__mc.one(eventNames, handlers)
   },
   first: function (eventName, handlers) {
-    __$p$.__mc.first(eventName, handlers)
+    this.__mc.first(eventName, handlers)
   },
   trigger: function (eventName, e) {
     // 检测e的对象类型
@@ -34,16 +33,16 @@ var __$p$ = {
       try {
         e = JSON.parse(e)
       } catch (err) {
-        __$p$.log('found err:', err)
+        this.log('found err:', err)
         e = {
           data: e
         }
       }
     }
-    __$p$.__mc.trigger(eventName, e)
+    this.__mc.trigger(eventName, e)
   },
   unbind: function (eventName, handler) {
-    __$p$.__mc.unbind(eventName, handler)
+    this.__mc.unbind(eventName, handler)
   }
 }
 

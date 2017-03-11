@@ -12,7 +12,6 @@ function deepExtend (destination) {
   for (i = 1; i < length; i++) {
     deepExtendOne(destination, arguments[i])
   }
-
   return destination
 }
 
@@ -64,17 +63,8 @@ var isDefaultPrevented = function () {
   return this._defaultPrevented === true
 }
 
-const logCord = '[SDK.SelfClass]'
-const debugTip = `
-[*] SelfClass must be care for this . use your self var
-You are running DoveMaxSDK in development mode.
-Make sure to turn on production mode when deploying for production.
-See more tips at https://github.com/LabsRS-Dev/sdk
-`
-
 function SelfClass () {}
 SelfClass.extend = function (proto) {
-  console.warn(logCord, debugTip)
   var base = function () {},
     member,
     that = this,
@@ -90,7 +80,7 @@ SelfClass.extend = function (proto) {
     if (proto[member] != null && proto[member].constructor === Object) {
       // Merge object members
       // fn[member] = extend(true, {}, base.prototype[member], proto[member])
-      fn[member] = _.extend({}, base.prototype[member], proto[member])
+      fn[member] = deepExtend({}, base.prototype[member], proto[member])
     } else {
       fn[member] = proto[member]
     }
@@ -109,6 +99,11 @@ SelfClass.prototype._initOptions = function (options) {
 var Observable = SelfClass.extend({
   init: function () {
     this._events = {}
+    this._name = _.uniqueId('SDK-Observable-')
+  },
+
+  getInternalName: function () {
+    return this._name
   },
 
   getMetaDataEvents: function () {

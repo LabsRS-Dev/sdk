@@ -20,11 +20,11 @@ var __$p$ = {
   name: __key,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$.mc
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end = '') {
-    if (__$p$.debug) {
+    if (this.debug) {
       console.log(title, message, end)
     }
   },
@@ -39,7 +39,7 @@ var __$p$ = {
 
   _isStarted: false,
   start: function (config) {
-    var that = __$p$
+    var that = this
     if (that._isStarted) {
       console.warn(logCord, 'is started .... you can use bind message to process you data')
       return
@@ -52,7 +52,7 @@ var __$p$ = {
   },
 
   __startNodeWebServer: (cg) => {
-    var that = __$p$
+    var that = this
     that.log(logCord, 'start node web server')
 
     const taskID = __key + _.now()

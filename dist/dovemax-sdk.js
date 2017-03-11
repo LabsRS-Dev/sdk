@@ -1902,7 +1902,6 @@ function deepExtend (destination) {
   for (i = 1; i < length; i++) {
     deepExtendOne(destination, arguments$1[i]);
   }
-
   return destination
 }
 
@@ -1954,12 +1953,8 @@ var isDefaultPrevented = function () {
   return this._defaultPrevented === true
 };
 
-var logCord = '[SDK.SelfClass]';
-var debugTip = "\n[*] SelfClass must be care for this . use your self var\nYou are running DoveMaxSDK in development mode.\nMake sure to turn on production mode when deploying for production.\nSee more tips at https://github.com/LabsRS-Dev/sdk\n";
-
 function SelfClass () {}
 SelfClass.extend = function (proto) {
-  console.warn(logCord, debugTip);
   var base = function () {},
     member,
     that = this,
@@ -1975,7 +1970,7 @@ SelfClass.extend = function (proto) {
     if (proto[member] != null && proto[member].constructor === Object) {
       // Merge object members
       // fn[member] = extend(true, {}, base.prototype[member], proto[member])
-      fn[member] = _$4.extend({}, base.prototype[member], proto[member]);
+      fn[member] = deepExtend({}, base.prototype[member], proto[member]);
     } else {
       fn[member] = proto[member];
     }
@@ -1994,6 +1989,11 @@ SelfClass.prototype._initOptions = function (options) {
 var Observable = SelfClass.extend({
   init: function () {
     this._events = {};
+    this._name = _$4.uniqueId('SDK-Observable-');
+  },
+
+  getInternalName: function () {
+    return this._name
   },
 
   getMetaDataEvents: function () {
@@ -5851,31 +5851,30 @@ var _$8 = underscore._;
 
 var __$p$$2 = {
   init: function () {
-    __$p$$2.__mc = new Observable();
+    this.__mc = new Observable();
   },
-
   debugLog: false,
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
 
-    if (__$p$$2.debugLog) {
+    if (this.debugLog) {
       console.log(title, message, end);
     }
   },
 
   getEvents: function () {
-    return __$p$$2.__mc.getMetaDataEvents()
+    return this.__mc.getMetaDataEvents()
   },
   bind: function (eventName, handlers, one) {
     if ( one === void 0 ) one = false;
 
-    __$p$$2.__mc.bind(eventName, handlers, one);
+    this.__mc.bind(eventName, handlers, one);
   },
   one: function (eventNames, handlers) {
-    __$p$$2.__mc.one(eventNames, handlers);
+    this.__mc.one(eventNames, handlers);
   },
   first: function (eventName, handlers) {
-    __$p$$2.__mc.first(eventName, handlers);
+    this.__mc.first(eventName, handlers);
   },
   trigger: function (eventName, e) {
     // 检测e的对象类型
@@ -5883,16 +5882,16 @@ var __$p$$2 = {
       try {
         e = JSON.parse(e);
       } catch (err) {
-        __$p$$2.log('found err:', err);
+        this.log('found err:', err);
         e = {
           data: e
         };
       }
     }
-    __$p$$2.__mc.trigger(eventName, e);
+    this.__mc.trigger(eventName, e);
   },
   unbind: function (eventName, handler) {
-    __$p$$2.__mc.unbind(eventName, handler);
+    this.__mc.unbind(eventName, handler);
   }
 };
 
@@ -6270,7 +6269,7 @@ var Tool = {
 
 var _$7 = underscore._;
 
-var logCord$2 = '[SDK.Proxy.Client.Websocket.Node]';
+var logCord$1 = '[SDK.Proxy.Client.Websocket.Node]';
 
 var __key$1 = 'proxy-client-websocket-node';
 var __msgPrefix = __key$1 + '-' + _$7.now() + _$7.random(1, Number.MAX_SAFE_INTEGER) + '-';
@@ -6296,13 +6295,13 @@ var __$p$$1 = {
   name: __key$1,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$$1.mc
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
 
-    if (__$p$$1.debug) {
+    if (this.debug) {
       console.log(title, message, end);
     }
   },
@@ -6312,11 +6311,11 @@ var __$p$$1 = {
   ClientIOType: ClientIOType,
   // ------------------ log -------------------------------------------------
   _traceLogEventsCount: function () {
-    var _events = __$p$$1.mc.getEvents();
-    __$p$$1.log(logCord$2, ' _events count = ' + _$7.keys(_events).length);
+    var _events = this.mc.getEvents();
+    this.log(logCord$1, ' _events count = ' + _$7.keys(_events).length);
   },
   _traceLogCacheSendMessageCount: function () {
-    __$p$$1.log(logCord$2, ' cacheMessage count = ' + __$p$$1.cacheSendMessage.length);
+    this.log(logCord$1, ' cacheMessage count = ' + this.cacheSendMessage.length);
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
@@ -6331,28 +6330,28 @@ var __$p$$1 = {
     debug: true
   },
   getUrl: function () {
-    var that = __$p$$1;
+    var that = this;
     var url = that.config.protocol + that.config.ip + ':' + that.config.port + that.config.reqUrl;
     return url
   },
   getAutoReConnectSec: function () {
-    return __$p$$1.config.autoReconnectMaxRunTimes
+    return this.config.autoReconnectMaxRunTimes
   },
   isRunning: false,
   initWithConfig: function (inConfig) {
     if ( inConfig === void 0 ) inConfig = {};
 
-    __$p$$1.log(logCord$2, __key$1 + ' call initWithConfig function ....');
-    __$p$$1.config = _$7.extend(__$p$$1.config, inConfig);
-    __$p$$1.debug = __$p$$1.config.debug;
-    __$p$$1.initialized = true;
+    this.log(logCord$1, __key$1 + ' call initWithConfig function ....');
+    this.config = _$7.extend(this.config, inConfig);
+    this.debug = this.config.debug;
+    this.initialized = true;
   },
   run: function () {
-    if (!__$p$$1.initialized) {
-      __$p$$1.showInitializedTip();
+    if (!this.initialized) {
+      this.showInitializedTip();
       return
     }
-    __$p$$1.autoCreateWS();
+    this.autoCreateWS();
   },
   // ------------------------------------------------
   // 消息交互的核心部分
@@ -6363,45 +6362,50 @@ var __$p$$1 = {
   sendMessage: function (message, first) {
     if ( first === void 0 ) first = false;
    // 客户端向服务器发送消息
-    if (!__$p$$1.isRunning || !__$p$$1.wsHandler) {
-      __$p$$1.cacheSendMessage.push(message);
-      console.warn(logCord$2, 'WebSocket is not running .....');
+    var that = this;
+    if (!that.isRunning || !that.wsHandler) {
+      that.cacheSendMessage.push(message);
+      console.warn(logCord$1, 'WebSocket is not running .....');
       return
     }
 
-    first ? __$p$$1.cacheSendMessage.unshift(message) : __$p$$1.cacheSendMessage.push(message);
+    first ? that.cacheSendMessage.unshift(message) : that.cacheSendMessage.push(message);
 
-    __$p$$1._traceLogCacheSendMessageCount();
-    _$7.each(__$p$$1.cacheSendMessage, function (curMessage) {
+    that._traceLogCacheSendMessageCount();
+    _$7.each(that.cacheSendMessage, function (curMessage) {
       // 做好区分的准备
-      if (__$p$$1.config.clientIOType === ClientIOType.SocketIO) {
-        __$p$$1.wsHandler.send(__$p$$1.config.customSendEventDefine, curMessage);
-      } else if (__$p$$1.config.clientIOType === ClientIOType.EngineIO) {
-        __$p$$1.wsHandler.send(curMessage);
+      if (that.config.clientIOType === ClientIOType.SocketIO) {
+        that.wsHandler.send(that.config.customSendEventDefine, curMessage);
+      } else if (that.config.clientIOType === ClientIOType.EngineIO) {
+        that.wsHandler.send(curMessage);
       }
 
-      __$p$$1._traceLogEventsCount();
-      __$p$$1.mc.trigger(TypeMsg$1.OnSendMessageToServer, curMessage);
-      __$p$$1.cacheSendMessage.shift();
+      that._traceLogEventsCount();
+      that.mc.trigger(TypeMsg$1.OnSendMessageToServer, curMessage);
+      that.cacheSendMessage.shift();
     });
-    __$p$$1._traceLogCacheSendMessageCount();
+    that._traceLogCacheSendMessageCount();
   },
   onReceiveMessage: function (message) {
-    __$p$$1._traceLogEventsCount();
-    __$p$$1.mc.trigger(TypeMsg$1.OnWSGetServerMessage, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$1.OnWSGetServerMessage, message);
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: function (message) {
-    __$p$$1._traceLogEventsCount();
-    __$p$$1.mc.trigger(TypeMsg$1.OnCreateError, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$1.OnCreateError, message);
   },
   noticeWSOpen: function (message) {
-    __$p$$1._traceLogEventsCount();
-    __$p$$1.mc.trigger(TypeMsg$1.OnWSOpen, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$1.OnWSOpen, message);
   },
   noticeWSClosed: function (message) {
-    __$p$$1._traceLogEventsCount();
-    __$p$$1.mc.trigger(TypeMsg$1.OnWSClose, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$1.OnWSClose, message);
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
@@ -6409,45 +6413,47 @@ var __$p$$1 = {
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: _$7.uniqueId(__key$1), // 客户端唯一ID
   showInitializedTip: function () {
-    console.warn(logCord$2, initializedTip);
+    console.warn(logCord$1, initializedTip);
   },
   autoCreateWS: function () {
-    __$p$$1._pAutoCreateWS();
+    var that = this;
+    that._pAutoCreateWS();
   },
   _pAutoCreateWS: function () {
-    if (!__$p$$1.isRunning) {
+    var that = this;
+    if (!that.isRunning) {
       // 尝试新的链接
-      if (__$p$$1.autoCWSTimesIndex <= __$p$$1.autoReconnectMaxRunTimes) {
-        __$p$$1.log(logCord$2, 'try create new socket connect, port = ' + __$p$$1.config.port);
-        __$p$$1.createWS();
+      if (that.autoCWSTimesIndex <= that.autoReconnectMaxRunTimes) {
+        that.log(logCord$1, 'try create new socket connect, port = ' + that.config.port);
+        that.createWS();
       }
-      ++__$p$$1.autoCWSTimesIndex;
+      ++that.autoCWSTimesIndex;
     }
   },
   createWS: function () { // 建立Websocket 客户端
-    var __agent = __$p$$1;
-    if (__agent.config.clientIOType === ClientIOType.SocketIO) {
-      __$p$$1.__createWSWithSocketIO();
-    } else if (__agent.config.clientIOType === ClientIOType.EngineIO) {
-      __$p$$1.__createWSWithEngineIO();
+    var that = this;
+    if (that.config.clientIOType === ClientIOType.SocketIO) {
+      that.__createWSWithSocketIO();
+    } else if (that.config.clientIOType === ClientIOType.EngineIO) {
+      that.__createWSWithEngineIO();
     }
   },
   // --------------------------------------------------------
   __createWSWithSocketIO: function () {
-    var __agent = __$p$$1;
+    var __agent = this;
     var url = __agent.getUrl();
-    __agent.log(logCord$2, 'create new socket connect, wsurl = ' + url);
+    __agent.log(logCord$1, 'create new socket connect, wsurl = ' + url);
 
     var warning = "\n    This way use the Socket.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/socket.io-client\n    ";
 
     try {
       if (Tool.isUndefinedOrNull(window.io)) {
-        return console.warn(logCord$2, warning)
+        return console.warn(logCord$1, warning)
       }
 
       var ws = window.io(url);
       ws.on('connect', function () {
-        __agent.log(logCord$2, 'is connecting ...');
+        __agent.log(logCord$1, 'is connecting ...');
         __agent.wsHandler = ws;
         __agent.isRunning = true;
 
@@ -6461,7 +6467,7 @@ var __$p$$1 = {
         }));
       });
       ws.on('message', function (event, data) {
-        __agent.log(logCord$2, event, data);
+        __agent.log(logCord$1, event, data);
         __agent.isRunning = true;
 
         var msgPackage = '';
@@ -6480,17 +6486,17 @@ var __$p$$1 = {
           msgPackage = data;
           __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
         } else if (_$7.isNull(data)) {
-          console.warn(logCord$2, 'cannot process null data obj ....');
+          console.warn(logCord$1, 'cannot process null data obj ....');
         } else {
-          console.warn(logCord$2, 'cannot process this message type ....');
+          console.warn(logCord$1, 'cannot process this message type ....');
         }
       });
       ws.on('event', function (data) {
-        __agent.log(logCord$2, 'on ws.on("event")');
+        __agent.log(logCord$1, 'on ws.on("event")');
       });
       ws.on('disconnect', function () {
         try {
-          __agent.log(logCord$2, 'onclose code = ');
+          __agent.log(logCord$1, 'onclose code = ');
         } catch (error) {}
 
         var tryCreateWS = function () {
@@ -6505,31 +6511,31 @@ var __$p$$1 = {
         tryCreateWS();
       });
     } catch (error) {
-      __agent.log(logCord$2, error);
+      __agent.log(logCord$1, error);
       __agent.isRunning = false;
       // notice some message for others
       __agent.noticeCreateError({ errCode: error });
     }
   },
   __createWSWithEngineIO: function () {
-    var __agent = __$p$$1;
+    var __agent = this;
     var url = __agent.getUrl();
-    __agent.log(logCord$2, 'create new socket connect, wsurl = ' + url);
+    __agent.log(logCord$1, 'create new socket connect, wsurl = ' + url);
     var warning = "\n    This way use the Engine.IO client interface api, Please download it, and use the script in you web source\n    see: https://github.com/socketio/engine.io-client\n    ";
 
     try {
       if (Tool.isUndefinedOrNull(window.io)) {
-        return console.warn(logCord$2, warning)
+        return console.warn(logCord$1, warning)
       }
       var ws = new window.eio.Socket(url);
       ws.on('open', function () {
-        __agent.log(logCord$2, 'is connecting ...');
+        __agent.log(logCord$1, 'is connecting ...');
         __agent.wsHandler = ws;
         __agent.isRunning = true;
 
         ws.on('message', function (data) {
           __agent.isRunning = true;
-          __agent.log(logCord$2, data);
+          __agent.log(logCord$1, data);
 
           var msgPackage = '';
           // Decodeing 匹配大部分数据格式，进行处理
@@ -6547,12 +6553,12 @@ var __$p$$1 = {
             msgPackage = data;
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
           } else {
-            console.warn(logCord$2, 'cannot process this message type ....');
+            console.warn(logCord$1, 'cannot process this message type ....');
           }
         });
         ws.on('close', function () {
           try {
-            __agent.log(logCord$2, 'onclose code = ');
+            __agent.log(logCord$1, 'onclose code = ');
           } catch (error) {}
 
           var tryCreateWS = function () {
@@ -6579,7 +6585,7 @@ var __$p$$1 = {
         }));
       });
     } catch (error) {
-      __agent.log(logCord$2, error);
+      __agent.log(logCord$1, error);
       __agent.isRunning = false;
       // notice some message for others
       __agent.noticeCreateError({
@@ -6612,9 +6618,10 @@ var ProxyClientWebsocketForNode = SelfClass.extend(__$p$$1);
 //
 // -----------------------------------------------
 
+var this$1 = undefined;
 var _$10 = underscore._;
 
-var logCord$3 = '[SDK.Proxy.Client.Websocket.Python]';
+var logCord$2 = '[SDK.Proxy.Client.Websocket.Python]';
 
 var __key$2 = 'proxy-client-websocket-python';
 var __msgPrefix$1 = __key$2 + '-' + _$10.now() + _$10.random(1, Number.MAX_SAFE_INTEGER) + '-';
@@ -6635,13 +6642,13 @@ var __$p$$3 = {
   name: __key$2,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$$3.mc
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
 
-    if (__$p$$3.debug) {
+    if (this.debug) {
       console.log(title, message, end);
     }
   },
@@ -6650,11 +6657,11 @@ var __$p$$3 = {
   },
   // ------------------ log -------------------------------------------------
   _traceLogEventsCount: function () {
-    var _events = __$p$$3.mc.getEvents();
-    __$p$$3.log(logCord$3, ' _events count = ' + _$10.keys(_events).length);
+    var _events = this.mc.getEvents();
+    this.log(logCord$2, ' _events count = ' + _$10.keys(_events).length);
   },
   _traceLogCacheSendMessageCount: function () {
-    __$p$$3.log(logCord$3, ' cacheMessage count = ' + __$p$$3.cacheSendMessage.length);
+    this.log(logCord$2, ' cacheMessage count = ' + this.cacheSendMessage.length);
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
@@ -6667,28 +6674,30 @@ var __$p$$3 = {
     debug: true
   },
   getUrl: function () {
-    var that = __$p$$3;
+    var that = this;
     var url = that.config.protocol + that.config.ip + ':' + that.config.port + that.config.reqUrl;
     return url
   },
   getAutoReConnectSec: function () {
-    return __$p$$3.config.autoReconnectMaxRunTimes
+    return this.config.autoReconnectMaxRunTimes
   },
   isRunning: false,
   initWithConfig: function (inConfig) {
     if ( inConfig === void 0 ) inConfig = {};
 
-    __$p$$3.log(logCord$3, __key$2 + ' call initWithConfig function ....');
-    __$p$$3.config = _$10.extend(__$p$$3.config, inConfig);
-    __$p$$3.debug = __$p$$3.config.debug;
-    __$p$$3.initialized = true;
+    var that = this;
+    that.log(logCord$2, __key$2 + ' call initWithConfig function ....');
+    that.config = _$10.extend(that.config, inConfig);
+    that.debug = that.config.debug;
+    that.initialized = true;
   },
   run: function () {
-    if (!__$p$$3.initialized) {
-      __$p$$3.showInitializedTip();
+    var that = this;
+    if (!that.initialized) {
+      that.showInitializedTip();
       return
     }
-    __$p$$3.autoCreateWS();
+    that.autoCreateWS();
   },
   // ------------------------------------------------
   // 消息交互的核心部分
@@ -6699,40 +6708,45 @@ var __$p$$3 = {
   sendMessage: function (message, first) {
     if ( first === void 0 ) first = false;
    // 客户端向服务器发送消息
-    if (!__$p$$3.isRunning || !__$p$$3.wsHandler) {
-      __$p$$3.cacheSendMessage.push(message);
-      console.warn(logCord$3, 'WebSocket is not running .....');
+    var that = this;
+    if (!that.isRunning || !that.wsHandler) {
+      that.cacheSendMessage.push(message);
+      console.warn(logCord$2, 'WebSocket is not running .....');
       return
     }
 
-    first ? __$p$$3.cacheSendMessage.unshift(message) : __$p$$3.cacheSendMessage.push(message);
+    first ? that.cacheSendMessage.unshift(message) : that.cacheSendMessage.push(message);
 
-    __$p$$3._traceLogCacheSendMessageCount();
-    _$10.each(__$p$$3.cacheSendMessage, function (curMessage) {
-      __$p$$3.wsHandler.send(curMessage);
+    that._traceLogCacheSendMessageCount();
+    _$10.each(that.cacheSendMessage, function (curMessage) {
+      that.wsHandler.send(curMessage);
 
-      __$p$$3._traceLogEventsCount();
-      __$p$$3.mc.trigger(TypeMsg$2.OnSendMessageToServer, curMessage);
-      __$p$$3.cacheSendMessage.shift();
+      that._traceLogEventsCount();
+      that.mc.trigger(TypeMsg$2.OnSendMessageToServer, curMessage);
+      that.cacheSendMessage.shift();
     });
-    __$p$$3._traceLogCacheSendMessageCount();
+    that._traceLogCacheSendMessageCount();
   },
   onReceiveMessage: function (message) {
-    __$p$$3._traceLogEventsCount();
-    __$p$$3.mc.trigger(TypeMsg$2.OnWSGetServerMessage, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$2.OnWSGetServerMessage, message);
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: function (message) {
-    __$p$$3._traceLogEventsCount();
-    __$p$$3.mc.trigger(TypeMsg$2.OnCreateError, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$2.OnCreateError, message);
   },
   noticeWSOpen: function (message) {
-    __$p$$3._traceLogEventsCount();
-    __$p$$3.mc.trigger(TypeMsg$2.OnWSOpen, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$2.OnWSOpen, message);
   },
   noticeWSClosed: function (message) {
-    __$p$$3._traceLogEventsCount();
-    __$p$$3.mc.trigger(TypeMsg$2.OnWSClose, message);
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$2.OnWSClose, message);
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
@@ -6740,25 +6754,27 @@ var __$p$$3 = {
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: _$10.uniqueId(__key$2), // 客户端唯一ID
   showInitializedTip: function () {
-    console.warn(logCord$3, initializedTip$1);
+    console.warn(logCord$2, initializedTip$1);
   },
   autoCreateWS: function () {
-    __$p$$3._pAutoCreateWS();
+    var that = this;
+    that._pAutoCreateWS();
   },
   _pAutoCreateWS: function () {
-    if (!__$p$$3.isRunning) {
+    var that = this;
+    if (!that.isRunning) {
       // 尝试新的链接
-      if (__$p$$3.autoCWSTimesIndex <= __$p$$3.autoReconnectMaxRunTimes) {
-        __$p$$3.log(logCord$3, 'try create new socket connect, port = ' + __$p$$3.config.port);
-        __$p$$3.createWS(__$p$$3.getUrl());
+      if (that.autoCWSTimesIndex <= that.autoReconnectMaxRunTimes) {
+        that.log(logCord$2, 'try create new socket connect, port = ' + that.config.port);
+        that.createWS(that.getUrl());
       }
-      ++__$p$$3.autoCWSTimesIndex;
+      ++that.autoCWSTimesIndex;
     }
   },
   createWS: function (url) { // 建立Websocket 客户端
-    var __agent = __$p$$3;
+    var __agent = this$1;
     var WebSocket = window.WebSocket || window.MozWebSocket;
-    __agent.log(logCord$3, 'create new socket connect, wsurl = ' + url);
+    __agent.log(logCord$2, 'create new socket connect, wsurl = ' + url);
 
     try {
       var ws = new WebSocket(url); // 启动监听服务
@@ -6769,7 +6785,7 @@ var __$p$$3 = {
           __agent.wsHandler = this;
 
           if (that.readyState === 1) {
-            __agent.log(logCord$3, 'is connecting ...');
+            __agent.log(logCord$2, 'is connecting ...');
             __agent.isRunning = true;
             // 广播自己已经连接上
             __agent.noticeWSOpen({ data: ws });
@@ -6785,7 +6801,7 @@ var __$p$$3 = {
         // ==== onmessage
         ws.onmessage = function (evt) {
           __agent.isRunning = true;
-          __agent.log(logCord$3, evt.data);
+          __agent.log(logCord$2, evt.data);
 
           var msgPackage = '';
           // Decodeing 匹配大部分数据格式，进行处理
@@ -6803,7 +6819,7 @@ var __$p$$3 = {
             msgPackage = evt.data;
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
           } else {
-            console.warn(logCord$3, 'cannot process this message type ....');
+            console.warn(logCord$2, 'cannot process this message type ....');
           }
         };
 
@@ -6815,7 +6831,7 @@ var __$p$$3 = {
         // ==== onclose
         ws.onclose = function (evt) {
           try {
-            __agent.log(logCord$3, 'onclose code = ' + evt);
+            __agent.log(logCord$2, 'onclose code = ' + evt);
           } catch (error) {}
 
           var tryCreateWS = function () {
@@ -6831,7 +6847,7 @@ var __$p$$3 = {
         };
       }
     } catch (error) {
-      __agent.log(logCord$3, error);
+      __agent.log(logCord$2, error);
       __agent.isRunning = false;
       // notice some message for others
       __agent.noticeCreateError({ errCode: error });
@@ -6843,12 +6859,15 @@ var __$p$$3 = {
 
 // 批量处理注册及接收方式
 _$10.each(TypeMsg$2, function (eventType, key, list) {
-  __$p$$3['register' + key] = function (handler, one) {
+  var registerKey = 'register' + key;
+  var unregisterKey = 'unregister' + key;
+
+  __$p$$3[registerKey] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
     __$p$$3.mc.bind(eventType, handler, one);
   };
-  __$p$$3['unregister' + key] = function (handler) {
+  __$p$$3[unregisterKey] = function (handler) {
     __$p$$3.mc.unbind(eventType, handler);
   };
 });
@@ -6863,7 +6882,7 @@ var ProxyClientWebsocketForPython = SelfClass.extend(__$p$$3);
 var _$6 = underscore._;
 
 // -----------------------------------------------------------------------
-var logCord$1 = '[SDK.agent.client]';
+var logCord = '[SDK.agent.client]';
 
 var __key = 'agent-client';
 var TypeMsg = {
@@ -6925,13 +6944,41 @@ Chancel.prototype.active = function active () {
 
 Object.defineProperties( Chancel.prototype, prototypeAccessors );
 
+var Chancel2HandlerHelper = function Chancel2HandlerHelper () {
+  this.mapAssEvent = {};
+  this.mapAssObj = {};
+  this.mapAssFnc = {};
+};
+
+Chancel2HandlerHelper.prototype.getNewFunction = function getNewFunction (this2, assEvent, assObj, fnc) {
+  var key = _$6.uniqueId(logCord + '__chancel2HandlerHelp__');
+  var that = this2;
+  that.mapAssObj[key] = assObj;
+  that.mapAssFnc[key] = fnc;
+  that.mapAssEvent[key] = assEvent;
+  return fnc
+};
+
+Chancel2HandlerHelper.prototype.getThatFunctionList = function getThatFunctionList (this2, assEvent, assObj) {
+  var that = this2;
+  var _fnList = [];
+  _$6.each(_$6.kes(that.mapAssObj), function (key) {
+    if (assObj === that.mapAssObj[key] &&
+    assEvent === that.mapAssEvent[key]
+    ) {
+      _fnList.push(that.mapAssFnc[key]);
+    }
+  });
+  return _fnList
+};
+
 // ------------------------------------------------------------------------
 // Class AgentClient
 var __$p$ = {
   name: __key,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$.mc
+    return this.mc
   },
   getInternalMessageType: function () {
     return TypeMsg
@@ -6940,87 +6987,130 @@ var __$p$ = {
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
 
-    if (__$p$.debug) {
+    if (this.debug) {
       console.log(title, message, end);
     }
   },
   // ------------------ log -------------------------------------------------
   _traceLogEventsCount: function () {
-    var _events = __$p$.mc.getEvents();
-    __$p$.log(logCord$1, ' _events count = ' + _$6.keys(_events).length);
+    var that = this;
+    var _events = that.mc.getEvents();
+    that.log(logCord, ' _events count = ' + _$6.keys(_events).length);
   },
   // --------------------------------------------------------
   init: function () {
-    __$p$.debug = true;
+    var that = this;
+    that.debug = true;
   },
   // --------------- 信息交互 通道建立 ------------------------
   ChancelType: ChancelType,
   Chancel: Chancel,
   __chancelList: [],   // 通讯通道对象
   getChancelCount: function () {
-    return __$p$.__chancelList.length
+    var that = this;
+    return that.__chancelList.length
   },
+  chancel2HandlerHelper: new Chancel2HandlerHelper(),
   appendChancel: function (chancel, handler) {
+    var that = this;
+    var _c2hh = that.chancel2HandlerHelper;
+    var _c2hhFn = _c2hh.getNewFunction;
+    var _cs = chancel.server;
+    var _msgType = _cs.getInternalMessageType();
+
     // 建立信息关联
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython
     ) {
       console.log(chancel.server);
-      chancel.server.registerOnWSGetServerMessage(__$p$.onReceiveFromServer);
-      chancel.server.registerOnSendMessageToServer(function (message) {});
-
-      chancel.server.registerOnCreateError(__$p$.onBuildChannelError);
-      chancel.server.registerOnWSClose(__$p$.onChannelFault);
-      chancel.server.registerOnWSOpen(__$p$.onFinishBuildChannel);
+      _cs.registerOnWSGetServerMessage(_c2hhFn(_c2hh, _msgType.OnWSGetServerMessage, _cs, function (message) { that.onReceiveFromServer(message); }));
+      _cs.registerOnSendMessageToServer(_c2hhFn(_c2hh, _msgType.OnSendMessageToServer, _cs, function (message) { }));
+      _cs.registerOnCreateError(_c2hhFn(_c2hh, _msgType.OnCreateError, _cs, function (message) { that.onBuildChannelError(message); }));
+      _cs.registerOnWSClose(_c2hhFn(_c2hh, _msgType.OnWSClose, _cs, function (message) { that.onChannelFault(message); }));
+      _cs.registerOnWSOpen(_c2hhFn(_c2hh, _msgType.OnWSOpen, _cs, function (message) { that.onFinishBuildChannel(message); }));
 
       chancel.active();
     }
 
-    __$p$.__chancelList.push(chancel);
+    that.__chancelList.push(chancel);
   },
   removeChancel: function (chancel) {
+    var that = this;
+    var _c2hh = that.chancel2HandlerHelper;
+    var _c2hhFn = _c2hh.getThatFunctionList;
+    var _cs = chancel.server;
+    var _msgType = _cs.getInternalMessageType();
+
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython
     ) {
-      chancel.server.unregisterOnWSGetServerMessage(__$p$.onReceiveFromServer);
-      chancel.server.unregisterOnSendMessageToServer(function (message) {});
-
-      chancel.server.unregisterOnCreateError(__$p$.onBuildChannelError);
-      chancel.server.unregisterOnWSClose(__$p$.onChannelFault);
+      _$6.each(_c2hhFn(_c2hh, _msgType.OnWSGetServerMessage, _cs), function (fnc) {
+        _cs.unregisterOnWSGetServerMessage(fnc);
+      });
+      _$6.each(_c2hhFn(_c2hh, _msgType.OnSendMessageToServer, _cs), function (fnc) {
+        _cs.unregisterOnSendMessageToServer(fnc);
+      });
+      _$6.each(_c2hhFn(_c2hh, _msgType.OnCreateError, _cs), function (fnc) {
+        _cs.unregisterOnCreateError(fnc);
+      });
+      _$6.each(_c2hhFn(_c2hh, _msgType.OnWSClose, _cs), function (fnc) {
+        _cs.unregisterOnWSClose(fnc);
+      });
+      _$6.each(_c2hhFn(_c2hh, _msgType.OnWSOpen, _cs), function (fnc) {
+        _cs.unregisterOnWSOpen(fnc);
+      });
     }
   },
   // -------------------------------------------------
   noticeToServer: function (message) {
-    if (__$p$.__chancelList.length === 0) {
-      console.warn(logCord$1, 'You maybe add one chancel');
+    var that = this;
+    console.assert(this !== undefined, '[SDK] this !== undefined');
+    
+    if (that.__chancelList.length === 0) {
+      console.warn(logCord, 'You maybe add one chancel');
     }
 
-    _$6.each(__$p$.__chancelList, function (chancel) {
+    _$6.each(that.__chancelList, function (chancel) {
       chancel.server.sendMessage(message);
     });
-    __$p$._traceLogEventsCount();
-    __$p$.mc.trigger(TypeMsg.OnNoticeToServer, message);
-    return __$p$
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg.OnNoticeToServer, message);
+    return that
   },
   onReceiveFromServer: function (message) {
-    __$p$._traceLogEventsCount();
-    __$p$.mc.trigger(TypeMsg.OnReceiveFromServer, message);
+    var that = this;
+    console.assert(this !== undefined, '[SDK] this !== undefined');
+
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg.OnReceiveFromServer, message);
   },
   onStartBuildChannel: function (message) {
-    __$p$._traceLogEventsCount();
-    __$p$.mc.trigger(TypeMsg.OnStartBuildChannel, message);
+    var that = this;
+    console.assert(this !== undefined, '[SDK] this !== undefined');
+
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg.OnStartBuildChannel, message);
   },
   onBuildChannelError: function (message) {
-    __$p$._traceLogEventsCount();
-    __$p$.mc.trigger(TypeMsg.OnBuildChannelError, message);
+    var that = this;
+    console.assert(this !== undefined, '[SDK] this !== undefined');
+
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg.OnBuildChannelError, message);
   },
   onFinishBuildChannel: function (message) {
-    __$p$._traceLogEventsCount();
-    __$p$.mc.trigger(TypeMsg.OnFinishBuildChannel, message);
+    var that = this;
+    console.assert(this !== undefined, '[SDK] this !== undefined');
+
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg.OnFinishBuildChannel, message);
   },
   onChannelFault: function (message) {
-    __$p$._traceLogEventsCount();
-    __$p$.mc.trigger(TypeMsg.OnChannelFault, message);
+    var that = this;
+    console.assert(this !== undefined, '[SDK] this !== undefined');
+
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg.OnChannelFault, message);
   }
 };
 
@@ -7041,28 +7131,30 @@ _$6.each(TypeMsg, function (eventType, key, list) {
 
 var AgentClient = SelfClass.extend(__$p$);
 
+var this$1$2 = undefined;
 var _$13 = underscore._;
 
-var $bc_$16 = common;
+var $bc_$16 = task;
 
-var logCord$6 = '[SDK.Proxy.WebServer.Python]';
-var __key$5 = 'proxy-sever-plugin-python';
+var logCord$5 = '[SDK.Proxy.WebServer.Node]';
+var __key$5 = 'proxy-sever-plugin-Node';
 
-var TypeMsg$5 = {};
+var TypeMsg$5 = _$13.extend({}, TypeTriggerMsg);
+var TNMT$1 = TypeNativeMessageType;
 
 // ====================================================================
-// python 插件服务器引擎
+// Node 插件服务器引擎
 var __$p$$6 = {
   name: __key$5,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$$6.mc
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
 
-    if (__$p$$6.debug) {
+    if (this.debug) {
       console.log(title, message, end);
     }
   },
@@ -7070,9 +7162,108 @@ var __$p$$6 = {
     return TypeMsg$5
   },
   // ---------------------------------------------------------------
+  isRunning: false,
+  baseConfig: {
+    port: '8080'
+  },
+
+  _isStarted: false,
+  start: function (config) {
+    var that = this;
+    if (that._isStarted) {
+      console.warn(logCord$5, 'is started .... you can use bind message to process you data');
+      return
+    }
+    // 整理config信息
+    var cg = that.baseConfig = _$13.extend(that.baseConfig, config);
+    // const MT = that.getInternalMessageType()
+    that._isStarted = true;
+    that.__startNodeWebServer(cg);
+  },
+
+  __startNodeWebServer: function (cg) {
+    var that = this$1$2;
+    that.log(logCord$5, 'start node web server');
+
+    var taskID = __key$5 + _$13.now();
+    if ($bc_$16.pNative) {
+      // 定义一个处理该任务的回调
+      var cbName = $bc_$16._get_callback(function (obj) {
+        if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
+          return $bc_$16.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'callback', obj.queueInfo.id])
+        } else if (obj.type === TNMT$1.CallTaskStart) {
+          console.log('server start url: ', obj);
+        }
+      }, true);
+
+      var serverURL = $bc_$16.App.getAppDataHomeDir() + '/server/www';
+      // 优先使用系统DataHome目录下面的服务器引擎文件
+      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/server/www';
+      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/www';
+      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/www';
+
+      // 检测是否使用了www.js 作为
+      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppDataHomeDir() + '/server/www.js';
+      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/server/www.js';
+      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/www.js';
+      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/www.js';
+
+      if ($bc_$16.App.checkPathIsExist(serverURL) === false) {
+        console.error(logCord$5, 'not found www file');
+        return
+      }
+
+      return $bc_$16.runTaskSample(TaskMethodWay.Task, cbName, [taskID, [{
+        appPath: $bc_$16.App.getAppPluginDir() + '/node',
+        command: [
+          serverURL,
+          cg.port.toString()
+        ],
+        mainThread: false
+      }]])
+    } else {
+      console.warn(logCord$5, 'please run you or remote python server for process');
+    }
+  }
+};
+
+var ProxyServerPluginWebServerNode = SelfClass.extend(__$p$$6);
+
+//
+// -----------------------------------------------
+
+var _$14 = underscore._;
+
+var $bc_$17 = common;
+
+var logCord$6 = '[SDK.Proxy.WebServer.Python]';
+var __key$6 = 'proxy-sever-plugin-python';
+
+var TypeMsg$6 = {};
+
+// ====================================================================
+// python 插件服务器引擎
+var __$p$$7 = {
+  name: __key$6,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return this.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (this.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$6
+  },
+  // ---------------------------------------------------------------
   getPath: function () {
-    var pluginDir = $bc_$16.App.getAppPluginDir();
-    var runOS = $bc_$16.App.getAppRunOnOS();
+    var pluginDir = $bc_$17.App.getAppPluginDir();
+    var runOS = $bc_$17.App.getAppRunOnOS();
     if (runOS === 'MacOSX') {
       return pluginDir + '/pythonCLI.app/Contents/MacOS/pythonCLI'
     } else if (runOS === 'win32') {
@@ -7082,7 +7273,7 @@ var __$p$$6 = {
     }
   },
   getInfo: function () {
-    var that = __$p$$6;
+    var that = this;
     var pluginPath = that.getPath();
     var plugin = {
       callMethod: 'task',
@@ -7102,30 +7293,30 @@ var __$p$$6 = {
 
   _isStarted: false,
   start: function (config) {
-    var that = __$p$$6;
+    var that = this;
     if (that._isStarted) {
       console.warn(logCord$6, 'is started .... you can use bind message to process you data');
       return
     }
     // 整理config信息
-    var cg = that.baseConfig = _$13.extend(that.baseConfig, config);
+    var cg = that.baseConfig = _$14.extend(that.baseConfig, config);
     // const MT = that.getInternalMessageType()
     that._isStarted = true;
     that.__startPyWebServer(cg);
   },
 
   __startPyWebServer: function (cg) {
-    var that = __$p$$6;
+    var that = this;
     var __agent = that;
 
-    var taskID = __key$5 + _$13.now();
-    if ($bc_$16.pNative) {
+    var taskID = __key$6 + _$14.now();
+    if ($bc_$17.pNative) {
       var copyPlugin = __agent.getInfo();
 
       var regCommand, formatCommonStr, command, pythonCommand;
-      var runOS = $bc_$16.App.getAppRunOnOS();
+      var runOS = $bc_$17.App.getAppRunOnOS();
       // const workDir = $bc_.App.getAppResourceDir() + '/data/python'
-      var resourceDir = $bc_$16.App.getAppDataHomeDir() + '/Resources';
+      var resourceDir = $bc_$17.App.getAppDataHomeDir() + '/Resources';
       // const configFile = 'Resources/config.plist'
 
       if (runOS === 'MacOSX') {
@@ -7143,7 +7334,7 @@ var __$p$$6 = {
       command = window.eval(formatCommonStr); // 转换成command
       copyPlugin.tool.command = command;
 
-      $bc_$16.createTask(copyPlugin.callMethod, taskID, [copyPlugin.tool]);
+      $bc_$17.createTask(copyPlugin.callMethod, taskID, [copyPlugin.tool]);
     } else {
       console.warn(logCord$6, 'please run you or remote python server for process');
     }
@@ -7152,107 +7343,7 @@ var __$p$$6 = {
   }
 };
 
-var ProxyServerPluginWebServerPython = SelfClass.extend(__$p$$6);
-
-//
-// -----------------------------------------------
-
-var _$14 = underscore._;
-
-var $bc_$17 = task;
-
-var logCord$7 = '[SDK.Proxy.WebServer.Node]';
-var __key$6 = 'proxy-sever-plugin-Node';
-
-var TypeMsg$6 = _$14.extend({}, TypeTriggerMsg);
-var TNMT$1 = TypeNativeMessageType;
-
-// ====================================================================
-// Node 插件服务器引擎
-var __$p$$7 = {
-  name: __key$6,
-  mc: new ProxyMessageCenter(),
-  getMsgHelper: function () {
-    return __$p$$7.mc
-  },
-  debug: false, // 时候开启Debug模式
-  log: function (title, message, end) {
-    if ( end === void 0 ) end = '';
-
-    if (__$p$$7.debug) {
-      console.log(title, message, end);
-    }
-  },
-  getInternalMessageType: function () {
-    return TypeMsg$6
-  },
-  // ---------------------------------------------------------------
-  isRunning: false,
-  baseConfig: {
-    port: '8080'
-  },
-
-  _isStarted: false,
-  start: function (config) {
-    var that = __$p$$7;
-    if (that._isStarted) {
-      console.warn(logCord$7, 'is started .... you can use bind message to process you data');
-      return
-    }
-    // 整理config信息
-    var cg = that.baseConfig = _$14.extend(that.baseConfig, config);
-    // const MT = that.getInternalMessageType()
-    that._isStarted = true;
-    that.__startNodeWebServer(cg);
-  },
-
-  __startNodeWebServer: function (cg) {
-    var that = __$p$$7;
-    that.log(logCord$7, 'start node web server');
-
-    var taskID = __key$6 + _$14.now();
-    if ($bc_$17.pNative) {
-      // 定义一个处理该任务的回调
-      var cbName = $bc_$17._get_callback(function (obj) {
-        if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
-          return $bc_$17.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'callback', obj.queueInfo.id])
-        } else if (obj.type === TNMT$1.CallTaskStart) {
-          console.log('server start url: ', obj);
-        }
-      }, true);
-
-      var serverURL = $bc_$17.App.getAppDataHomeDir() + '/server/www';
-      // 优先使用系统DataHome目录下面的服务器引擎文件
-      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/server/www';
-      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/www';
-      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/www';
-
-      // 检测是否使用了www.js 作为
-      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppDataHomeDir() + '/server/www.js';
-      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/server/www.js';
-      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/www.js';
-      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/www.js';
-
-      if ($bc_$17.App.checkPathIsExist(serverURL) === false) {
-        console.error(logCord$7, 'not found www file');
-        return
-      }
-
-      return $bc_$17.runTaskSample(TaskMethodWay.Task, cbName, [taskID, [{
-        appPath: $bc_$17.App.getAppPluginDir() + '/node',
-        command: [
-          serverURL,
-          cg.port.toString()
-        ],
-        mainThread: false
-      }]])
-    } else {
-      console.warn(logCord$7, 'please run you or remote python server for process');
-    }
-  }
-};
-
-var ProxyServerPluginWebServerNode = SelfClass.extend(__$p$$7);
+var ProxyServerPluginWebServerPython = SelfClass.extend(__$p$$7);
 
 //
 // -----------------------------------------------
@@ -7261,7 +7352,7 @@ var _$12 = underscore._;
 var $bc_$15 = task;
 
 var debugBand = "\nYou are running Vue in development mode.\nMake sure to turn on production mode when deploying for production.\nSee more tips at https://github.com/LabsRS-Dev/sdk\nProxy.debug = false\n";
-var logCord$5 = '[SDK.Proxy]';
+var logCord$4 = '[SDK.Proxy]';
 
 var __key$4 = 'agent-sever';
 var TypeMsg$4 = TypeTriggerMsg;
@@ -7274,13 +7365,13 @@ var __$p$$5 = {
   name: __key$4,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$$5.mc
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
 
-    if (__$p$$5.debug) {
+    if (this.debug) {
       console.log(title, message, end);
     }
   },
@@ -7313,13 +7404,12 @@ var __$p$$5 = {
     }
   },
   getDefaultConfig: function () {
-    var that = __$p$$5;
-    return that.baseConfig
+    return this.baseConfig
   },
   start: function (config) {
-    var that = __$p$$5;
+    var that = this;
     if (that._isStarted) {
-      console.warn(logCord$5, '[SDK.proxy] is started .... you can use bind message to process you data');
+      console.warn(logCord$4, '[SDK.proxy] is started .... you can use bind message to process you data');
       return
     }
 
@@ -7364,7 +7454,7 @@ var __$p$$5 = {
           });
         }
       } catch (error) {
-        console.error(logCord$5, error);
+        console.error(logCord$4, error);
         that._isStarted = false;
       }
     });
@@ -7394,7 +7484,7 @@ var __$p$$5 = {
       var _fnCallName = that.configExecTaskUpdateInfoCallback();
       that.mc.trigger(MT.onCreate, _fnCallName);
     } catch (error) {
-      console.error(logCord$5, error);
+      console.error(logCord$4, error);
       that._isStarted = false;
     }
   },
@@ -7402,11 +7492,11 @@ var __$p$$5 = {
   // ---------------------------------------------------------------
   // 配置内核启动成功后的处理方式
   configOnNativeEngineInitSuccessCallback: function (cb) {
-    console.log(logCord$5, 'config on native engine init success!');
+    console.log(logCord$4, 'config on native engine init success!');
   },
 
   configExecTaskUpdateInfoCallback: function (cb) {
-    var __agent = __$p$$5;
+    var __agent = this;
     var __mc = __agent.getMsgHelper();
     var fn = function (obj) {
       __agent.log(debugBand, JSON.stringify(obj));
@@ -7415,18 +7505,18 @@ var __$p$$5 = {
       function process_init (obj) {
         try {
           if (obj.type === TNMT.InitCoreSuccess) {
-            __agent.log(logCord$5, 'init core plugin success!');
+            __agent.log(logCord$4, 'init core plugin success!');
             __mc.trigger(TypeMsg$4.onNativeEngineInitSuccess, {
               data: obj
             });
           } else if (obj.type === TNMT.InitCoreFailed) {
-            console.error(logCord$5, 'init core plugin failed!');
+            console.error(logCord$4, 'init core plugin failed!');
             __mc.trigger(TypeMsg$4.onNativeEngineInitFailed, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$5, error);
+          console.error(logCord$4, error);
         }
       }
 
@@ -7434,23 +7524,23 @@ var __$p$$5 = {
       function process_dylibCLI (obj) {
         try {
           if (obj.type === TNMT.CliCallStart) {
-            __agent.log(logCord$5, 'start dylib cli call!');
+            __agent.log(logCord$4, 'start dylib cli call!');
             __mc.trigger(TypeMsg$4.onDylibCLIStart, {
               data: obj
             });
           } else if (obj.type === TNMT.CliCallReportProgress) {
-            __agent.log(logCord$5, 'report dylib cli call progress!');
+            __agent.log(logCord$4, 'report dylib cli call progress!');
             __mc.trigger(TypeMsg$4.onDylibCLIFeedback, {
               data: obj
             });
           } else if (obj.type === TNMT.CliCallEnd) {
-            __agent.log(logCord$5, 'end dylib cli call!');
+            __agent.log(logCord$4, 'end dylib cli call!');
             __mc.trigger(TypeMsg$4.onDylibCLIEnd, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$5, error);
+          console.error(logCord$4, error);
         }
       }
 
@@ -7458,40 +7548,40 @@ var __$p$$5 = {
       function process_execCommand (obj) {
         try {
           if (obj.type === TNMT.AddExecCommandQueueSuccess) {
-            __agent.log(logCord$5, 'add exec command queue success and start after!');
+            __agent.log(logCord$4, 'add exec command queue success and start after!');
             var queueID = obj.queueInfo.id;
             $bc_$15.sendQueueEvent(queueID, 'execcommand', 'start');
             __mc.trigger(TypeMsg$4.onExecCommandAdded, {
               data: obj
             });
           } else if (obj.type === TNMT.ExecCommandStart) {
-            __agent.log(logCord$5, 'exec command start ...');
+            __agent.log(logCord$4, 'exec command start ...');
             __mc.trigger(TypeMsg$4.onExecCommandStarted, {
               data: obj
             });
           } else if (obj.type === TNMT.ExecCommandReportProgress) {
-            __agent.log(logCord$5, 'report exec command progress ...');
+            __agent.log(logCord$4, 'report exec command progress ...');
             __mc.trigger(TypeMsg$4.onExecCommandFeedback, {
               data: obj
             });
           } else if (obj.type === TNMT.ExecCommandSuccess) {
-            __agent.log(logCord$5, 'exec command success ...');
+            __agent.log(logCord$4, 'exec command success ...');
             __mc.trigger(TypeMsg$4.onExecCommandSuccess, {
               data: obj
             });
           } else if (obj.type === TNMT.CancelExecCommand) {
-            __agent.log(logCord$5, 'exec command cancel ...');
+            __agent.log(logCord$4, 'exec command cancel ...');
             __mc.trigger(TypeMsg$4.onExecCommandCanceled, {
               data: obj
             });
           } else if (obj.type === TNMT.ExecCommandFailed) {
-            __agent.log(logCord$5, 'exec command error ...');
+            __agent.log(logCord$4, 'exec command error ...');
             __mc.trigger(TypeMsg$4.onExecCommandError, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$5, error);
+          console.error(logCord$4, error);
         }
       }
 
@@ -7499,38 +7589,38 @@ var __$p$$5 = {
       function process_task (obj) {
         try {
           if (obj.type === TNMT.AddCallTaskQueueSuccess) {
-            __agent.log(logCord$5, 'add task queue success and start after!');
+            __agent.log(logCord$4, 'add task queue success and start after!');
             var queueID = obj.queueInfo.id;
             $bc_$15.sendQueueEvent(queueID, 'calltask', 'start');
             __mc.trigger(TypeMsg$4.onTaskAdded, {
               data: obj
             });
           } else if (obj.type === TNMT.CallTaskStart) {
-            __agent.log(logCord$5, 'call task start!');
+            __agent.log(logCord$4, 'call task start!');
             __mc.trigger(TypeMsg$4.onTaskStarted, {
               data: obj
             });
           } else if (obj.type === TNMT.CallTaskFailed) {
-            __agent.log(logCord$5, 'call task error!');
-            __agent.log(logCord$5, JSON.stringify(obj));
+            __agent.log(logCord$4, 'call task error!');
+            __agent.log(logCord$4, JSON.stringify(obj));
             __mc.trigger(TypeMsg$4.onTaskError, {
               data: obj
             });
           } else if (obj.type === TNMT.CallTaskSuccess) {
-            __agent.log(logCord$5, 'call task finished!');
-            __agent.log(logCord$5, JSON.stringify(obj));
+            __agent.log(logCord$4, 'call task finished!');
+            __agent.log(logCord$4, JSON.stringify(obj));
             __mc.trigger(TypeMsg$4.onTaskFinished, {
               data: obj
             });
           } else if (obj.type === TNMT.CancelCallTask) {
-            __agent.log(logCord$5, 'call task cancel!');
-            __agent.log(logCord$5, JSON.stringify(obj));
+            __agent.log(logCord$4, 'call task cancel!');
+            __agent.log(logCord$4, JSON.stringify(obj));
             __mc.trigger(TypeMsg$4.onTaskCanceled, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$5, error);
+          console.error(logCord$4, error);
         }
       }
 
@@ -7554,10 +7644,11 @@ var ProxyServer = SelfClass.extend(__$p$$5);
 //
 // -----------------------------------------------
 
+var this$1$1 = undefined;
 var _$11 = underscore._;
 
 // -----------------------------------------------------------------------
-var logCord$4 = '[SDK.agent.server]';
+var logCord$3 = '[SDK.agent.server]';
 
 var __key$3 = 'agent-server';
 var TypeMsg$3 = {
@@ -7570,7 +7661,8 @@ var __$p$$4 = {
   name: __key$3,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$$4.mc
+    var that = this$1$1;
+    return that.mc
   },
   getInternalMessageType: function () {
     return TypeMsg$3
@@ -7579,29 +7671,34 @@ var __$p$$4 = {
   log: function (title, message, end) {
     if ( end === void 0 ) end = '';
 
-    if (__$p$$4.debug) {
+    var that = this;
+    if (that.debug) {
       console.log(title, message, end);
     }
-    return __$p$$4
+    return that
   },
   // --------------------------------------------------------
   active: function (config) {
-    console.log(logCord$4, 'You maybe known some config information');
+    var that = this;
+    console.log(logCord$3, 'You maybe known some config information');
     var svr = new ProxyServer();
     svr.start(config);
-    __$p$$4.mc.trigger(TypeMsg$3.OnCallActive, '');
-    return __$p$$4
+    that.mc.trigger(TypeMsg$3.OnCallActive, '');
+    return that
   }
 };
 
 // 批量处理注册及接收方式
 _$11.each(TypeMsg$3, function (eventType, key, list) {
-  __$p$$4['register' + key] = function (handler, one) {
+  var registerKey = 'register' + key;
+  var unregisterKey = 'unregister' + key;
+
+  __$p$$4[registerKey] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
     __$p$$4.mc.bind(eventType, handler, one);
   };
-  __$p$$4['unregister' + key] = function (handler) {
+  __$p$$4[unregisterKey] = function (handler) {
     __$p$$4.mc.unbind(eventType, handler);
   };
 });
@@ -8392,7 +8489,7 @@ var compatibilityWrapper = {};
 var _$16 = underscore._;
 // Object functions
 // -------------------------------------------------------------------------
-var logCord$8 = '[SDK.Util.common]';
+var logCord$7 = '[SDK.Util.common]';
 var uu$ = {};
 uu$.RTYUtils = {
   find: Tool.find,
@@ -8450,7 +8547,7 @@ uu$.getMyDateStr = function (format) {
 
 uu$.getBSb$ = function () {
   if (uu$.RTYUtils.isUndefinedOrNullOrFalse(BS.b$)) {
-    console.warn(logCord$8, 'cannot found b$');
+    console.warn(logCord$7, 'cannot found b$');
     return null
   }
 

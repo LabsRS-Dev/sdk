@@ -1,9 +1,11 @@
-import { task, TypeTriggerMsg, TypeNativeMessageType  } from './task'
-import { ProxyServerPluginWebServerPython } from './proxy.server.plugin.webserver.python'
-import { ProxyServerPluginWebServerNode } from './proxy.server.plugin.webserver.node'
+import { TypeNativeMessageType, TypeTriggerMsg, task } from './task'
+
 import { ProxyMessageCenter } from './proxy'
+import { ProxyServerPluginWebServerNode } from './proxy.server.plugin.webserver.node'
+import { ProxyServerPluginWebServerPython } from './proxy.server.plugin.webserver.python'
 import { SelfClass } from '../observable'
 import underscore from '../underscore'
+
 var _ = underscore._
 var $bc_ = task
 
@@ -26,11 +28,11 @@ var __$p$ = {
   name: __key,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    return __$p$.mc
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end = '') {
-    if (__$p$.debug) {
+    if (this.debug) {
       console.log(title, message, end)
     }
   },
@@ -62,12 +64,11 @@ var __$p$ = {
       java: false
     }
   },
-  getDefaultConfig: () => {
-    var that = __$p$
-    return that.baseConfig
+  getDefaultConfig: function () {
+    return this.baseConfig
   },
   start: function (config) {
-    var that = __$p$
+    var that = this
     if (that._isStarted) {
       console.warn(logCord, '[SDK.proxy] is started .... you can use bind message to process you data')
       return
@@ -149,12 +150,12 @@ var __$p$ = {
 
   // ---------------------------------------------------------------
   // 配置内核启动成功后的处理方式
-  configOnNativeEngineInitSuccessCallback: (cb) => {
+  configOnNativeEngineInitSuccessCallback: function (cb) {
     console.log(logCord, 'config on native engine init success!')
   },
 
-  configExecTaskUpdateInfoCallback: (cb) => {
-    const __agent = __$p$
+  configExecTaskUpdateInfoCallback: function (cb) {
+    const __agent = this
     const __mc = __agent.getMsgHelper()
     const fn = function (obj) {
       __agent.log(debugBand, JSON.stringify(obj))

@@ -32,12 +32,12 @@ const ClientIOType = {
 var __$p$ = {
   name: __key,
   mc: new ProxyMessageCenter(),
-  getMsgHelper: () => {
-    return __$p$.mc
+  getMsgHelper: function () {
+    return this.mc
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end = '') {
-    if (__$p$.debug) {
+    if (this.debug) {
       console.log(title, message, end)
     }
   },
@@ -47,11 +47,11 @@ var __$p$ = {
   ClientIOType: ClientIOType,
   // ------------------ log -------------------------------------------------
   _traceLogEventsCount: function () {
-    const _events = __$p$.mc.getEvents()
-    __$p$.log(logCord, ' _events count = ' + _.keys(_events).length)
+    const _events = this.mc.getEvents()
+    this.log(logCord, ' _events count = ' + _.keys(_events).length)
   },
   _traceLogCacheSendMessageCount: function () {
-    __$p$.log(logCord, ' cacheMessage count = ' + __$p$.cacheSendMessage.length)
+    this.log(logCord, ' cacheMessage count = ' + this.cacheSendMessage.length)
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
@@ -66,26 +66,26 @@ var __$p$ = {
     debug: true
   },
   getUrl: function () {
-    var that = __$p$
+    var that = this
     var url = that.config.protocol + that.config.ip + ':' + that.config.port + that.config.reqUrl
     return url
   },
-  getAutoReConnectSec: () => {
-    return __$p$.config.autoReconnectMaxRunTimes
+  getAutoReConnectSec: function () {
+    return this.config.autoReconnectMaxRunTimes
   },
   isRunning: false,
   initWithConfig: function (inConfig = {}) {
-    __$p$.log(logCord, __key + ' call initWithConfig function ....')
-    __$p$.config = _.extend(__$p$.config, inConfig)
-    __$p$.debug = __$p$.config.debug
-    __$p$.initialized = true
+    this.log(logCord, __key + ' call initWithConfig function ....')
+    this.config = _.extend(this.config, inConfig)
+    this.debug = this.config.debug
+    this.initialized = true
   },
   run: function () {
-    if (!__$p$.initialized) {
-      __$p$.showInitializedTip()
+    if (!this.initialized) {
+      this.showInitializedTip()
       return
     }
-    __$p$.autoCreateWS()
+    this.autoCreateWS()
   },
   // ------------------------------------------------
   // 消息交互的核心部分
@@ -93,79 +93,86 @@ var __$p$ = {
 
   // --------------- 核心消息 ------------------------
   cacheSendMessage: [],         // 缓存发送信息部分
-  sendMessage: (message, first = false) => {   // 客户端向服务器发送消息
-    if (!__$p$.isRunning || !__$p$.wsHandler) {
-      __$p$.cacheSendMessage.push(message)
+  sendMessage: function (message, first = false) {   // 客户端向服务器发送消息
+    var that = this
+    if (!that.isRunning || !that.wsHandler) {
+      that.cacheSendMessage.push(message)
       console.warn(logCord, 'WebSocket is not running .....')
       return
     }
 
-    first ? __$p$.cacheSendMessage.unshift(message) : __$p$.cacheSendMessage.push(message)
+    first ? that.cacheSendMessage.unshift(message) : that.cacheSendMessage.push(message)
 
-    __$p$._traceLogCacheSendMessageCount()
-    _.each(__$p$.cacheSendMessage, (curMessage) => {
+    that._traceLogCacheSendMessageCount()
+    _.each(that.cacheSendMessage, (curMessage) => {
       // 做好区分的准备
-      if (__$p$.config.clientIOType === ClientIOType.SocketIO) {
-        __$p$.wsHandler.send(__$p$.config.customSendEventDefine, curMessage)
-      } else if (__$p$.config.clientIOType === ClientIOType.EngineIO) {
-        __$p$.wsHandler.send(curMessage)
+      if (that.config.clientIOType === ClientIOType.SocketIO) {
+        that.wsHandler.send(that.config.customSendEventDefine, curMessage)
+      } else if (that.config.clientIOType === ClientIOType.EngineIO) {
+        that.wsHandler.send(curMessage)
       }
 
-      __$p$._traceLogEventsCount()
-      __$p$.mc.trigger(TypeMsg.OnSendMessageToServer, curMessage)
-      __$p$.cacheSendMessage.shift()
+      that._traceLogEventsCount()
+      that.mc.trigger(TypeMsg.OnSendMessageToServer, curMessage)
+      that.cacheSendMessage.shift()
     })
-    __$p$._traceLogCacheSendMessageCount()
+    that._traceLogCacheSendMessageCount()
   },
-  onReceiveMessage: (message) => {
-    __$p$._traceLogEventsCount()
-    __$p$.mc.trigger(TypeMsg.OnWSGetServerMessage, message)
+  onReceiveMessage: function (message) {
+    var that = this
+    that._traceLogEventsCount()
+    that.mc.trigger(TypeMsg.OnWSGetServerMessage, message)
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
-  noticeCreateError: (message) => {
-    __$p$._traceLogEventsCount()
-    __$p$.mc.trigger(TypeMsg.OnCreateError, message)
+  noticeCreateError: function (message) {
+    var that = this
+    that._traceLogEventsCount()
+    that.mc.trigger(TypeMsg.OnCreateError, message)
   },
-  noticeWSOpen: (message) => {
-    __$p$._traceLogEventsCount()
-    __$p$.mc.trigger(TypeMsg.OnWSOpen, message)
+  noticeWSOpen: function (message) {
+    var that = this
+    that._traceLogEventsCount()
+    that.mc.trigger(TypeMsg.OnWSOpen, message)
   },
-  noticeWSClosed: (message) => {
-    __$p$._traceLogEventsCount()
-    __$p$.mc.trigger(TypeMsg.OnWSClose, message)
+  noticeWSClosed: function (message) {
+    var that = this
+    that._traceLogEventsCount()
+    that.mc.trigger(TypeMsg.OnWSClose, message)
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
   autoCWSTimesIndex: 0,  // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: _.uniqueId(__key), // 客户端唯一ID
-  showInitializedTip: () => {
+  showInitializedTip: function () {
     console.warn(logCord, initializedTip)
   },
-  autoCreateWS: () => {
-    __$p$._pAutoCreateWS()
+  autoCreateWS: function () {
+    var that = this
+    that._pAutoCreateWS()
   },
-  _pAutoCreateWS: () => {
-    if (!__$p$.isRunning) {
+  _pAutoCreateWS: function () {
+    var that = this
+    if (!that.isRunning) {
       // 尝试新的链接
-      if (__$p$.autoCWSTimesIndex <= __$p$.autoReconnectMaxRunTimes) {
-        __$p$.log(logCord, 'try create new socket connect, port = ' + __$p$.config.port)
-        __$p$.createWS()
+      if (that.autoCWSTimesIndex <= that.autoReconnectMaxRunTimes) {
+        that.log(logCord, 'try create new socket connect, port = ' + that.config.port)
+        that.createWS()
       }
-      ++__$p$.autoCWSTimesIndex
+      ++that.autoCWSTimesIndex
     }
   },
-  createWS: () => { // 建立Websocket 客户端
-    const __agent = __$p$
-    if (__agent.config.clientIOType === ClientIOType.SocketIO) {
-      __$p$.__createWSWithSocketIO()
-    } else if (__agent.config.clientIOType === ClientIOType.EngineIO) {
-      __$p$.__createWSWithEngineIO()
+  createWS: function () { // 建立Websocket 客户端
+    var that = this
+    if (that.config.clientIOType === ClientIOType.SocketIO) {
+      that.__createWSWithSocketIO()
+    } else if (that.config.clientIOType === ClientIOType.EngineIO) {
+      that.__createWSWithEngineIO()
     }
   },
   // --------------------------------------------------------
-  __createWSWithSocketIO: () => {
-    const __agent = __$p$
+  __createWSWithSocketIO: function () {
+    const __agent = this
     var url = __agent.getUrl()
     __agent.log(logCord, 'create new socket connect, wsurl = ' + url)
 
@@ -245,8 +252,8 @@ var __$p$ = {
       __agent.noticeCreateError({ errCode: error })
     }
   },
-  __createWSWithEngineIO: () => {
-    const __agent = __$p$
+  __createWSWithEngineIO: function () {
+    const __agent = this
     var url = __agent.getUrl()
     __agent.log(logCord, 'create new socket connect, wsurl = ' + url)
     const warning = `
@@ -328,14 +335,14 @@ var __$p$ = {
 }
 
 // 批量处理注册及接收方式
-_.each(TypeMsg, (eventType, key, list) => {
+_.each(TypeMsg, function (eventType, key, list) {
   var registerKey = 'register' + key
   var unregisterKey = 'unregister' + key
 
-  __$p$[registerKey] = (handler, one = false) => {
+  __$p$[registerKey] = function (handler, one = false) {
     __$p$.mc.bind(eventType, handler, one)
   }
-  __$p$[unregisterKey] = (handler) => {
+  __$p$[unregisterKey] = function (handler) {
     __$p$.mc.unbind(eventType, handler)
   }
 })
