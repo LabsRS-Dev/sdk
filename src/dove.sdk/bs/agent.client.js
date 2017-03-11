@@ -68,19 +68,22 @@ class Chancel2HandlerHelper {
     this.mapAssEvent = {}
     this.mapAssObj = {}
     this.mapAssFnc = {}
+
+    this.getNewFunction = this.getNewFunction.bind(this)
+    this.getThatFunctionList = this.getThatFunctionList.bind(this)
   }
 
-  getNewFunction (this2, assEvent, assObj, fnc) {
+  getNewFunction (assEvent, assObj, fnc) {
     var key = _.uniqueId(logCord + '__chancel2HandlerHelp__')
-    var that = this2
+    var that = this
     that.mapAssObj[key] = assObj
     that.mapAssFnc[key] = fnc
     that.mapAssEvent[key] = assEvent
     return fnc
   }
 
-  getThatFunctionList (this2, assEvent, assObj) {
-    var that = this2
+  getThatFunctionList (assEvent, assObj) {
+    var that = this
     var _fnList = []
     _.each(_.kes(that.mapAssObj), function (key) {
       if (assObj === that.mapAssObj[key] &&
@@ -143,11 +146,11 @@ var __$p$ = {
     chancel.type === ChancelType.websocketForPython
     ) {
       console.log(chancel.server)
-      _cs.registerOnWSGetServerMessage(_c2hhFn(_c2hh, _msgType.OnWSGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
-      _cs.registerOnSendMessageToServer(_c2hhFn(_c2hh, _msgType.OnSendMessageToServer, _cs, (message) => { }))
-      _cs.registerOnCreateError(_c2hhFn(_c2hh, _msgType.OnCreateError, _cs, (message) => { that.onBuildChannelError(message) }))
-      _cs.registerOnWSClose(_c2hhFn(_c2hh, _msgType.OnWSClose, _cs, (message) => { that.onChannelFault(message) }))
-      _cs.registerOnWSOpen(_c2hhFn(_c2hh, _msgType.OnWSOpen, _cs, (message) => { that.onFinishBuildChannel(message) }))
+      _cs.registerOnWSGetServerMessage(_c2hhFn(_msgType.OnWSGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
+      _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, (message) => { }))
+      _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, (message) => { that.onBuildChannelError(message) }))
+      _cs.registerOnWSClose(_c2hhFn(_msgType.OnWSClose, _cs, (message) => { that.onChannelFault(message) }))
+      _cs.registerOnWSOpen(_c2hhFn(_msgType.OnWSOpen, _cs, (message) => { that.onFinishBuildChannel(message) }))
 
       chancel.active()
     }
@@ -164,19 +167,19 @@ var __$p$ = {
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython
     ) {
-      _.each(_c2hhFn(_c2hh, _msgType.OnWSGetServerMessage, _cs), function (fnc) {
+      _.each(_c2hhFn(_msgType.OnWSGetServerMessage, _cs), function (fnc) {
         _cs.unregisterOnWSGetServerMessage(fnc)
       })
-      _.each(_c2hhFn(_c2hh, _msgType.OnSendMessageToServer, _cs), function (fnc) {
+      _.each(_c2hhFn(_msgType.OnSendMessageToServer, _cs), function (fnc) {
         _cs.unregisterOnSendMessageToServer(fnc)
       })
-      _.each(_c2hhFn(_c2hh, _msgType.OnCreateError, _cs), function (fnc) {
+      _.each(_c2hhFn(_msgType.OnCreateError, _cs), function (fnc) {
         _cs.unregisterOnCreateError(fnc)
       })
-      _.each(_c2hhFn(_c2hh, _msgType.OnWSClose, _cs), function (fnc) {
+      _.each(_c2hhFn(_msgType.OnWSClose, _cs), function (fnc) {
         _cs.unregisterOnWSClose(fnc)
       })
-      _.each(_c2hhFn(_c2hh, _msgType.OnWSOpen, _cs), function (fnc) {
+      _.each(_c2hhFn(_msgType.OnWSOpen, _cs), function (fnc) {
         _cs.unregisterOnWSOpen(fnc)
       })
     }
@@ -185,7 +188,7 @@ var __$p$ = {
   noticeToServer: function (message) {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')
-    
+
     if (that.__chancelList.length === 0) {
       console.warn(logCord, 'You maybe add one chancel')
     }

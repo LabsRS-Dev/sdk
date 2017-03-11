@@ -80,9 +80,14 @@ SelfClass.extend = function (proto) {
     if (proto[member] != null && proto[member].constructor === Object) {
       // Merge object members
       // fn[member] = extend(true, {}, base.prototype[member], proto[member])
+      // fn[member] = _.extend({}, base.prototype[member], proto[member])
       fn[member] = deepExtend({}, base.prototype[member], proto[member])
     } else {
       fn[member] = proto[member]
+
+      if (_.isFunction(proto[member])) {
+        fn[member].bind(subclass)
+      }
     }
   }
 
