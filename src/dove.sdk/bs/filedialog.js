@@ -1,5 +1,7 @@
 import { common } from './common'
-import _ from '../underscore'
+import underscore from '../underscore'
+
+var _ = underscore._
 
 var $bc_ = common
 
@@ -28,50 +30,50 @@ var $bc_ = common
 $bc_.cb_importFiles = null // 导入文件的回调
 /**
  * 导入文件
- * @param parms 参数的json对象
+ * @param params 参数的json对象
  * @param noNcb 非Native的状态下，执行的回调函数
  * @param cb    Native状态下，执行的回调函数是，默认是优化外部传入函数
  */
-$bc_.importFiles = function (in_parms, noNcb, cb) {
+$bc_.importFiles = function (paramOptions, noNcb, cb) {
   var _this = this
   try {
-    var parms = {}
+    var params = {}
     // 限制内部属性：
-    parms['callback'] = in_parms['callback'] || _this._get_callback(function (obj) {
+    params['callback'] = paramOptions['callback'] || _this._get_callback(function (obj) {
       if (_this.cb_importFiles) {
         _this.cb_importFiles && _this.cb_importFiles(obj)
       } else {
         cb && cb(obj)
       }
     }, true)
-    parms['title'] = in_parms['title'] || 'Select a file'
-    parms['prompt'] = in_parms['prompt'] || 'Open'
+    params['title'] = paramOptions['title'] || 'Select a file'
+    params['prompt'] = paramOptions['prompt'] || 'Open'
 
-    parms['allowOtherFileTypes'] = in_parms['allowOtherFileTypes'] || false
-    parms['allowMulSelection'] = in_parms['allowMulSelection'] || false
-    parms['canCreateDir'] = in_parms['canCreateDir'] || false
-    parms['canChooseFiles'] = true
-    parms['canChooseDir'] = false
-    parms['canAddToRecent'] = true // 是否添加到最近目录中
-    parms['directory'] = in_parms['directory'] || '' // 默认指定的目录
-    parms['types'] = in_parms['types'] || [] // eg. ['png','svg'] 或 ['*']
+    params['allowOtherFileTypes'] = paramOptions['allowOtherFileTypes'] || false
+    params['allowMulSelection'] = paramOptions['allowMulSelection'] || false
+    params['canCreateDir'] = paramOptions['canCreateDir'] || false
+    params['canChooseFiles'] = true
+    params['canChooseDir'] = false
+    params['canAddToRecent'] = true // 是否添加到最近目录中
+    params['directory'] = paramOptions['directory'] || '' // 默认指定的目录
+    params['types'] = paramOptions['types'] || [] // eg. ['png','svg'] 或 ['*']
 
     // 下拉文件类型选择处理
-    parms['enableFileFormatCombox'] = in_parms['enableFileFormatCombox'] || false
-    parms['typesDescript'] = in_parms['typesDescript'] || []
-    parms['lable'] = in_parms['lable'] || 'File Format:'
-    parms['label'] = in_parms['label'] || 'File Format:'
+    params['enableFileFormatCombox'] = paramOptions['enableFileFormatCombox'] || false
+    params['typesDescript'] = paramOptions['typesDescript'] || []
+    params['lable'] = paramOptions['lable'] || 'File Format:'
+    params['label'] = paramOptions['label'] || 'File Format:'
     // [end]下拉文件类型选择处理
 
     // / 统一向后兼容处理
-    for (var key in in_parms) {
-      if (in_parms.hasOwnProperty(key)) {
-        parms[key] = in_parms[key]
+    for (var key in paramOptions) {
+      if (paramOptions.hasOwnProperty(key)) {
+        params[key] = paramOptions[key]
       }
     }
 
     if ($bc_.pN) {
-      $bc_.pN.window.openFile(JSON.stringify(parms))
+      $bc_.pN.window.openFile(JSON.stringify(params))
     } else {
       alert('启动选择文件对话框!')
       noNcb && noNcb()
@@ -99,42 +101,43 @@ $bc_.importFiles = function (in_parms, noNcb, cb) {
 $bc_.cb_selectOutDir = null // 选择输出目录的回调
 /**
  * 选择输出目录
- * @param parms 传递的json对象
+ * @param params 传递的json对象
  * @param noNcb 非Native状态下，执行
  * @param cb 在Native下，可以通过传递cb来执行
  */
-$bc_.selectOutDir = function (in_parms, noNcb, cb) {
+$bc_.selectDir = $bc_.selectOutDir = function (paramOptions, noNcb, cb) {
   try {
-    var parms = {}
+    var params = {}
 
     // 限制内部属性：
-    parms['callback'] = in_parms['callback'] || $bc_._get_callback(function (obj) {
+    params['callback'] = paramOptions['callback'] || $bc_._get_callback(function (obj) {
       if (_.isFunction($bc_.cb_selectOutDir)) {
         $bc_.cb_selectOutDir && $bc_.cb_selectOutDir(obj)
       } else {
         cb && cb(obj)
       }
     }, true)
-    parms['title'] = in_parms['title'] || 'Select Directory'
-    parms['prompt'] = in_parms['prompt'] || 'Select'
+    params['title'] = paramOptions['title'] || 'Select Directory'
+    params['prompt'] = paramOptions['prompt'] || 'Select'
 
-    parms['allowOtherFileTypes'] = false
-    parms['canCreateDir'] = in_parms['canCreateDir'] !== false
-    parms['canChooseDir'] = true
-    parms['canChooseFiles'] = false // 不可以选择文件
-    parms['canAddToRecent'] = true // 是否添加到最近目录中
-    parms['directory'] = in_parms['directory'] || '' // 默认指定的目录
-    parms['types'] = []
+    params['allowOtherFileTypes'] = paramOptions['allowOtherFileTypes'] || false
+    params['allowMulSelection'] = paramOptions['allowMulSelection'] || false
+    params['canCreateDir'] = paramOptions['canCreateDir'] !== false
+    params['canChooseDir'] = true
+    params['canChooseFiles'] = false // 不可以选择文件
+    params['canAddToRecent'] = true // 是否添加到最近目录中
+    params['directory'] = paramOptions['directory'] || '' // 默认指定的目录
+    params['types'] = []
 
     // / 统一向后兼容处理
-    for (var key in in_parms) {
-      if (in_parms.hasOwnProperty(key)) {
-        parms[key] = in_parms[key]
+    for (var key in paramOptions) {
+      if (paramOptions.hasOwnProperty(key)) {
+        params[key] = paramOptions[key]
       }
     }
 
     if ($bc_.pN) {
-      $bc_.pN.window.openFile(JSON.stringify(parms))
+      $bc_.pN.window.openFile(JSON.stringify(params))
     } else {
       alert('启动选择目录对话框!')
       noNcb && noNcb()
@@ -158,48 +161,48 @@ $bc_.selectOutDir = function (in_parms, noNcb, cb) {
 $bc_.cb_selectOutFile = null // 选择输出文件的回调
 /**
  * 选择输出文件
- * @param parms 传递的json对象
+ * @param params 传递的json对象
  * @param noNcb 非Native状态下，执行
  * @param cb 在Native下，可以通过传递cb来执行
  */
-$bc_.selectOutFile = function (in_parms, noNcb, cb) {
+$bc_.selectOutFile = function (paramOptions, noNcb, cb) {
   if ($bc_.pN) {
     try {
-      var parms = {}
+      var params = {}
 
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_._get_callback(function (obj) {
         if (_.isFunction($bc_.cb_selectOutFile)) {
           $bc_.cb_selectOutFile && $bc_.cb_selectOutFile(obj)
         } else {
           cb && cb(obj)
         }
       }, true)
-      parms['title'] = in_parms['title'] || 'Save as'
-      parms['prompt'] = in_parms['prompt'] || 'Save'
+      params['title'] = paramOptions['title'] || 'Save as'
+      params['prompt'] = paramOptions['prompt'] || 'Save'
 
-      parms['allowOtherFileTypes'] = false
-      parms['canCreateDir'] = in_parms['canCreateDir'] !== false
-      parms['canAddToRecent'] = true // 是否添加到最近目录中
-      parms['fileName'] = in_parms['fileName'] || 'untitled'
-      parms['directory'] = in_parms['directory'] || '' // 默认指定的目录
-      parms['types'] = in_parms['types'] || ['*'] // 要求的数组
+      params['allowOtherFileTypes'] = false
+      params['canCreateDir'] = paramOptions['canCreateDir'] !== false
+      params['canAddToRecent'] = true // 是否添加到最近目录中
+      params['fileName'] = paramOptions['fileName'] || 'untitled'
+      params['directory'] = paramOptions['directory'] || '' // 默认指定的目录
+      params['types'] = paramOptions['types'] || ['*'] // 要求的数组
 
       // 下拉文件类型选择处理
-      parms['enableFileFormatCombox'] = in_parms['enableFileFormatCombox'] || false
-      parms['typesDescript'] = in_parms['typesDescript'] || []
-      parms['lable'] = in_parms['lable'] || 'File Format:'
-      parms['label'] = in_parms['label'] || 'File Format:'
+      params['enableFileFormatCombox'] = paramOptions['enableFileFormatCombox'] || false
+      params['typesDescript'] = paramOptions['typesDescript'] || []
+      params['lable'] = paramOptions['lable'] || 'File Format:'
+      params['label'] = paramOptions['label'] || 'File Format:'
       // [end]下拉文件类型选择处理
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key]
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key]
         }
       }
 
-      $bc_.pN.window.saveFile(JSON.stringify(parms))
+      $bc_.pN.window.saveFile(JSON.stringify(params))
     } catch (e) {
       console.error(e)
     }

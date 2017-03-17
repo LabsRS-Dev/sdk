@@ -1,4 +1,5 @@
 import underscore from './underscore'
+
 var _ = underscore._
 
 /**
@@ -68,6 +69,14 @@ var Tool = {
     return this.isUndefinedOrNull(o) || o === false
   },
   isObject: _.isObject,
+  isError: _.isError,
+  isNaN: _.isNaN,
+  isFinite: _.isFinite,
+  isArguments: _.isArguments,
+  isElement: _.isElement,
+  isEmpty: _.isEmpty,
+  isMatch: _.isMatch,
+  isEqual: _.isEqual,
   isPromise: function (val) {
     return val && typeof val.then === 'function'
   },
@@ -145,6 +154,8 @@ var Tool = {
     try {
       if (this.isString(err)) {
         msg = err
+      } else if (this.isError(err)) {
+        msg = err.message
       } else if (this.isObject(err)) {
         var errMsg = []
         for (var p in err) {
@@ -344,7 +355,7 @@ var Tool = {
       return 0
     } catch (e) {
       return -1
-    }    
+    }
   },
   // 测试对象类型
   testObjectType: function (obj, type) {
@@ -358,7 +369,6 @@ var Tool = {
 }
 
 // -------------------------------------------------------
-
 
 export {
    Tool

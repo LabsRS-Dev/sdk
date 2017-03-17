@@ -51,19 +51,19 @@ $bc_.Window = {
   move: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['x'] = jsonObj['x'] || 0.0
-        parms['y'] = jsonObj['y'] || 0.0
+        params['x'] = jsonObj['x'] || 0.0
+        params['y'] = jsonObj['y'] || 0.0
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.move(JSON.stringify(parms))
+        $bc_.pN.window.move(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -76,19 +76,19 @@ $bc_.Window = {
   resize: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600
-        parms['height'] = jsonObj['height'] || 400
+        params['width'] = jsonObj['width'] || 600
+        params['height'] = jsonObj['height'] || 400
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.resize(JSON.stringify(parms))
+        $bc_.pN.window.resize(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -112,19 +112,19 @@ $bc_.Window = {
   setMinSize: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600
-        parms['height'] = jsonObj['height'] || 400
+        params['width'] = jsonObj['width'] || 600
+        params['height'] = jsonObj['height'] || 400
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.setMinsize(JSON.stringify(parms))
+        $bc_.pN.window.setMinsize(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -148,19 +148,19 @@ $bc_.Window = {
   setMaxSize: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600
-        parms['height'] = jsonObj['height'] || 400
+        params['width'] = jsonObj['width'] || 600
+        params['height'] = jsonObj['height'] || 400
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.setMaxsize(JSON.stringify(parms))
+        $bc_.pN.window.setMaxsize(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -185,19 +185,19 @@ $bc_.Window = {
   setSize: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600
-        parms['height'] = jsonObj['height'] || 400
+        params['width'] = jsonObj['width'] || 600
+        params['height'] = jsonObj['height'] || 400
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.Window.resize(parms)
+        $bc_.Window.resize(params)
       } catch (e) {
         console.error(e)
       }

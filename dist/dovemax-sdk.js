@@ -1816,24 +1816,24 @@ $bc_$1.revealInFinder = function (path, cb) {
 };
 
 // 预览文件
-$bc_$1.previewFile = function (in_parms, cb) {
+$bc_$1.previewFile = function (paramOptions, cb) {
   if ($bc_$1.pN) {
     try {
-      var parms = in_parms || {};
+      var params = paramOptions || {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$1._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$1._get_callback(function (obj) {
         cb && cb(obj);
       }, true);
-      parms['filePath'] = in_parms['filePath'] || '';
+      params['filePath'] = paramOptions['filePath'] || '';
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
-      $bc_$1.pN.window.preveiwFile(JSON.stringify(parms));
+      $bc_$1.pN.window.preveiwFile(JSON.stringify(params));
     } catch (e) {
       console.error(e);
     }
@@ -2253,12 +2253,12 @@ $bc_$2.IAP = {
     return false
   },
 
-  enableIAP: function (in_parms, cb) {
+  enableIAP: function (paramOptions, cb) {
     var t$ = this;
 
     try {
-      var parms = {};
-      parms['cb_IAP_js'] = in_parms['cb_IAP_js'] || $bc_$2._get_callback(function (obj) {
+      var params = {};
+      params['cb_IAP_js'] = paramOptions['cb_IAP_js'] || $bc_$2._get_callback(function (obj) {
         // ////////////////////////内部处理//////////////////////////////////
         try {
           if (_$3.isObject(obj)) {
@@ -2302,27 +2302,27 @@ $bc_$2.IAP = {
       }, true);
 
       // / 数据校验
-      console.assert(_$3.isString(parms['cb_IAP_js']) === true, 'must be function string');
+      console.assert(_$3.isString(params['cb_IAP_js']) === true, 'must be function string');
 
       // /Ian(原先的方式)
-      if (_$3.isArray(in_parms['productIds'])) {
-        parms['productIds'] = in_parms['productIds'] || [];
+      if (_$3.isArray(paramOptions['productIds'])) {
+        params['productIds'] = paramOptions['productIds'] || [];
       }
 
       // /Ian 2016.12.06 现在的方式. 支持更高级的商品属性定义传入
-      parms['products'] = [];
-      if (_$3.isArray(in_parms['products'])) { // [{productIdentifier, description, buyUrl, price}]
+      params['products'] = [];
+      if (_$3.isArray(paramOptions['products'])) { // [{productIdentifier, description, buyUrl, price}]
         try {
           var productIds = [];
-          _$3.each(in_parms['products'], function (product, index, list) {
+          _$3.each(paramOptions['products'], function (product, index, list) {
             productIds.push(product.productIdentifier);
           });
 
-          if (_$3.isUndefined(parms['productIds'] || _$3.isNull(parms['productIds']))) {
-            parms['productIds'] = productIds;
+          if (_$3.isUndefined(params['productIds'] || _$3.isNull(params['productIds']))) {
+            params['productIds'] = productIds;
           }
 
-          parms['products'] = in_parms['products'];
+          params['products'] = paramOptions['products'];
         } catch (e) {
           console.error(e);
           alert(e);
@@ -2330,15 +2330,15 @@ $bc_$2.IAP = {
       }
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$2.pN) {
         // 注册IAP回调
-        $bc_$2.pN.iap.regeditIAPCallbackJs(parms.cb_IAP_js);
+        $bc_$2.pN.iap.regeditIAPCallbackJs(params.cb_IAP_js);
 
         // 注册IAPBundle
         $bc_$2.pN.iap.regeditIAPCore(JSON.stringify({
@@ -2352,8 +2352,8 @@ $bc_$2.IAP = {
 
           // 发送商品请求
           $bc_$2.pN.iap.requestProducts(JSON.stringify({
-            productIdentifiers: parms.productIds || [],
-            products: parms['products'] || []
+            productIdentifiers: params.productIds || [],
+            products: params['products'] || []
           }));
         }
 
@@ -2361,19 +2361,19 @@ $bc_$2.IAP = {
 
         // /注册模拟IAP回调
         $bc_$2.IAP_SE_Wrapper.caller().add(function (obj) {
-          console.assert(_$3.isString(parms.cb_IAP_js) === true, 'must be function string');
+          console.assert(_$3.isString(params.cb_IAP_js) === true, 'must be function string');
 
-          var fnc = window.eval(parms.cb_IAP_js);
+          var fnc = window.eval(params.cb_IAP_js);
           if (_$3.isFunction(fnc)) {
             fnc && fnc(obj);
           }
         });
 
         // /注册商品ID
-        $bc_$2.IAP_SE_Wrapper.productIdentifiers = parms.productIds || [];
+        $bc_$2.IAP_SE_Wrapper.productIdentifiers = params.productIds || [];
 
         var productsInfo = [];
-        _$3.each(parms.productIds, function (id, index, list) {
+        _$3.each(params.productIds, function (id, index, list) {
           var productObj = {
             productIdentifier: id,
             description: 'Plugin Description and price demo for ' + id,
@@ -2493,13 +2493,13 @@ $bc_$2.IAP = {
 
   /**
    * 购买商品
-   * @param parms {} 参数productIdentifier： 购买的商品唯一标识， quantity： 购买的商品数量
+   * @param params {} 参数productIdentifier： 购买的商品唯一标识， quantity： 购买的商品数量
    * @param successCallback 购买成功后的回调, 传值参数为商品标识，和消息内容
    * @param failCallback 购买失败后的回调，传值参数为商品标识，和消息内容
    */
-  buyProduct: function (parms, successCallback, failCallback) {
+  buyProduct: function (params, successCallback, failCallback) {
     var t$ = this;
-    if (!t$._check(parms.productIdentifier)) { return }
+    if (!t$._check(params.productIdentifier)) { return }
 
     // ////////////////////////////////////////////////////////////////////////////
     var _cb = function (obj) {
@@ -2509,7 +2509,7 @@ $bc_$2.IAP = {
           var info = obj.info;
           var notifyType = obj.notifyType;
 
-          if (info.productIdentifier === parms.productIdentifier) {
+          if (info.productIdentifier === params.productIdentifier) {
             if (notifyType === t$.MessageType['ProductPurchased']) {
               successCallback && successCallback(info.productIdentifier, obj);
             } else if (t$.MessageType['ProductPurchaseFailed']) {
@@ -2528,8 +2528,8 @@ $bc_$2.IAP = {
     if ($bc_$2.pN) {
       // 发送购买请求
       $bc_$2.pN.iap.buyProduct(JSON.stringify({
-        identifier: parms.productIdentifier,
-        quantity: parms.quantity || 1
+        identifier: params.productIdentifier,
+        quantity: params.quantity || 1
       }));
     } else {
       console.log('Romanysoft SDK simulation environment....');
@@ -2538,21 +2538,21 @@ $bc_$2.IAP = {
       $bc_$2.IAP_SE_OBJ = JSON.parse(obj);
       var orgQuantity = 0;
       var saveQuantity = 0;
-      if ($bc_$2.IAP_SE_OBJ[parms.productIdentifier]) {
-        orgQuantity = $bc_$2.IAP_SE_OBJ[parms.productIdentifier];
-        saveQuantity = orgQuantity + parms.quantity || 1;
+      if ($bc_$2.IAP_SE_OBJ[params.productIdentifier]) {
+        orgQuantity = $bc_$2.IAP_SE_OBJ[params.productIdentifier];
+        saveQuantity = orgQuantity + params.quantity || 1;
       } else {
-        saveQuantity = parms.quantity || 1;
+        saveQuantity = params.quantity || 1;
       }
 
-      $bc_$2.IAP_SE_OBJ[parms.productIdentifier] = saveQuantity;
+      $bc_$2.IAP_SE_OBJ[params.productIdentifier] = saveQuantity;
       window.localStorage.setItem($bc_$2.IAP_SE_KEY, JSON.stringify($bc_$2.IAP_SE_OBJ));
 
       // 模拟发送成功购买信息
       $bc_$2.IAP_SE_Wrapper.caller().fire({
         notifyType: t$.MessageType['ProductPurchased'],
         info: {
-          productIdentifier: parms.productIdentifier,
+          productIdentifier: params.productIdentifier,
           quantity: saveQuantity
         }
       });
@@ -2561,7 +2561,7 @@ $bc_$2.IAP = {
       $bc_$2.IAP_SE_Wrapper.caller().fire({
         notifyType: t$.MessageType['ProductCompletePurchased'],
         info: {
-          productIdentifier: parms.productIdentifier,
+          productIdentifier: params.productIdentifier,
           transactionId: 'transactionId' + Math.round(999),
           receipt: 'receipt' + Math.round(999)
         }
@@ -3009,21 +3009,21 @@ $bc_$4.App = {
   sendEmail: function (jsonObj) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['sendAddress'] = jsonObj['sendAddress'] || 'admin@gmail.com';
-        parms['toAddress'] = jsonObj['toAddress'] || 'admin@gmail.com';
-        parms['subject'] = jsonObj['subject'] || 'Hello';
-        parms['body'] = jsonObj['body'] || 'Hello!!';
+        params['sendAddress'] = jsonObj['sendAddress'] || 'admin@gmail.com';
+        params['toAddress'] = jsonObj['toAddress'] || 'admin@gmail.com';
+        params['subject'] = jsonObj['subject'] || 'Hello';
+        params['body'] = jsonObj['body'] || 'Hello!!';
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$4.pN.app.sendEmailWithMail(JSON.stringify(parms));
+        $bc_$4.pN.app.sendEmailWithMail(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -3412,15 +3412,15 @@ $bc_$4.App = {
   createDir: $bc_$4.createDir = function (dir_path, atts, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = {};
+        var params = {};
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['path'] = dir_path || ($bc_$4.pN.path.tempDir() + 'tmp_dir001');
-        if (atts) { parms['atts'] = atts || {}; }
+        params['path'] = dir_path || ($bc_$4.pN.path.tempDir() + 'tmp_dir001');
+        if (atts) { params['atts'] = atts || {}; }
 
-        $bc_$4.pN.window.createDir(JSON.stringify(parms));
+        $bc_$4.pN.window.createDir(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -3444,14 +3444,14 @@ $bc_$4.App = {
   removeDir: $bc_$4.removeDir = function (dir_path, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = {};
+        var params = {};
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['path'] = dir_path || ($bc_$4.pN.path.tempDir() + '/tmp_dir001');
+        params['path'] = dir_path || ($bc_$4.pN.path.tempDir() + '/tmp_dir001');
 
-        $bc_$4.pN.window.removeDir(JSON.stringify(parms));
+        $bc_$4.pN.window.removeDir(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -3462,22 +3462,22 @@ $bc_$4.App = {
   copyFile: $bc_$4.copyFile = function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['src'] = jsonObj['src'] || '';
-        parms['dest'] = jsonObj['dest'] || '';
+        params['src'] = jsonObj['src'] || '';
+        params['dest'] = jsonObj['dest'] || '';
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$4.pN.window.copyFile(JSON.stringify(parms));
+        $bc_$4.pN.window.copyFile(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -3488,22 +3488,22 @@ $bc_$4.App = {
   copyDir: $bc_$4.copyDir = function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['src'] = jsonObj['src'] || '';
-        parms['dest'] = jsonObj['dest'] || '';
+        params['src'] = jsonObj['src'] || '';
+        params['dest'] = jsonObj['dest'] || '';
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$4.pN.window.copyDir(JSON.stringify(parms));
+        $bc_$4.pN.window.copyDir(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -3514,22 +3514,22 @@ $bc_$4.App = {
   moveFile: $bc_$4.moveFile = function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['src'] = jsonObj['src'] || '';
-        parms['dest'] = jsonObj['dest'] || '';
+        params['src'] = jsonObj['src'] || '';
+        params['dest'] = jsonObj['dest'] || '';
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$4.pN.window.moveFile(JSON.stringify(parms));
+        $bc_$4.pN.window.moveFile(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -3540,22 +3540,22 @@ $bc_$4.App = {
   moveDir: $bc_$4.moveDir = function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['src'] = jsonObj['src'] || '';
-        parms['dest'] = jsonObj['dest'] || '';
+        params['src'] = jsonObj['src'] || '';
+        params['dest'] = jsonObj['dest'] || '';
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$4.pN.window.moveDir(JSON.stringify(parms));
+        $bc_$4.pN.window.moveDir(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -3568,7 +3568,7 @@ $bc_$4.App = {
       var _dir = dir || $bc_$4.pN.path.tempDir();
       var _fileName = fileName || 'tmp.txt';
 
-      var parms = {
+      var params = {
         callback: cbName || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true),
@@ -3576,7 +3576,7 @@ $bc_$4.App = {
         fileName: _fileName
       };
 
-      return $bc_$4.pN.window.findFile(JSON.stringify(parms))
+      return $bc_$4.pN.window.findFile(JSON.stringify(params))
     }
 
     return null
@@ -3701,14 +3701,14 @@ $bc_$4.App = {
   getOtherAppInfo: function (path, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = {};
+        var params = {};
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['path'] = path || ($bc_$4.pN.path.tempDir() + '/tmp_dir001');
+        params['path'] = path || ($bc_$4.pN.path.tempDir() + '/tmp_dir001');
 
-        return $bc_$4.pN.window.getOtherAppInfo(JSON.stringify(parms))
+        return $bc_$4.pN.window.getOtherAppInfo(JSON.stringify(params))
       } catch (e) {
         console.error(e);
       }
@@ -4069,7 +4069,7 @@ $bc_$4.App = {
 
     var defaultLanguage = 'en';
     // 本地对应浏览器的语言标识
-    var NativeApple2WebKit_LanguageMap = {
+    var NativeApple2WebKitLanguageMap = {
       'Unknown': [''],
       'en': ['en', 'en-US', 'en-us'], // 英语
 
@@ -4141,16 +4141,16 @@ $bc_$4.App = {
     };
 
     if (getType === 'Native2Webkit') { // 先获取Native的语言，然后查找Map
-      var apple_lng = 'en-US';
+      var appleLanguage = 'en-US';
       if ($bc_$4.pN) {
-        apple_lng = $bc_$4.pN.app.curAppleLanguage();
+        appleLanguage = $bc_$4.pN.app.curAppleLanguage();
       }
 
-      if (NativeApple2WebKit_LanguageMap.hasOwnProperty(apple_lng)) {
-        return NativeApple2WebKit_LanguageMap[apple_lng]
+      if (NativeApple2WebKitLanguageMap.hasOwnProperty(appleLanguage)) {
+        return NativeApple2WebKitLanguageMap[appleLanguage]
       }
 
-      return NativeApple2WebKit_LanguageMap[defaultLanguage]
+      return NativeApple2WebKitLanguageMap[defaultLanguage]
     } else if (getType === 'webkitCompatible') {
       var mapValue = null;
       var webLanguage = navigator.language || 'en';
@@ -4166,9 +4166,9 @@ $bc_$4.App = {
         }
       };
 
-      for (var key in NativeApple2WebKit_LanguageMap) {
-        if (NativeApple2WebKit_LanguageMap.hasOwnProperty(key)) {
-          var languageArray = NativeApple2WebKit_LanguageMap[key];
+      for (var key in NativeApple2WebKitLanguageMap) {
+        if (NativeApple2WebKitLanguageMap.hasOwnProperty(key)) {
+          var languageArray = NativeApple2WebKitLanguageMap[key];
           if (inArray(webLanguage, languageArray) > -1) {
             mapValue = languageArray;
             break
@@ -4202,21 +4202,21 @@ $bc_$4.App = {
   captureFull: function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['filePath'] = parms['filePath'] || ($bc_$4.pN.path.tempDir() +
+        params['filePath'] = params['filePath'] || ($bc_$4.pN.path.tempDir() +
           'cap_screen.png'); // 保存文件
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
-        $bc_$4.pN.window.capture(JSON.stringify(parms));
+        $bc_$4.pN.window.capture(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -4227,9 +4227,9 @@ $bc_$4.App = {
   addDirPathToChangeWatcher: function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
 
-        parms['callback'] = parms['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileWritten"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileAttributesChanged"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileSizeIncreased"} (app.js, line 270)
@@ -4239,16 +4239,16 @@ $bc_$4.App = {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileDeleted"} (app.js, line 270)
           cb && cb(obj);
         }, true);
-        parms['path'] = parms['path'] || ($bc_$4.pN.path.tempDir());
+        params['path'] = params['path'] || ($bc_$4.pN.path.tempDir());
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$4.pN.window.createDirChangeWatcher(JSON.stringify(parms));
+        $bc_$4.pN.window.createDirChangeWatcher(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -4259,9 +4259,9 @@ $bc_$4.App = {
   addFilePathToChangeWatcher: function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
 
-        parms['callback'] = parms['callback'] || $bc_$4._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileWritten"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileAttributesChanged"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileSizeIncreased"} (app.js, line 270)
@@ -4271,16 +4271,16 @@ $bc_$4.App = {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileDeleted"} (app.js, line 270)
           cb && cb(obj);
         }, true);
-        parms['path'] = parms['path'] || ($bc_$4.pN.path.tempDir());
+        params['path'] = params['path'] || ($bc_$4.pN.path.tempDir());
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$4.pN.window.createFileChangeWatcher(JSON.stringify(parms));
+        $bc_$4.pN.window.createFileChangeWatcher(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -4291,17 +4291,17 @@ $bc_$4.App = {
   removeFromChangeWatcher: function (jsonObj) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
-        parms['path'] = parms['path'] || ($bc_$4.pN.path.tempDir());
+        var params = jsonObj || {};
+        params['path'] = params['path'] || ($bc_$4.pN.path.tempDir());
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        return $bc_$4.pN.window.removeFromChangeWatcher(JSON.stringify(parms))
+        return $bc_$4.pN.window.removeFromChangeWatcher(JSON.stringify(params))
       } catch (e) {
         console.error(e);
       }
@@ -4314,18 +4314,18 @@ $bc_$4.App = {
   print: function (jsonObj) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
-        parms['silent'] = parms['silent'] || false;
-        parms['printBackground'] = parms['printBackground'] || false;
+        var params = jsonObj || {};
+        params['silent'] = params['silent'] || false;
+        params['printBackground'] = params['printBackground'] || false;
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        return $bc_$4.pN.window.print(JSON.stringify(parms))
+        return $bc_$4.pN.window.print(JSON.stringify(params))
       } catch (e) {
         console.error(e);
       }
@@ -4336,26 +4336,26 @@ $bc_$4.App = {
   printToPDF: function (jsonObj, cb) {
     if ($bc_$4.pN) {
       try {
-        var parms = jsonObj || {};
-        parms['callback'] = parms['callback'] || $bc_$4._get_callback(function (obj) {
+        var params = jsonObj || {};
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        parms['marginsType'] = parms['marginsType'] || 0;
-        parms['pageSize'] = parms['pageSize'] || 'A4';
-        parms['printBackground'] = parms['printBackground'] || false;
-        parms['printSelectionOnly'] = parms['printSelectionOnly'] || false;
-        parms['landscape'] = parms['landscape'] || false;
-        parms['filePath'] = parms['filePath'] || ($bc_$4.pN.path.tempDir() + '/' + Date
+        params['marginsType'] = params['marginsType'] || 0;
+        params['pageSize'] = params['pageSize'] || 'A4';
+        params['printBackground'] = params['printBackground'] || false;
+        params['printSelectionOnly'] = params['printSelectionOnly'] || false;
+        params['landscape'] = params['landscape'] || false;
+        params['filePath'] = params['filePath'] || ($bc_$4.pN.path.tempDir() + '/' + Date
           .now() + '.pdf');
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        return $bc_$4.pN.window.printToPDF(JSON.stringify(parms))
+        return $bc_$4.pN.window.printToPDF(JSON.stringify(params))
       } catch (e) {
         console.error(e);
       }
@@ -4807,19 +4807,19 @@ $bc_$6.Window = {
   move: function (jsonObj) {
     if ($bc_$6.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['x'] = jsonObj['x'] || 0.0;
-        parms['y'] = jsonObj['y'] || 0.0;
+        params['x'] = jsonObj['x'] || 0.0;
+        params['y'] = jsonObj['y'] || 0.0;
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$6.pN.window.move(JSON.stringify(parms));
+        $bc_$6.pN.window.move(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -4832,19 +4832,19 @@ $bc_$6.Window = {
   resize: function (jsonObj) {
     if ($bc_$6.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600;
-        parms['height'] = jsonObj['height'] || 400;
+        params['width'] = jsonObj['width'] || 600;
+        params['height'] = jsonObj['height'] || 400;
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$6.pN.window.resize(JSON.stringify(parms));
+        $bc_$6.pN.window.resize(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -4868,19 +4868,19 @@ $bc_$6.Window = {
   setMinSize: function (jsonObj) {
     if ($bc_$6.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600;
-        parms['height'] = jsonObj['height'] || 400;
+        params['width'] = jsonObj['width'] || 600;
+        params['height'] = jsonObj['height'] || 400;
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$6.pN.window.setMinsize(JSON.stringify(parms));
+        $bc_$6.pN.window.setMinsize(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -4904,19 +4904,19 @@ $bc_$6.Window = {
   setMaxSize: function (jsonObj) {
     if ($bc_$6.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600;
-        parms['height'] = jsonObj['height'] || 400;
+        params['width'] = jsonObj['width'] || 600;
+        params['height'] = jsonObj['height'] || 400;
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$6.pN.window.setMaxsize(JSON.stringify(parms));
+        $bc_$6.pN.window.setMaxsize(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -4941,19 +4941,19 @@ $bc_$6.Window = {
   setSize: function (jsonObj) {
     if ($bc_$6.pN) {
       try {
-        var parms = jsonObj || {};
+        var params = jsonObj || {};
         // 限制内部属性：
-        parms['width'] = jsonObj['width'] || 600;
-        parms['height'] = jsonObj['height'] || 400;
+        params['width'] = jsonObj['width'] || 600;
+        params['height'] = jsonObj['height'] || 400;
 
         // / 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key];
+            params[key] = jsonObj[key];
           }
         }
 
-        $bc_$6.Window.resize(parms);
+        $bc_$6.Window.resize(params);
       } catch (e) {
         console.error(e);
       }
@@ -4974,30 +4974,30 @@ var $bc_$7 = common;
  * @type {{setMenuProperty: Function, maxRecentDocumentCount: Function, addRecentDocument: Function, clearAllRecentDocuments: Function}}
  */
 $bc_$7.SystemMenus = {
-  setMenuProperty: function (in_parms, cb, actionCB) {
+  setMenuProperty: function (paramOptions, cb, actionCB) {
     try {
-      var parms = {};
+      var params = {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$7._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$7._get_callback(function (obj) {
         cb && cb(obj);
       }, true);
-      parms['menuTag'] = in_parms['menuTag'] || 999;
-      parms['hideMenu'] = in_parms['hideMenu'] || false;
-      parms['isSeparatorItem'] = in_parms['isSeparatorItem'] || false; // 是否为分割线，用来创建新的Item
-      parms['title'] = in_parms['title'] || '##**'; // "MenuTitle";
-      parms['action'] = in_parms['action'] || $bc_$7._get_callback(function (obj) {
+      params['menuTag'] = paramOptions['menuTag'] || 999;
+      params['hideMenu'] = paramOptions['hideMenu'] || false;
+      params['isSeparatorItem'] = paramOptions['isSeparatorItem'] || false; // 是否为分割线，用来创建新的Item
+      params['title'] = paramOptions['title'] || '##**'; // "MenuTitle";
+      params['action'] = paramOptions['action'] || $bc_$7._get_callback(function (obj) {
         actionCB && actionCB(obj);
       }, true);
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$7.pN) {
-        $bc_$7.pN.window.setMenuProperty(JSON.stringify(parms));
+        $bc_$7.pN.window.setMenuProperty(JSON.stringify(params));
       } else {
         alert('启动系统菜单控制!');
       }
@@ -5012,22 +5012,22 @@ $bc_$7.SystemMenus = {
 
     return 0
   },
-  addRecentDocument: function (in_parms) {
+  addRecentDocument: function (paramOptions) {
     if ($bc_$7.pN) {
       try {
-        var parms = in_parms || {};
+        var params = paramOptions || {};
         // 限制内部属性：
-        parms['url'] = in_parms['url'] || '';
-        parms['mustWritable'] = in_parms['mustWritable'] || false;
+        params['url'] = paramOptions['url'] || '';
+        params['mustWritable'] = paramOptions['mustWritable'] || false;
 
         // / 统一向后兼容处理
-        for (var key in in_parms) {
-          if (in_parms.hasOwnProperty(key)) {
-            parms[key] = in_parms[key];
+        for (var key in paramOptions) {
+          if (paramOptions.hasOwnProperty(key)) {
+            params[key] = paramOptions[key];
           }
         }
 
-        $bc_$7.pN.window.addRecentDocument(JSON.stringify(parms));
+        $bc_$7.pN.window.addRecentDocument(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -5099,27 +5099,27 @@ var $bc_$10 = common;
  * @type {{createBinaryFile: Function, createTextFile: Function, getUTF8TextContentFromFile: Function, base64ToFile: Function, base64ToImageFile: Function, imageFileConvertToOthers: Function}}
  */
 $bc_$10.Binary = {
-  createBinaryFile: function (in_parms, cb) {
+  createBinaryFile: function (paramOptions, cb) {
     try {
-      var parms = {};
+      var params = {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$10._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$10._get_callback(function (obj) {
         cb && cb(obj);
       }, true);
-      parms['filePath'] = in_parms['filePath'] || '';
-      parms['data'] = in_parms['data'] || '';
-      parms['offset'] = in_parms['offset'] || 0;
-      parms['dataAppend'] = in_parms['dataAppend'] || false;
+      params['filePath'] = paramOptions['filePath'] || '';
+      params['data'] = paramOptions['data'] || '';
+      params['offset'] = paramOptions['offset'] || 0;
+      params['dataAppend'] = paramOptions['dataAppend'] || false;
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$10.pN) {
-        $bc_$10.pN.binaryFileWriter.writeBinaryArray(JSON.stringify(parms));
+        $bc_$10.pN.binaryFileWriter.writeBinaryArray(JSON.stringify(params));
       } else {
         alert('创建二进制文件');
       }
@@ -5128,27 +5128,27 @@ $bc_$10.Binary = {
     }
   },
 
-  createTextFile: function (in_parms, cb) {
+  createTextFile: function (paramOptions, cb) {
     try {
-      var parms = {};
+      var params = {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$10._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$10._get_callback(function (obj) {
         cb && cb(obj);
       }, true);
-      parms['filePath'] = in_parms['filePath'] || '';
-      parms['text'] = in_parms['text'] || '';
-      parms['offset'] = in_parms['offset'] || 0;
-      parms['dataAppend'] = in_parms['dataAppend'] || false;
+      params['filePath'] = paramOptions['filePath'] || '';
+      params['text'] = paramOptions['text'] || '';
+      params['offset'] = paramOptions['offset'] || 0;
+      params['dataAppend'] = paramOptions['dataAppend'] || false;
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$10.pN) {
-        $bc_$10.pN.binaryFileWriter.writeTextToFile(JSON.stringify(parms));
+        $bc_$10.pN.binaryFileWriter.writeTextToFile(JSON.stringify(params));
       } else {
         alert('创建文本文件');
       }
@@ -5157,11 +5157,11 @@ $bc_$10.Binary = {
     }
   },
 
-  getUTF8TextContentFromFile: function (in_parms, cb) {
+  getUTF8TextContentFromFile: function (paramOptions, cb) {
     try {
-      var parms = {};
+      var params = {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$10._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$10._get_callback(function (obj) {
         /**
          obj.success = true || false
          obj.content =  //内容
@@ -5169,9 +5169,9 @@ $bc_$10.Binary = {
          **/
         cb && cb(obj);
       }, true);
-      parms['filePath'] = in_parms['filePath'] || '';
-      parms['encode'] = in_parms['encode'] || 'utf8';
-      parms['async'] = in_parms['async'] !== false; // 异步的时候，回调函数有效，否则无效，直接返回内容值
+      params['filePath'] = paramOptions['filePath'] || '';
+      params['encode'] = paramOptions['encode'] || 'utf8';
+      params['async'] = paramOptions['async'] !== false; // 异步的时候，回调函数有效，否则无效，直接返回内容值
 
       /**
        encode: 说明，不区分大小写
@@ -5181,14 +5181,14 @@ $bc_$10.Binary = {
        **/
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$10.pN) {
-        return $bc_$10.pN.binaryFileWriter.getTextFromFile(JSON.stringify(parms)) // 使用非异步模式(async == false)，直接返回content内容
+        return $bc_$10.pN.binaryFileWriter.getTextFromFile(JSON.stringify(params)) // 使用非异步模式(async == false)，直接返回content内容
       } else {
         alert('获取文本文件中的内容（UTF8编码）');
         cb && cb({
@@ -5201,26 +5201,26 @@ $bc_$10.Binary = {
     }
   },
 
-  base64ToFile: function (in_parms, cb) {
+  base64ToFile: function (paramOptions, cb) {
     try {
-      var parms = {};
+      var params = {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$10._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$10._get_callback(function (obj) {
         cb && cb(obj);
       }, true);
-      parms['filePath'] = in_parms['filePath'] || '';
-      parms['base64String'] = in_parms['base64String'] || '';
-      parms['dataAppend'] = in_parms['dataAppend'] || false;
+      params['filePath'] = paramOptions['filePath'] || '';
+      params['base64String'] = paramOptions['base64String'] || '';
+      params['dataAppend'] = paramOptions['dataAppend'] || false;
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$10.pN) {
-        $bc_$10.pN.binaryFileWriter.base64ToFile(JSON.stringify(parms));
+        $bc_$10.pN.binaryFileWriter.base64ToFile(JSON.stringify(params));
       } else {
         alert('base64编码保存到文件中');
       }
@@ -5229,26 +5229,26 @@ $bc_$10.Binary = {
     }
   },
 
-  base64ToImageFile: function (in_parms, cb) {
+  base64ToImageFile: function (paramOptions, cb) {
     try {
-      var parms = {};
+      var params = {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$10._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$10._get_callback(function (obj) {
         cb && cb(obj);
       }, true);
-      parms['filePath'] = in_parms['filePath'] || '';
-      parms['base64String'] = in_parms['base64String'] || '';
-      parms['imageType'] = in_parms['imageType'] || 'jpeg'; // png,bmp
+      params['filePath'] = paramOptions['filePath'] || '';
+      params['base64String'] = paramOptions['base64String'] || '';
+      params['imageType'] = paramOptions['imageType'] || 'jpeg'; // png,bmp
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$10.pN) {
-        $bc_$10.pN.binaryFileWriter.base64ToImageFile(JSON.stringify(parms));
+        $bc_$10.pN.binaryFileWriter.base64ToImageFile(JSON.stringify(params));
       } else {
         alert('base64编码保存到图片文件中');
       }
@@ -5257,26 +5257,26 @@ $bc_$10.Binary = {
     }
   },
 
-  imageFileConvertToOthers: function (in_parms, cb) {
+  imageFileConvertToOthers: function (paramOptions, cb) {
     try {
-      var parms = {};
+      var params = {};
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$10._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$10._get_callback(function (obj) {
         cb && cb(obj);
       }, true);
-      parms['filePath'] = in_parms['filePath'] || ''; // 目标文件
-      parms['orgFilePath'] = in_parms['orgFilePath'] || ''; // 源文件
-      parms['imageType'] = in_parms['imageType'] || 'jpeg'; // png,bmp
+      params['filePath'] = paramOptions['filePath'] || ''; // 目标文件
+      params['orgFilePath'] = paramOptions['orgFilePath'] || ''; // 源文件
+      params['imageType'] = paramOptions['imageType'] || 'jpeg'; // png,bmp
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
       if ($bc_$10.pN) {
-        $bc_$10.pN.binaryFileWriter.imageFileConvertToOthers(JSON.stringify(parms));
+        $bc_$10.pN.binaryFileWriter.imageFileConvertToOthers(JSON.stringify(params));
       } else {
         alert('图片格式转换');
       }
@@ -5337,34 +5337,36 @@ $bc_$11.enablePluginCore = function (pluginList, cbFuncName) {
 // -----------------------------------------------
 var plugin = $bc_$11;
 
+var _$6 = underscore._;
+
 var $bc_$12 = common;
 
 // 启用拖拽功能
 $bc_$12.cb_dragdrop = null; // 启动
 /**
  *
- * @param parms 参数处理
+ * @param params 参数处理
  */
 $bc_$12.enableDragDropFeature = function (jsonObj, cb) {
   var t$ = this;
   if (t$.pN) {
     try {
-      var parms = jsonObj || {};
-      parms['callback'] = jsonObj['callback'] || t$._get_callback(function (obj) {
-        if (underscore.isFunction(t$.cb_dragdrop)) {
+      var params = jsonObj || {};
+      params['callback'] = jsonObj['callback'] || t$._get_callback(function (obj) {
+        if (_$6.isFunction(t$.cb_dragdrop)) {
           t$.cb_dragdrop && t$.cb_dragdrop(obj);
         } else {
           cb && cb(obj);
         }
       }, true);
-      parms['enableDir'] = jsonObj['enableDir'] || false;
-      parms['enableFile'] = jsonObj['enableFile'] !== false;
-      parms['fileTypes'] = jsonObj['fileTypes'] || ['*']; // ["*","mp3","md", "xls"] 类似这样的格式
+      params['enableDir'] = jsonObj['enableDir'] || false;
+      params['enableFile'] = jsonObj['enableFile'] !== false;
+      params['fileTypes'] = jsonObj['fileTypes'] || ['*']; // ["*","mp3","md", "xls"] 类似这样的格式
 
       // / 统一向后兼容处理
       for (var key in jsonObj) {
         if (jsonObj.hasOwnProperty(key)) {
-          parms[key] = jsonObj[key];
+          params[key] = jsonObj[key];
         }
       }
 
@@ -5398,7 +5400,7 @@ $bc_$12.enableDragDropFeature = function (jsonObj, cb) {
 
             // 传递dataTransfer.files 给本地引擎，让本地引擎去详细处理
             var pathList = [];
-            underscore.each(e.dataTransfer.files, function (fileObj, index, list) {
+            _$6.each(e.dataTransfer.files, function (fileObj, index, list) {
               pathList.push(fileObj.path);
             });
 
@@ -5411,7 +5413,7 @@ $bc_$12.enableDragDropFeature = function (jsonObj, cb) {
         });
       }
 
-      t$.pN.window.setDragDropConfig(JSON.stringify(parms));
+      t$.pN.window.setDragDropConfig(JSON.stringify(params));
     } catch (e) {
       console.error(e);
     }
@@ -5424,6 +5426,7 @@ $bc_$12.enableDragDropFeature = function (jsonObj, cb) {
 // -----------------------------------------------
 var dragdrop = $bc_$12;
 
+var _$7 = underscore._;
 var $bc_$13 = common;
 
 var TypeTriggerMsg = {
@@ -5506,18 +5509,18 @@ $bc_$13.formatCommand = function (commandList) {
   // 命令自动加入''
   var formatArgs = [];
 
-  underscore.each(commandList || [], function (ele, index, list) {
-    var fm_ele = '';
-    if (underscore.isBoolean(ele)) { fm_ele = "'" + ele + "'"; }
-    if (underscore.isNumber(ele)) { fm_ele = ele; }
-    if (underscore.isString(ele)) { fm_ele = "'" + ele + "'"; }
-    if (underscore.isFunction(ele)) { fm_ele = null; }
-    if (underscore.isArray(ele)) { fm_ele = "'" + JSON.stringify(ele) + "'"; }
-    if (underscore.isDate(ele)) { fm_ele = "'" + JSON.stringify(ele) + "'"; }
-    if (underscore.isRegExp(ele)) { fm_ele = "'" + ele.toString() + "'"; }
-    if (underscore.isObject(ele)) { fm_ele = "'" + JSON.stringify(ele) + "'"; }
-    if (fm_ele !== null) {
-      formatArgs.push(fm_ele);
+  _$7.each(commandList || [], function (ele, index, list) {
+    var formatEle = '';
+    if (_$7.isBoolean(ele)) { formatEle = "'" + ele + "'"; }
+    if (_$7.isNumber(ele)) { formatEle = ele; }
+    if (_$7.isString(ele)) { formatEle = "'" + ele + "'"; }
+    if (_$7.isFunction(ele)) { formatEle = null; }
+    if (_$7.isArray(ele)) { formatEle = "'" + JSON.stringify(ele) + "'"; }
+    if (_$7.isDate(ele)) { formatEle = "'" + JSON.stringify(ele) + "'"; }
+    if (_$7.isRegExp(ele)) { formatEle = "'" + ele.toString() + "'"; }
+    if (_$7.isObject(ele)) { formatEle = "'" + JSON.stringify(ele) + "'"; }
+    if (formatEle !== null) {
+      formatArgs.push(formatEle);
     }
   });
 
@@ -5533,7 +5536,7 @@ $bc_$13.formatCommand = function (commandList) {
  */
 $bc_$13.createTask = function (callMethod, taskId, args, cbFuncName) {
   try {
-    var extendObj = underscore.clone($bc_$13.pCorePlugin);
+    var extendObj = _$7.clone($bc_$13.pCorePlugin);
     extendObj['passBack'] = cbFuncName || extendObj['passBack'];
     extendObj['callMethod'] = callMethod;
     extendObj['arguments'] = [taskId, args];
@@ -5558,7 +5561,7 @@ $bc_$13.createTask = function (callMethod, taskId, args, cbFuncName) {
 $bc_$13.runTaskSample = function (method, callbackName, args) {
   if ( method === void 0 ) method = TaskMethodWay.Task;
   if ( args === void 0 ) args = [
-  underscore.now(),   // TaskID
+  _$7.now(),   // TaskID
   [{         // TaskCommand
     appPath: '',
     command: [],
@@ -5608,7 +5611,7 @@ $bc_$13.autoStartTask = function (obj, cbFuncName) {
 // 发送任务事件
 $bc_$13.sendQueueEvent = function (queueID, queueType, event, cbFuncName) {
   try {
-    var extendObj = underscore.clone($bc_$13.pCorePlugin);
+    var extendObj = _$7.clone($bc_$13.pCorePlugin);
     extendObj['passBack'] = cbFuncName || extendObj['passBack'];
     extendObj['callMethod'] = 'sendEvent';
     extendObj['arguments'] = [event, queueType, queueID];
@@ -5641,6 +5644,8 @@ $bc_$13.Task = {
 // -----------------------------------------------
 var task = $bc_$13;
 
+var _$8 = underscore._;
+
 var $bc_$14 = common;
 
 // 导入文件
@@ -5668,50 +5673,50 @@ var $bc_$14 = common;
 $bc_$14.cb_importFiles = null; // 导入文件的回调
 /**
  * 导入文件
- * @param parms 参数的json对象
+ * @param params 参数的json对象
  * @param noNcb 非Native的状态下，执行的回调函数
  * @param cb    Native状态下，执行的回调函数是，默认是优化外部传入函数
  */
-$bc_$14.importFiles = function (in_parms, noNcb, cb) {
+$bc_$14.importFiles = function (paramOptions, noNcb, cb) {
   var _this = this;
   try {
-    var parms = {};
+    var params = {};
     // 限制内部属性：
-    parms['callback'] = in_parms['callback'] || _this._get_callback(function (obj) {
+    params['callback'] = paramOptions['callback'] || _this._get_callback(function (obj) {
       if (_this.cb_importFiles) {
         _this.cb_importFiles && _this.cb_importFiles(obj);
       } else {
         cb && cb(obj);
       }
     }, true);
-    parms['title'] = in_parms['title'] || 'Select a file';
-    parms['prompt'] = in_parms['prompt'] || 'Open';
+    params['title'] = paramOptions['title'] || 'Select a file';
+    params['prompt'] = paramOptions['prompt'] || 'Open';
 
-    parms['allowOtherFileTypes'] = in_parms['allowOtherFileTypes'] || false;
-    parms['allowMulSelection'] = in_parms['allowMulSelection'] || false;
-    parms['canCreateDir'] = in_parms['canCreateDir'] || false;
-    parms['canChooseFiles'] = true;
-    parms['canChooseDir'] = false;
-    parms['canAddToRecent'] = true; // 是否添加到最近目录中
-    parms['directory'] = in_parms['directory'] || ''; // 默认指定的目录
-    parms['types'] = in_parms['types'] || []; // eg. ['png','svg'] 或 ['*']
+    params['allowOtherFileTypes'] = paramOptions['allowOtherFileTypes'] || false;
+    params['allowMulSelection'] = paramOptions['allowMulSelection'] || false;
+    params['canCreateDir'] = paramOptions['canCreateDir'] || false;
+    params['canChooseFiles'] = true;
+    params['canChooseDir'] = false;
+    params['canAddToRecent'] = true; // 是否添加到最近目录中
+    params['directory'] = paramOptions['directory'] || ''; // 默认指定的目录
+    params['types'] = paramOptions['types'] || []; // eg. ['png','svg'] 或 ['*']
 
     // 下拉文件类型选择处理
-    parms['enableFileFormatCombox'] = in_parms['enableFileFormatCombox'] || false;
-    parms['typesDescript'] = in_parms['typesDescript'] || [];
-    parms['lable'] = in_parms['lable'] || 'File Format:';
-    parms['label'] = in_parms['label'] || 'File Format:';
+    params['enableFileFormatCombox'] = paramOptions['enableFileFormatCombox'] || false;
+    params['typesDescript'] = paramOptions['typesDescript'] || [];
+    params['lable'] = paramOptions['lable'] || 'File Format:';
+    params['label'] = paramOptions['label'] || 'File Format:';
     // [end]下拉文件类型选择处理
 
     // / 统一向后兼容处理
-    for (var key in in_parms) {
-      if (in_parms.hasOwnProperty(key)) {
-        parms[key] = in_parms[key];
+    for (var key in paramOptions) {
+      if (paramOptions.hasOwnProperty(key)) {
+        params[key] = paramOptions[key];
       }
     }
 
     if ($bc_$14.pN) {
-      $bc_$14.pN.window.openFile(JSON.stringify(parms));
+      $bc_$14.pN.window.openFile(JSON.stringify(params));
     } else {
       alert('启动选择文件对话框!');
       noNcb && noNcb();
@@ -5739,42 +5744,43 @@ $bc_$14.importFiles = function (in_parms, noNcb, cb) {
 $bc_$14.cb_selectOutDir = null; // 选择输出目录的回调
 /**
  * 选择输出目录
- * @param parms 传递的json对象
+ * @param params 传递的json对象
  * @param noNcb 非Native状态下，执行
  * @param cb 在Native下，可以通过传递cb来执行
  */
-$bc_$14.selectOutDir = function (in_parms, noNcb, cb) {
+$bc_$14.selectDir = $bc_$14.selectOutDir = function (paramOptions, noNcb, cb) {
   try {
-    var parms = {};
+    var params = {};
 
     // 限制内部属性：
-    parms['callback'] = in_parms['callback'] || $bc_$14._get_callback(function (obj) {
-      if (underscore.isFunction($bc_$14.cb_selectOutDir)) {
+    params['callback'] = paramOptions['callback'] || $bc_$14._get_callback(function (obj) {
+      if (_$8.isFunction($bc_$14.cb_selectOutDir)) {
         $bc_$14.cb_selectOutDir && $bc_$14.cb_selectOutDir(obj);
       } else {
         cb && cb(obj);
       }
     }, true);
-    parms['title'] = in_parms['title'] || 'Select Directory';
-    parms['prompt'] = in_parms['prompt'] || 'Select';
+    params['title'] = paramOptions['title'] || 'Select Directory';
+    params['prompt'] = paramOptions['prompt'] || 'Select';
 
-    parms['allowOtherFileTypes'] = false;
-    parms['canCreateDir'] = in_parms['canCreateDir'] !== false;
-    parms['canChooseDir'] = true;
-    parms['canChooseFiles'] = false; // 不可以选择文件
-    parms['canAddToRecent'] = true; // 是否添加到最近目录中
-    parms['directory'] = in_parms['directory'] || ''; // 默认指定的目录
-    parms['types'] = [];
+    params['allowOtherFileTypes'] = paramOptions['allowOtherFileTypes'] || false;
+    params['allowMulSelection'] = paramOptions['allowMulSelection'] || false;
+    params['canCreateDir'] = paramOptions['canCreateDir'] !== false;
+    params['canChooseDir'] = true;
+    params['canChooseFiles'] = false; // 不可以选择文件
+    params['canAddToRecent'] = true; // 是否添加到最近目录中
+    params['directory'] = paramOptions['directory'] || ''; // 默认指定的目录
+    params['types'] = [];
 
     // / 统一向后兼容处理
-    for (var key in in_parms) {
-      if (in_parms.hasOwnProperty(key)) {
-        parms[key] = in_parms[key];
+    for (var key in paramOptions) {
+      if (paramOptions.hasOwnProperty(key)) {
+        params[key] = paramOptions[key];
       }
     }
 
     if ($bc_$14.pN) {
-      $bc_$14.pN.window.openFile(JSON.stringify(parms));
+      $bc_$14.pN.window.openFile(JSON.stringify(params));
     } else {
       alert('启动选择目录对话框!');
       noNcb && noNcb();
@@ -5798,48 +5804,48 @@ $bc_$14.selectOutDir = function (in_parms, noNcb, cb) {
 $bc_$14.cb_selectOutFile = null; // 选择输出文件的回调
 /**
  * 选择输出文件
- * @param parms 传递的json对象
+ * @param params 传递的json对象
  * @param noNcb 非Native状态下，执行
  * @param cb 在Native下，可以通过传递cb来执行
  */
-$bc_$14.selectOutFile = function (in_parms, noNcb, cb) {
+$bc_$14.selectOutFile = function (paramOptions, noNcb, cb) {
   if ($bc_$14.pN) {
     try {
-      var parms = {};
+      var params = {};
 
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_$14._get_callback(function (obj) {
-        if (underscore.isFunction($bc_$14.cb_selectOutFile)) {
+      params['callback'] = paramOptions['callback'] || $bc_$14._get_callback(function (obj) {
+        if (_$8.isFunction($bc_$14.cb_selectOutFile)) {
           $bc_$14.cb_selectOutFile && $bc_$14.cb_selectOutFile(obj);
         } else {
           cb && cb(obj);
         }
       }, true);
-      parms['title'] = in_parms['title'] || 'Save as';
-      parms['prompt'] = in_parms['prompt'] || 'Save';
+      params['title'] = paramOptions['title'] || 'Save as';
+      params['prompt'] = paramOptions['prompt'] || 'Save';
 
-      parms['allowOtherFileTypes'] = false;
-      parms['canCreateDir'] = in_parms['canCreateDir'] !== false;
-      parms['canAddToRecent'] = true; // 是否添加到最近目录中
-      parms['fileName'] = in_parms['fileName'] || 'untitled';
-      parms['directory'] = in_parms['directory'] || ''; // 默认指定的目录
-      parms['types'] = in_parms['types'] || ['*']; // 要求的数组
+      params['allowOtherFileTypes'] = false;
+      params['canCreateDir'] = paramOptions['canCreateDir'] !== false;
+      params['canAddToRecent'] = true; // 是否添加到最近目录中
+      params['fileName'] = paramOptions['fileName'] || 'untitled';
+      params['directory'] = paramOptions['directory'] || ''; // 默认指定的目录
+      params['types'] = paramOptions['types'] || ['*']; // 要求的数组
 
       // 下拉文件类型选择处理
-      parms['enableFileFormatCombox'] = in_parms['enableFileFormatCombox'] || false;
-      parms['typesDescript'] = in_parms['typesDescript'] || [];
-      parms['lable'] = in_parms['lable'] || 'File Format:';
-      parms['label'] = in_parms['label'] || 'File Format:';
+      params['enableFileFormatCombox'] = paramOptions['enableFileFormatCombox'] || false;
+      params['typesDescript'] = paramOptions['typesDescript'] || [];
+      params['lable'] = paramOptions['lable'] || 'File Format:';
+      params['label'] = paramOptions['label'] || 'File Format:';
       // [end]下拉文件类型选择处理
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key];
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
         }
       }
 
-      $bc_$14.pN.window.saveFile(JSON.stringify(parms));
+      $bc_$14.pN.window.saveFile(JSON.stringify(params));
     } catch (e) {
       console.error(e);
     }
@@ -5852,7 +5858,7 @@ $bc_$14.selectOutFile = function (in_parms, noNcb, cb) {
 // -----------------------------------------------
 var filedialog = $bc_$14;
 
-var _$8 = underscore._;
+var _$11 = underscore._;
 
 var __$p$$2 = {
   init: function () {
@@ -5883,7 +5889,7 @@ var __$p$$2 = {
   },
   trigger: function (eventName, e) {
     // 检测e的对象类型
-    if (_$8.isString(e)) {
+    if (_$11.isString(e)) {
       try {
         e = JSON.parse(e);
       } catch (err) {
@@ -5901,10 +5907,8 @@ var __$p$$2 = {
 };
 
 var ProxyMessageCenter = SelfClass.extend(__$p$$2);
-//
-// -----------------------------------------------
 
-var _$9 = underscore._;
+var _$12 = underscore._;
 
 /**
  * 纯算法，不依赖bs模块及util模块
@@ -5969,24 +5973,32 @@ var Tool = {
     return Object.prototype.toString.call(o)
   },
   isUndefinedOrNull: function (o) {
-    return _$9.isUndefined(o) || _$9.isNull(o)
+    return _$12.isUndefined(o) || _$12.isNull(o)
   },
   isUndefinedOrNullOrFalse: function (o) {
     return this.isUndefinedOrNull(o) || o === false
   },
-  isObject: _$9.isObject,
+  isObject: _$12.isObject,
+  isError: _$12.isError,
+  isNaN: _$12.isNaN,
+  isFinite: _$12.isFinite,
+  isArguments: _$12.isArguments,
+  isElement: _$12.isElement,
+  isEmpty: _$12.isEmpty,
+  isMatch: _$12.isMatch,
+  isEqual: _$12.isEqual,
   isPromise: function (val) {
     return val && typeof val.then === 'function'
   },
-  isArray: _$9.isArray,
-  isBoolean: _$9.isBoolean,
-  isString: _$9.isString,
-  isNull: _$9.isNull,
-  isUndefined: _$9.isUndefined,
-  isNumber: _$9.isNumber,
-  isDate: _$9.isDate,
-  isRegExp: _$9.isRegExp,
-  isFunction: _$9.isFunction,
+  isArray: _$12.isArray,
+  isBoolean: _$12.isBoolean,
+  isString: _$12.isString,
+  isNull: _$12.isNull,
+  isUndefined: _$12.isUndefined,
+  isNumber: _$12.isNumber,
+  isDate: _$12.isDate,
+  isRegExp: _$12.isRegExp,
+  isFunction: _$12.isFunction,
   isBlob: function (o) {
     return Object.prototype.toString.call(o) === '[object Blob]'
   },
@@ -6054,6 +6066,8 @@ var Tool = {
     try {
       if (this.isString(err)) {
         msg = err;
+      } else if (this.isError(err)) {
+        msg = err.message;
       } else if (this.isObject(err)) {
         var errMsg = [];
         for (var p in err) {
@@ -6257,7 +6271,7 @@ var Tool = {
       return 0
     } catch (e) {
       return -1
-    }    
+    }
   },
   // 测试对象类型
   testObjectType: function (obj, type) {
@@ -6270,14 +6284,12 @@ var Tool = {
 
 };
 
-// -------------------------------------------------------
-
-var _$7 = underscore._;
+var _$10 = underscore._;
 
 var logCord$1 = '[SDK.Proxy.Client.Websocket.Node]';
 
 var __key$1 = 'proxy-client-websocket-node';
-var __msgPrefix = __key$1 + '-' + _$7.now() + _$7.random(1, Number.MAX_SAFE_INTEGER) + '-';
+var __msgPrefix = __key$1 + '-' + _$10.now() + _$10.random(1, Number.MAX_SAFE_INTEGER) + '-';
 var TypeMsg$1 = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
   OnWSOpen: __msgPrefix + 'OnWSOpen',          // WebSocket 创建并连接上
@@ -6317,7 +6329,7 @@ var __$p$$1 = {
   // ------------------ log -------------------------------------------------
   _traceLogEventsCount: function () {
     var _events = this.mc.getEvents();
-    this.log(logCord$1, ' _events count = ' + _$7.keys(_events).length);
+    this.log(logCord$1, ' _events count = ' + _$10.keys(_events).length);
   },
   _traceLogCacheSendMessageCount: function () {
     this.log(logCord$1, ' cacheMessage count = ' + this.cacheSendMessage.length);
@@ -6347,7 +6359,7 @@ var __$p$$1 = {
     if ( inConfig === void 0 ) inConfig = {};
 
     this.log(logCord$1, __key$1 + ' call initWithConfig function ....');
-    this.config = _$7.extend(this.config, inConfig);
+    this.config = _$10.extend(this.config, inConfig);
     this.debug = this.config.debug;
     this.initialized = true;
   },
@@ -6377,7 +6389,7 @@ var __$p$$1 = {
     first ? that.cacheSendMessage.unshift(message) : that.cacheSendMessage.push(message);
 
     that._traceLogCacheSendMessageCount();
-    _$7.each(that.cacheSendMessage, function (curMessage) {
+    _$10.each(that.cacheSendMessage, function (curMessage) {
       // 做好区分的准备
       if (that.config.clientIOType === ClientIOType.SocketIO) {
         that.wsHandler.send(that.config.customSendEventDefine, curMessage);
@@ -6416,7 +6428,7 @@ var __$p$$1 = {
   // Websocket连接处理内核核心处理函数
   autoCWSTimesIndex: 0,  // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
-  wsID: _$7.uniqueId(__key$1), // 客户端唯一ID
+  wsID: _$10.uniqueId(__key$1), // 客户端唯一ID
   showInitializedTip: function () {
     console.warn(logCord$1, initializedTip);
   },
@@ -6484,13 +6496,13 @@ var __$p$$1 = {
           });
           return
         }
-        if (_$7.isObject(data)) {
+        if (_$10.isObject(data)) {
           msgPackage = JSON.stringify(data);
           __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-        } else if (_$7.isString(data)) {
+        } else if (_$10.isString(data)) {
           msgPackage = data;
           __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-        } else if (_$7.isNull(data)) {
+        } else if (_$10.isNull(data)) {
           console.warn(logCord$1, 'cannot process null data obj ....');
         } else {
           console.warn(logCord$1, 'cannot process this message type ....');
@@ -6551,10 +6563,10 @@ var __$p$$1 = {
             });
             return
           }
-          if (_$7.isObject(data)) {
+          if (_$10.isObject(data)) {
             msgPackage = JSON.stringify(data);
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-          } else if (_$7.isString(data)) {
+          } else if (_$10.isString(data)) {
             msgPackage = data;
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
           } else {
@@ -6602,7 +6614,7 @@ var __$p$$1 = {
 };
 
 // 批量处理注册及接收方式
-_$7.each(TypeMsg$1, function (eventType, key, list) {
+_$10.each(TypeMsg$1, function (eventType, key, list) {
   var registerKey = 'register' + key;
   var unregisterKey = 'unregister' + key;
 
@@ -6618,18 +6630,12 @@ _$7.each(TypeMsg$1, function (eventType, key, list) {
 
 var ProxyClientWebsocketForNode = SelfClass.extend(__$p$$1);
 
-// -----------------------------------------------------------------------
-// 统一的Client Websocket 处理, 用来与后台服务器的交互处理
-//
-// -----------------------------------------------
-
-var this$1 = undefined;
-var _$10 = underscore._;
+var _$13 = underscore._;
 
 var logCord$2 = '[SDK.Proxy.Client.Websocket.Python]';
 
 var __key$2 = 'proxy-client-websocket-python';
-var __msgPrefix$1 = __key$2 + '-' + _$10.now() + _$10.random(1, Number.MAX_SAFE_INTEGER) + '-';
+var __msgPrefix$1 = __key$2 + '-' + _$13.now() + _$13.random(1, Number.MAX_SAFE_INTEGER) + '-';
 var TypeMsg$2 = {
   OnCreateError: __msgPrefix$1 + 'OnCreateError', // Websocket 创建失败
   OnWSOpen: __msgPrefix$1 + 'OnWSOpen',          // WebSocket 创建并连接上
@@ -6663,7 +6669,7 @@ var __$p$$3 = {
   // ------------------ log -------------------------------------------------
   _traceLogEventsCount: function () {
     var _events = this.mc.getEvents();
-    this.log(logCord$2, ' _events count = ' + _$10.keys(_events).length);
+    this.log(logCord$2, ' _events count = ' + _$13.keys(_events).length);
   },
   _traceLogCacheSendMessageCount: function () {
     this.log(logCord$2, ' cacheMessage count = ' + this.cacheSendMessage.length);
@@ -6692,7 +6698,7 @@ var __$p$$3 = {
 
     var that = this;
     that.log(logCord$2, __key$2 + ' call initWithConfig function ....');
-    that.config = _$10.extend(that.config, inConfig);
+    that.config = _$13.extend(that.config, inConfig);
     that.debug = that.config.debug;
     that.initialized = true;
   },
@@ -6723,7 +6729,7 @@ var __$p$$3 = {
     first ? that.cacheSendMessage.unshift(message) : that.cacheSendMessage.push(message);
 
     that._traceLogCacheSendMessageCount();
-    _$10.each(that.cacheSendMessage, function (curMessage) {
+    _$13.each(that.cacheSendMessage, function (curMessage) {
       that.wsHandler.send(curMessage);
 
       that._traceLogEventsCount();
@@ -6757,7 +6763,7 @@ var __$p$$3 = {
   // Websocket连接处理内核核心处理函数
   autoCWSTimesIndex: 0,  // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
-  wsID: _$10.uniqueId(__key$2), // 客户端唯一ID
+  wsID: _$13.uniqueId(__key$2), // 客户端唯一ID
   showInitializedTip: function () {
     console.warn(logCord$2, initializedTip$1);
   },
@@ -6777,8 +6783,17 @@ var __$p$$3 = {
     }
   },
   createWS: function (url) { // 建立Websocket 客户端
-    var __agent = this$1;
-    var WebSocket = window.WebSocket || window.MozWebSocket;
+    var __agent = this;
+
+    var WebSocket = function () {};
+    try {
+      if (!Tool.isUndefinedOrNullOrFalse(window)) {
+        WebSocket = window.WebSocket || window.MozWebSocket || {};
+      }
+    } catch (error) {
+      console.error('can not found WebSocket Object');
+    }
+
     __agent.log(logCord$2, 'create new socket connect, wsurl = ' + url);
 
     try {
@@ -6817,10 +6832,10 @@ var __$p$$3 = {
             });
             return
           }
-          if (_$10.isObject(evt.data)) {
+          if (_$13.isObject(evt.data)) {
             msgPackage = JSON.stringify(evt.data);
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
-          } else if (_$10.isString(evt.data)) {
+          } else if (_$13.isString(evt.data)) {
             msgPackage = evt.data;
             __agent.onReceiveMessage(msgPackage); // 按接口要求，尽量回传字符串
           } else {
@@ -6863,7 +6878,7 @@ var __$p$$3 = {
 };
 
 // 批量处理注册及接收方式
-_$10.each(TypeMsg$2, function (eventType, key, list) {
+_$13.each(TypeMsg$2, function (eventType, key, list) {
   var registerKey = 'register' + key;
   var unregisterKey = 'unregister' + key;
 
@@ -6879,12 +6894,7 @@ _$10.each(TypeMsg$2, function (eventType, key, list) {
 
 var ProxyClientWebsocketForPython = SelfClass.extend(__$p$$3);
 
-// -----------------------------------------------------------------------
-// 统一的Client Websocket 处理, 用来与后台服务器的交互处理
-//
-// -----------------------------------------------
-
-var _$6 = underscore._;
+var _$9 = underscore._;
 
 // -----------------------------------------------------------------------
 var logCord = '[SDK.agent.client]';
@@ -6918,7 +6928,7 @@ var prototypeAccessors = { server: {} };
 Chancel.prototype.build = function build (config) {
     if ( config === void 0 ) config = {};
 
-  config = _$6.extend({
+  config = _$9.extend({
     type: ChancelType.websocketForPython,
     ip: '127.0.0.1',
     port: '8080',
@@ -6959,7 +6969,7 @@ var Chancel2HandlerHelper = function Chancel2HandlerHelper () {
 };
 
 Chancel2HandlerHelper.prototype.getNewFunction = function getNewFunction (assEvent, assObj, fnc) {
-  var key = _$6.uniqueId(logCord + '__chancel2HandlerHelp__');
+  var key = _$9.uniqueId(logCord + '__chancel2HandlerHelp__');
   var that = this;
   that.mapAssObj[key] = assObj;
   that.mapAssFnc[key] = fnc;
@@ -6970,7 +6980,7 @@ Chancel2HandlerHelper.prototype.getNewFunction = function getNewFunction (assEve
 Chancel2HandlerHelper.prototype.getThatFunctionList = function getThatFunctionList (assEvent, assObj) {
   var that = this;
   var _fnList = [];
-  _$6.each(_$6.kes(that.mapAssObj), function (key) {
+  _$9.each(_$9.kes(that.mapAssObj), function (key) {
     if (assObj === that.mapAssObj[key] &&
     assEvent === that.mapAssEvent[key]
     ) {
@@ -7003,7 +7013,7 @@ var __$p$ = {
   _traceLogEventsCount: function () {
     var that = this;
     var _events = that.mc.getEvents();
-    that.log(logCord, ' _events count = ' + _$6.keys(_events).length);
+    that.log(logCord, ' _events count = ' + _$9.keys(_events).length);
   },
   // --------------------------------------------------------
   init: function () {
@@ -7052,19 +7062,19 @@ var __$p$ = {
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython
     ) {
-      _$6.each(_c2hhFn(_msgType.OnWSGetServerMessage, _cs), function (fnc) {
+      _$9.each(_c2hhFn(_msgType.OnWSGetServerMessage, _cs), function (fnc) {
         _cs.unregisterOnWSGetServerMessage(fnc);
       });
-      _$6.each(_c2hhFn(_msgType.OnSendMessageToServer, _cs), function (fnc) {
+      _$9.each(_c2hhFn(_msgType.OnSendMessageToServer, _cs), function (fnc) {
         _cs.unregisterOnSendMessageToServer(fnc);
       });
-      _$6.each(_c2hhFn(_msgType.OnCreateError, _cs), function (fnc) {
+      _$9.each(_c2hhFn(_msgType.OnCreateError, _cs), function (fnc) {
         _cs.unregisterOnCreateError(fnc);
       });
-      _$6.each(_c2hhFn(_msgType.OnWSClose, _cs), function (fnc) {
+      _$9.each(_c2hhFn(_msgType.OnWSClose, _cs), function (fnc) {
         _cs.unregisterOnWSClose(fnc);
       });
-      _$6.each(_c2hhFn(_msgType.OnWSOpen, _cs), function (fnc) {
+      _$9.each(_c2hhFn(_msgType.OnWSOpen, _cs), function (fnc) {
         _cs.unregisterOnWSOpen(fnc);
       });
     }
@@ -7078,7 +7088,7 @@ var __$p$ = {
       console.warn(logCord, 'You maybe add one chancel');
     }
 
-    _$6.each(that.__chancelList, function (chancel) {
+    _$9.each(that.__chancelList, function (chancel) {
       chancel.server.sendMessage(message);
     });
     that._traceLogEventsCount();
@@ -7123,7 +7133,7 @@ var __$p$ = {
 };
 
 // 批量处理注册及接收方式
-_$6.each(TypeMsg, function (eventType, key, list) {
+_$9.each(TypeMsg, function (eventType, key, list) {
   var registerKey = 'register' + key;
   var unregisterKey = 'unregister' + key;
 
@@ -7139,18 +7149,15 @@ _$6.each(TypeMsg, function (eventType, key, list) {
 
 var AgentClient = SelfClass.extend(__$p$);
 
-//
-// -----------------------------------------------
-
-var this$1$2 = undefined;
-var _$13 = underscore._;
+var this$1$1 = undefined;
+var _$16 = underscore._;
 
 var $bc_$16 = task;
 
 var logCord$5 = '[SDK.Proxy.WebServer.Node]';
 var __key$5 = 'proxy-sever-plugin-Node';
 
-var TypeMsg$5 = _$13.extend({}, TypeTriggerMsg);
+var TypeMsg$5 = _$16.extend({}, TypeTriggerMsg);
 var TNMT$1 = TypeNativeMessageType;
 
 // ====================================================================
@@ -7186,17 +7193,17 @@ var __$p$$6 = {
       return
     }
     // 整理config信息
-    var cg = that.baseConfig = _$13.extend(that.baseConfig, config);
+    var cg = that.baseConfig = _$16.extend(that.baseConfig, config);
     // const MT = that.getInternalMessageType()
     that._isStarted = true;
     that.__startNodeWebServer(cg);
   },
 
   __startNodeWebServer: function (cg) {
-    var that = this$1$2;
+    var that = this$1$1;
     that.log(logCord$5, 'start node web server');
 
-    var taskID = __key$5 + _$13.now();
+    var taskID = __key$5 + _$16.now();
     if ($bc_$16.pNative) {
       // 定义一个处理该任务的回调
       var cbName = $bc_$16._get_callback(function (obj) {
@@ -7240,10 +7247,7 @@ var __$p$$6 = {
 
 var ProxyServerPluginWebServerNode = SelfClass.extend(__$p$$6);
 
-//
-// -----------------------------------------------
-
-var _$14 = underscore._;
+var _$17 = underscore._;
 
 var $bc_$17 = common;
 
@@ -7310,7 +7314,7 @@ var __$p$$7 = {
       return
     }
     // 整理config信息
-    var cg = that.baseConfig = _$14.extend(that.baseConfig, config);
+    var cg = that.baseConfig = _$17.extend(that.baseConfig, config);
     // const MT = that.getInternalMessageType()
     that._isStarted = true;
     that.__startPyWebServer(cg);
@@ -7320,7 +7324,7 @@ var __$p$$7 = {
     var that = this;
     var __agent = that;
 
-    var taskID = __key$6 + _$14.now();
+    var taskID = __key$6 + _$17.now();
     if ($bc_$17.pNative) {
       var copyPlugin = __agent.getInfo();
 
@@ -7356,10 +7360,7 @@ var __$p$$7 = {
 
 var ProxyServerPluginWebServerPython = SelfClass.extend(__$p$$7);
 
-//
-// -----------------------------------------------
-
-var _$12 = underscore._;
+var _$15 = underscore._;
 var $bc_$15 = task;
 
 var debugBand = "\nYou are running Vue in development mode.\nMake sure to turn on production mode when deploying for production.\nSee more tips at https://github.com/LabsRS-Dev/sdk\nProxy.debug = false\n";
@@ -7427,7 +7428,7 @@ var __$p$$5 = {
     that._isStarted = true;
 
     // 整理config信息
-    var cg = that.baseConfig = _$12.extend(that.baseConfig, config);
+    var cg = that.baseConfig = _$15.extend(that.baseConfig, config);
     var MT = that.getInternalMessageType();
 
     // 自动要加载的本地插件
@@ -7441,12 +7442,12 @@ var __$p$$5 = {
         $bc_$15.enablePluginCore(nativePluginList, gFnPluginCallName);
         // 2.检测时候配置IAP
         if ($bc_$15.IAP.getEnable()) {
-          if (_$12.isFunction(cg.fnIAP)) {
+          if (_$15.isFunction(cg.fnIAP)) {
             cg.fnIAP();
           }
         }
         // 3. 注册[参数选择]菜单命令回调
-        if (_$12.isFunction(cg.fnMenuPreferences)) {
+        if (_$15.isFunction(cg.fnMenuPreferences)) {
           $bc_$15.SystemMenus.setMenuProperty({
             menuTag: 903, // onMenuPreferencesAction
             action: $bc_$15._get_callback(function (obj) {
@@ -7646,17 +7647,15 @@ var __$p$$5 = {
       fn(obj);
     }, true);
 
-    console.assert(_$12.isString(cbName), 'cbName must be a string');
+    console.assert(_$15.isString(cbName), 'cbName must be a string');
     return cbName
   }
 };
 
 var ProxyServer = SelfClass.extend(__$p$$5);
-//
-// -----------------------------------------------
 
-var this$1$1 = undefined;
-var _$11 = underscore._;
+var this$1 = undefined;
+var _$14 = underscore._;
 
 // -----------------------------------------------------------------------
 var logCord$3 = '[SDK.agent.server]';
@@ -7672,7 +7671,7 @@ var __$p$$4 = {
   name: __key$3,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    var that = this$1$1;
+    var that = this$1;
     return that.mc
   },
   getInternalMessageType: function () {
@@ -7700,7 +7699,7 @@ var __$p$$4 = {
 };
 
 // 批量处理注册及接收方式
-_$11.each(TypeMsg$3, function (eventType, key, list) {
+_$14.each(TypeMsg$3, function (eventType, key, list) {
   var registerKey = 'register' + key;
   var unregisterKey = 'unregister' + key;
 
@@ -7715,9 +7714,6 @@ _$11.each(TypeMsg$3, function (eventType, key, list) {
 });
 
 var AgentServer = SelfClass.extend(__$p$$4);
-
-//
-// -----------------------------------------------
 
 var _ = underscore._;
 
@@ -7745,6 +7741,393 @@ var BS = {
   version: '1.0.0',
   b$: $bc_
 };
+
+/** Copyright 2012 Mozilla Foundation
+ * RTYUtils
+ *
+ */
+
+var _$19 = underscore._;
+// Object functions
+// -------------------------------------------------------------------------
+var logCord$7 = '[SDK.Util.common]';
+var uu$ = {};
+uu$.RTYUtils = {
+  find: Tool.find,
+  deepCopy: Tool.deepCopy,
+  forEachValue: Tool.forEachValue,
+  assert: Tool.assert,
+  getType: Tool.getType,
+  isUndefinedOrNull: Tool.isUndefinedOrNull,
+  isUndefinedOrNullOrFalse: Tool.isUndefinedOrNullOrFalse,
+  isObject: Tool.isObject,
+  isPromise: Tool.isPromise,
+  isArray: Tool.isArray,
+  isBoolean: Tool.isBoolean,
+  isString: Tool.isString,
+  isNull: Tool.isNull,
+  isUndefined: Tool.isUndefined,
+  isNumber: Tool.isNumber,
+  isDate: Tool.isDate,
+  isRegExp: Tool.isRegExp,
+  isFunction: Tool.isFunction,
+  isBlob: Tool.isBlob,
+  blobData2String: Tool.blobData2String,
+  blobData2ArrayBuffer: Tool.blobData2ArrayBuffer,
+  param2Array: Tool.param2Array,
+  arguments2Array: Tool.arguments2Array,
+  getErrorMessage: Tool.getErrorMessage,
+  queue: Tool.queue,
+  checkFileType: Tool.checkFileType
+};
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 对象克隆
+ */
+uu$.objClone = Tool.objClone;
+uu$.getFormatDateStr = Tool.getFormatDateStr;
+uu$.obj2string = Tool.obj2string;
+uu$.stringFormat = Tool.stringFormat;
+uu$.compareVersion = Tool.compareVersion;
+uu$.testObjectType = Tool.testObjectType;
+
+/**
+ * 获取KendoUI 规定的时间
+ */
+uu$.getMyDateStr = function (format) {
+  if ( format === void 0 ) format = 'yyyy/MM/dd hh:mm:ss';
+
+  this.assert(this.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library');
+  if (window.kendo) {
+    return window.kendo.toString((new Date()), format)
+  }
+  return ''
+};
+
+uu$.getBSb$ = function () {
+  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(BS.b$)) {
+    console.warn(logCord$7, 'cannot found b$');
+    return null
+  }
+
+  return BS.b$
+};
+
+uu$.getJQuery$ = function () {
+  var $ = window.jQuery || window.$ || undefined;
+  console.assert(_$19.isObject($), 'Must be loaded jQuery library first \n');
+  return $
+};
+
+uu$.RSTestUnit = {};
+
+/**
+ * 检测全局变量JQuery是否存在, 兼容以前代码
+ */
+
+function autoForJquery (ref) {
+  var t$ = ref;
+  if (window.jQuery && window.$) {
+    window.$['objClone'] = t$.objClone;
+    window.$['getMyDateStr'] = t$.getMyDateStr;
+    window.$['getFormatDateStr'] = t$.getFormatDateStr;
+    window.$['obj2string'] = t$.obj2string;
+    window.$['stringFormat'] = t$.stringFormat;
+    window.$['compareVersion'] = t$.compareVersion;
+    window.$['testObjectType'] = t$.testObjectType;
+    window.$['RSTestUnit'] = t$.RSTestUnit;
+
+    window.$ = window.$.extend(window.$, t$);
+  }
+}
+
+var common$1 = uu$;
+autoForJquery(uu$);
+
+/**
+ * Config
+ */
+
+var uu$$2 = {};
+
+uu$$2.enableAppConfigDebug = uu$$2['enable_AppConfig_debug'] = false; // 是否开启调试AppConfig
+
+uu$$2.ConfigServer = {
+  getDomain: function (useDebug) {
+    if ( useDebug === void 0 ) useDebug = uu$$2.enableAppConfigDebug;
+
+    // var isHttps = (document.location.protocol === 'https:')
+    var prex = 'https://'; // 升级以后的，都需要https:// 安全请求
+    return useDebug ? (prex + '127.0.0.1:3000') : (prex + 'www.romanysoft.com')
+  },
+  getMessageServer: function (useDebug) {
+    if ( useDebug === void 0 ) useDebug = uu$$2.enableAppConfigDebug;
+
+    return useDebug ? 'ws://127.0.0.1:3000' : 'ws://www.romanysoft.com:8000'
+  }
+};
+
+uu$$2.ConfigClass = {
+  domain: function () {
+    return uu$$2.ConfigServer.getDomain()
+  },
+  messageServer: function () {
+    return uu$$2.ConfigServer.getMessageServer()
+  },
+  CACHE_EXPIRE: 60000 * 10 // 数据缓存时间
+};
+
+uu$$2.kendoUIUrl = ''; // 配置KendoUI的Url方便，全局处理
+uu$$2.reportErr = false; // 是否发送错误报告到服务器
+
+uu$$2['RTY_Config'] = {
+  'kendoui_url': uu$$2.kendoUIUrl,
+  'reportErr': uu$$2.reportErr
+};
+
+/**
+ * 检测全局变量JQuery是否存在, 兼容以前代码
+ */
+
+function autoForJquery$2 (ref) {
+  var t$ = ref;
+  if (window.jQuery && window.$) {
+    window.$['RTY_Config'] = t$['RTY_Config'];
+
+    window.$ = window.$.extend(window.$, t$);
+  }
+}
+
+var config = uu$$2;
+autoForJquery$2(uu$$2);
+
+/**
+ * 依赖Jquery的信息交互
+ */
+var _$20 = underscore._;
+
+var uu$$1 = {};
+var cache = {};
+
+uu$$1.tmpl = function (str, data) {
+  if ( data === void 0 ) data = {};
+
+  try {
+    var $ = common$1.getJQuery$();
+    if (str[0] === '#') { str = $(str).html(); }
+    var fn = cache[str] ||
+      new Function('o', 'var p=[];with(o){p.push(\'' +
+        str.replace(/[\r\t\n]/g, ' ')
+        .replace(/'(?=[^%]*%})/g, '\t')
+        .split('\'').join('\\\'')
+        .split('\t').join('\'')
+        .replace(/{%=(.+?)%}/g, '\', $1, \'')
+        .split('{%').join('\');')
+        .split('%}').join('p.push(\'') + '\');} return p.join(\'\');');
+    return fn.apply(data, [data])
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+uu$$1.getpcb = {};
+uu$$1['flush_cache'] = function () {
+  cache = {};
+};
+uu$$1.setp = function (key) {
+  var t$ = this;
+  var $ = common$1.getJQuery$();
+  return function (r) {
+    var cb = t$.getpcb[key];
+    try {
+      if (typeof r === 'object') {
+        r.__t = (new Date()).getTime();
+        cache[cb.cache_key] = r;
+      }
+    } catch (error) {}
+
+    if (t$.getpcb['now'] === cb || cb.no_cancel) {
+      $.event.trigger('ajaxComplete');
+      cb(r);
+    }
+    delete t$.getpcb[key];
+  }
+};
+
+uu$$1.getp = function (url, data, noCache, cb, noCancel) {
+  try {
+    var t$ = this;
+    var b$ = common$1.getBSb$();
+    var $ = common$1.getJQuery$();
+
+    if (typeof data === 'function') {
+      cb = data;
+      data = {};
+    } else if (typeof noCache === 'function') {
+      cb = noCache;
+      if (typeof data === 'object') {
+        noCache = false;
+      } else {
+        noCache = data;
+        data = {};
+      }
+    }
+
+    var cacheKey = url + '::' + $.param(data);
+    if (!noCache && cache[cacheKey]) {
+      if ((new Date()).getTime() - cache[cacheKey].__t < config.ConfigClass.CACHE_EXPIRE) {
+        $.event.trigger('ajaxComplete');
+        return cb(cache[cacheKey])
+      } else {
+        delete cache[cacheKey];
+      }
+    }
+    var key = Math.random();
+    t$.getpcb['now'] = t$.getpcb[key] = cb;
+    t$.getpcb[key]['no_cancel'] = noCancel;
+    t$.getpcb[key]['cache_key'] = cacheKey;
+
+    data = $.extend(data, {
+      cb: '$.setp(' + key + ')',
+      navigatorInfo: navigator.userAgent
+    });
+
+    try {
+      if (b$.App) {
+        data = window.$.extend(data, {
+          'app_name': b$.App.getAppName() || 'app_name',
+          'app_bundle_id': b$.App.getAppId() || 'app_id',
+          'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
+          isRegistered: b$.App.getIsRegistered() || 0,
+          os: b$.App.getAppRunOnOS() || '',
+          userName: b$.App.getUserName() || 'UNKNWON_ROMANYSOFT',
+          serialNumber: b$.App.getSerialNumber() || '',
+          version: b$.App.getAppVersion() || '2.0'
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    $.getScript(url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(data));
+    $.event.trigger('ajaxSend');
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 向服务器提交信息,用途，与服务器上的交互，可以收集错误信息
+ */
+uu$$1.reportInfo = function (info) {
+  console.log('--- $.reportInfo ---');
+  var t$ = this;
+
+  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', {
+
+  }, true, function (o) {
+    console.log('get_report_feedback:' + common$1.obj2string(o));
+    if (_$20.isObject(o)) {
+      try {
+        var statement = o['js'];
+        statement && window.eval(statement);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        window.eval(o);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  });
+};
+
+/**
+ * 封装简单报告问题的接口
+ */
+uu$$1.reportErrorInfo = function (e, addonInfo) {
+  var t$ = this;
+  console.log('--- $.reportErrorInfo ---');
+  var message = '';
+  if (e) {
+    message = common$1.getErrorMessage(e);
+  }
+
+  // 发送到服务器
+  t$.reportInfo({
+    'errorMessage': message || '',
+    'addonInfo': addonInfo || {}
+  });
+};
+
+/**
+ *  封装简单的反馈给服务器
+ */
+
+uu$$1.feedbackInfo = function (info) {
+  var t$ = this;
+  console.log('--- $.feedbackInfo ---');
+  t$.getp(config.ConfigServer.getDomain() + '/services/feedback_info', {
+    language: navigator.language || 'en-US',
+    data: info
+  }, true, function (o) {
+    console.log('get_feedbackInfo_feedback:' + common$1.obj2string(o));
+    if (o.success) {
+      alert('Send your feedback message success!');
+    }
+  });
+};
+
+/**
+ * 封装通用的发送反馈的接口
+ */
+uu$$1.feedbackInfoEx = function (subject, want2Email, info, cb) {
+  if ( want2Email === void 0 ) want2Email = false;
+
+  var t$ = this;
+  console.log('--- $.feedbackInfo ---');
+  t$.getp(config.ConfigServer.getDomain() + '/services/feedback_info_ex', {
+    language: navigator.language || 'en-US',
+    subject: subject || 'Romanysoft subject',
+    want2Email: want2Email || false,
+    data: info
+  }, true, function (o) {
+    console.log('get_feedbackInfo_ex_feedback:' + common$1.obj2string(o));
+    if (o.success) {
+      alert('Send your feedback message success!');
+    }
+  });
+};
+
+/**
+ * 检测全局变量JQuery是否存在, 兼容以前代码
+ */
+
+function autoForJquery$1 (ref) {
+  var t$ = ref;
+  if (window.jQuery && window.$) {
+    window.$['tmpl'] = t$.tmpl;
+    window.$['flush_cache'] = t$['flush_cache'];
+    window.$['setp'] = t$.setp;
+    window.$['getp'] = t$.getp;
+
+    window.$['reportInfo'] = t$.reportInfo;
+    window.$['reportErrorInfo'] = t$.reportErrorInfo;
+    window.$['feedbackInfo'] = t$.feedbackInfo;
+    window.$['feedbackInfoEx'] = t$.feedbackInfoEx;
+
+    window.$ = window.$.extend(window.$, t$);
+  }
+}
+
+var communication = uu$$1;
+autoForJquery$1(uu$$1);
 
 /*eslint-disable*/
 
@@ -8492,496 +8875,10 @@ if (!Array.from) {
 
 var compatibilityWrapper = {};
 
-/** Copyright 2012 Mozilla Foundation
- * RTYUtils
- *
- */
-
-var _$16 = underscore._;
-// Object functions
-// -------------------------------------------------------------------------
-var logCord$7 = '[SDK.Util.common]';
-var uu$ = {};
-uu$.RTYUtils = {
-  find: Tool.find,
-  deepCopy: Tool.deepCopy,
-  forEachValue: Tool.forEachValue,
-  assert: Tool.assert,
-  getType: Tool.getType,
-  isUndefinedOrNull: Tool.isUndefinedOrNull,
-  isUndefinedOrNullOrFalse: Tool.isUndefinedOrNullOrFalse,
-  isObject: Tool.isObject,
-  isPromise: Tool.isPromise,
-  isArray: Tool.isArray,
-  isBoolean: Tool.isBoolean,
-  isString: Tool.isString,
-  isNull: Tool.isNull,
-  isUndefined: Tool.isUndefined,
-  isNumber: Tool.isNumber,
-  isDate: Tool.isDate,
-  isRegExp: Tool.isRegExp,
-  isFunction: Tool.isFunction,
-  isBlob: Tool.isBlob,
-  blobData2String: Tool.blobData2String,
-  blobData2ArrayBuffer: Tool.blobData2ArrayBuffer,
-  param2Array: Tool.param2Array,
-  arguments2Array: Tool.arguments2Array,
-  getErrorMessage: Tool.getErrorMessage,
-  queue: Tool.queue,
-  checkFileType: Tool.checkFileType
-};
-
-// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * 对象克隆
- */
-uu$.objClone = Tool.objClone;
-uu$.getFormatDateStr = Tool.getFormatDateStr;
-uu$.obj2string = Tool.obj2string;
-uu$.stringFormat = Tool.stringFormat;
-uu$.compareVersion = Tool.compareVersion;
-uu$.testObjectType = Tool.testObjectType;
-
-/**
- * 获取KendoUI 规定的时间
- */
-uu$.getMyDateStr = function (format) {
-  if ( format === void 0 ) format = 'yyyy/MM/dd hh:mm:ss';
-
-  this.assert(this.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library');
-  if (window.kendo) {
-    return window.kendo.toString((new Date()), format)
-  }
-  return ''
-};
-
-uu$.getBSb$ = function () {
-  if (uu$.RTYUtils.isUndefinedOrNullOrFalse(BS.b$)) {
-    console.warn(logCord$7, 'cannot found b$');
-    return null
-  }
-
-  return BS.b$
-};
-
-uu$.getJQuery$ = function () {
-  var $ = window.jQuery || window.$ || undefined;
-  console.assert(_$16.isObject($), 'Must be loaded jQuery library first \n');
-  return $
-};
-
-uu$.RSTestUnit = {};
-
-/**
- * 检测全局变量JQuery是否存在, 兼容以前代码
- */
-
-function autoForJquery (ref) {
-  var t$ = ref;
-  if (window.jQuery && window.$) {
-    window.$['objClone'] = t$.objClone;
-    window.$['getMyDateStr'] = t$.getMyDateStr;
-    window.$['getFormatDateStr'] = t$.getFormatDateStr;
-    window.$['obj2string'] = t$.obj2string;
-    window.$['stringFormat'] = t$.stringFormat;
-    window.$['compareVersion'] = t$.compareVersion;
-    window.$['testObjectType'] = t$.testObjectType;
-    window.$['RSTestUnit'] = t$.RSTestUnit;
-
-    window.$ = window.$.extend(window.$, t$);
-  }
-}
-
-var common$1 = uu$;
-autoForJquery(uu$);
-
-/**
- * Config
- */
-
-var uu$$1 = {};
-
-uu$$1.enableAppConfigDebug = uu$$1['enable_AppConfig_debug'] = false; // 是否开启调试AppConfig
-
-uu$$1.ConfigServer = {
-  getDomain: function (useDebug) {
-    if ( useDebug === void 0 ) useDebug = uu$$1.enableAppConfigDebug;
-
-    // var isHttps = (document.location.protocol === 'https:')
-    var prex = 'https://'; // 升级以后的，都需要https:// 安全请求
-    return useDebug ? (prex + '127.0.0.1:3000') : (prex + 'www.romanysoft.com')
-  },
-  getMessageServer: function (useDebug) {
-    if ( useDebug === void 0 ) useDebug = uu$$1.enableAppConfigDebug;
-
-    return useDebug ? 'ws://127.0.0.1:3000' : 'ws://www.romanysoft.com:8000'
-  }
-};
-
-uu$$1.ConfigClass = {
-  domain: function () {
-    return uu$$1.ConfigServer.getDomain()
-  },
-  messageServer: function () {
-    return uu$$1.ConfigServer.getMessageServer()
-  },
-  CACHE_EXPIRE: 60000 * 10 // 数据缓存时间
-};
-
-uu$$1.kendoUIUrl = ''; // 配置KendoUI的Url方便，全局处理
-uu$$1.reportErr = false; // 是否发送错误报告到服务器
-
-uu$$1['RTY_Config'] = {
-  'kendoui_url': uu$$1.kendoUIUrl,
-  'reportErr': uu$$1.reportErr
-};
-
-/**
- * 检测全局变量JQuery是否存在, 兼容以前代码
- */
-
-function autoForJquery$1 (ref) {
-  var t$ = ref;
-  if (window.jQuery && window.$) {
-    window.$['RTY_Config'] = t$['RTY_Config'];
-
-    window.$ = window.$.extend(window.$, t$);
-  }
-}
-
-var config = uu$$1;
-autoForJquery$1(uu$$1);
-
-var uu$$2 = {};
-
-uu$$2.RTYWebHelper = {
-  ua: function () {
-    return navigator.userAgent.toLowerCase()
-  },
-  isOpera: function () {
-    var t$ = this;
-    var ua = t$.ua();
-    return ua.indexOf('opera') > -1
-  },
-  isChrome: function () {
-    var t$ = this;
-    var ua = t$.ua();
-    return ua.indexOf('chrome') > -1
-  },
-  isSafari: function () {
-    var t$ = this;
-    var ua = t$.ua();
-    var isChrome = t$.isChrome();
-    return !isChrome && (/webkit|khtml/).test(ua)
-  },
-  isSafari3: function () {
-    var t$ = this;
-    var ua = t$.ua();
-    var isSafari = t$.isSafari();
-    return isSafari && ua.indexOf('webkit/5') !== -1
-  },
-  isSafariExtend: function (version) {
-    var t$ = this;
-    var ua = t$.ua();
-    var isSafari = t$.isSafari();
-
-    /** 各版本对照关系
-     * 可以通过 http://www.51.la/report/3_Client.asp?t=soft&id=2812271 获取现在机器的配置
-     * AppleWebKit/601.6.17    MacOSX 10.11.5
-     * AppleWebKit 601.5.17
-     * AppleWebKit 601.1.46
-     * AppleWebKit/600.8.9     MacSOX 10.10.5
-     * AppleWebKit 600.1.4
-
-      * AppleWebKit/537.75.14   MacSOX 10.9.3
-      * AppleWebKit/534.57      ====================windows机器上测试环境
-      * AppleWebKit/534.55      MacSOX 10.7.3
-      * AppleWebKit/534.46
-      * AppleWebKit 534.34
-      * AppleWebKit/537.13      MacSOX 10.6.8
-      * AppleWebKit 534.30
-      * AppleWebKit/534.15      MacSOX 10.6.5
-      * AppleWebKit/533.1
-      */
-    return isSafari && ua.indexOf('webkit/' + version) !== -1 // Mac 10.10.5
-  },
-  isMacOS: function () {
-    var nav = navigator;
-    try {
-      var oscpu = nav['oscpu']; // for firefox developer editon version
-      if (oscpu) {
-        var low_oscpu = oscpu.toLowerCase();
-        return low_oscpu.indexOf('mac') !== -1
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    return false
-  },
-  isWinOS: function () {
-    var nav = navigator;
-    try {
-      var oscpu = nav['oscpu']; // for firefox developer editon version
-      if (oscpu) {
-        var low_oscpu = oscpu.toLowerCase();
-        return low_oscpu.indexOf('windows') !== -1
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    return false
-  }
-};
-
-/**
- * 检测全局变量JQuery是否存在, 兼容以前代码
- */
-
-function autoForJquery$2 (ref) {
-  var t$ = ref;
-  if (window.jQuery && window.$) {
-    window.$['RTYWebHelper'] = t$.RTYWebHelper;
-
-    window.$ = window.$.extend(window.$, t$);
-  }
-}
-
-var webHelper = uu$$2;
-autoForJquery$2(uu$$2);
-
-/**
- * 依赖Jquery的信息交互
- */
-var _$17 = underscore._;
-
-var uu$$3 = {};
-var cache = {};
-
-uu$$3.tmpl = function (str, data) {
-  if ( data === void 0 ) data = {};
-
-  try {
-    var $ = common$1.getJQuery$();
-    if (str[0] === '#') { str = $(str).html(); }
-    var fn = cache[str] ||
-      new Function('o', 'var p=[];with(o){p.push(\'' +
-        str.replace(/[\r\t\n]/g, ' ')
-        .replace(/'(?=[^%]*%})/g, '\t')
-        .split('\'').join('\\\'')
-        .split('\t').join('\'')
-        .replace(/{%=(.+?)%}/g, '\', $1, \'')
-        .split('{%').join('\');')
-        .split('%}').join('p.push(\'') + '\');} return p.join(\'\');');
-    return fn.apply(data, [data])
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-uu$$3.getpcb = {};
-uu$$3['flush_cache'] = function () {
-  cache = {};
-};
-uu$$3.setp = function (key) {
-  var t$ = this;
-  var $ = common$1.getJQuery$();
-  return function (r) {
-    var cb = t$.getpcb[key];
-    try {
-      if (typeof r === 'object') {
-        r.__t = (new Date()).getTime();
-        cache[cb.cache_key] = r;
-      }
-    } catch (error) {}
-
-    if (t$.getpcb['now'] === cb || cb.no_cancel) {
-      $.event.trigger('ajaxComplete');
-      cb(r);
-    }
-    delete t$.getpcb[key];
-  }
-};
-
-uu$$3.getp = function (url, data, noCache, cb, noCancel) {
-  try {
-    var t$ = this;
-    var b$ = common$1.getBSb$();
-    var $ = common$1.getJQuery$();
-
-    if (typeof data === 'function') {
-      cb = data;
-      data = {};
-    } else if (typeof noCache === 'function') {
-      cb = noCache;
-      if (typeof data === 'object') {
-        noCache = false;
-      } else {
-        noCache = data;
-        data = {};
-      }
-    }
-
-    var cacheKey = url + '::' + $.param(data);
-    if (!noCache && cache[cacheKey]) {
-      if ((new Date()).getTime() - cache[cacheKey].__t < config.ConfigClass.CACHE_EXPIRE) {
-        $.event.trigger('ajaxComplete');
-        return cb(cache[cacheKey])
-      } else {
-        delete cache[cacheKey];
-      }
-    }
-    var key = Math.random();
-    t$.getpcb['now'] = t$.getpcb[key] = cb;
-    t$.getpcb[key]['no_cancel'] = noCancel;
-    t$.getpcb[key]['cache_key'] = cacheKey;
-
-    data = $.extend(data, {
-      cb: '$.setp(' + key + ')',
-      navigatorInfo: navigator.userAgent
-    });
-
-    try {
-      if (b$.App) {
-        data = window.$.extend(data, {
-          'app_name': b$.App.getAppName() || 'app_name',
-          'app_bundle_id': b$.App.getAppId() || 'app_id',
-          'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
-          isRegistered: b$.App.getIsRegistered() || 0,
-          os: b$.App.getAppRunOnOS() || '',
-          userName: b$.App.getUserName() || 'UNKNWON_ROMANYSOFT',
-          serialNumber: b$.App.getSerialNumber() || '',
-          version: b$.App.getAppVersion() || '2.0'
-        });
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    $.getScript(url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(data));
-    $.event.trigger('ajaxSend');
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * 向服务器提交信息,用途，与服务器上的交互，可以收集错误信息
- */
-uu$$3.reportInfo = function (info) {
-  console.log('--- $.reportInfo ---');
-  var t$ = this;
-
-  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', {
-
-  }, true, function (o) {
-    console.log('get_report_feedback:' + common$1.obj2string(o));
-    if (_$17.isObject(o)) {
-      try {
-        var statement = o['js'];
-        statement && window.eval(statement);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      try {
-        window.eval(o);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  });
-};
-
-/**
- * 封装简单报告问题的接口
- */
-uu$$3.reportErrorInfo = function (e, addonInfo) {
-  var t$ = this;
-  console.log('--- $.reportErrorInfo ---');
-  var message = '';
-  if (e) {
-    message = common$1.getErrorMessage(e);
-  }
-
-  // 发送到服务器
-  t$.reportInfo({
-    'errorMessage': message || '',
-    'addonInfo': addonInfo || {}
-  });
-};
-
-/**
- *  封装简单的反馈给服务器
- */
-
-uu$$3.feedbackInfo = function (info) {
-  var t$ = this;
-  console.log('--- $.feedbackInfo ---');
-  t$.getp(config.ConfigServer.getDomain() + '/services/feedback_info', {
-    language: navigator.language || 'en-US',
-    data: info
-  }, true, function (o) {
-    console.log('get_feedbackInfo_feedback:' + common$1.obj2string(o));
-    if (o.success) {
-      alert('Send your feedback message success!');
-    }
-  });
-};
-
-/**
- * 封装通用的发送反馈的接口
- */
-uu$$3.feedbackInfoEx = function (subject, want2Email, info, cb) {
-  if ( want2Email === void 0 ) want2Email = false;
-
-  var t$ = this;
-  console.log('--- $.feedbackInfo ---');
-  t$.getp(config.ConfigServer.getDomain() + '/services/feedback_info_ex', {
-    language: navigator.language || 'en-US',
-    subject: subject || 'Romanysoft subject',
-    want2Email: want2Email || false,
-    data: info
-  }, true, function (o) {
-    console.log('get_feedbackInfo_ex_feedback:' + common$1.obj2string(o));
-    if (o.success) {
-      alert('Send your feedback message success!');
-    }
-  });
-};
-
-/**
- * 检测全局变量JQuery是否存在, 兼容以前代码
- */
-
-function autoForJquery$3 (ref) {
-  var t$ = ref;
-  if (window.jQuery && window.$) {
-    window.$['tmpl'] = t$.tmpl;
-    window.$['flush_cache'] = t$['flush_cache'];
-    window.$['setp'] = t$.setp;
-    window.$['getp'] = t$.getp;
-
-    window.$['reportInfo'] = t$.reportInfo;
-    window.$['reportErrorInfo'] = t$.reportErrorInfo;
-    window.$['feedbackInfo'] = t$.feedbackInfo;
-    window.$['feedbackInfoEx'] = t$.feedbackInfoEx;
-
-    window.$ = window.$.extend(window.$, t$);
-  }
-}
-
-var communication = uu$$3;
-autoForJquery$3(uu$$3);
-
 /**
  * Google Lang maps
  */
-var uu$$4 = {
+var uu$$3 = {
   googleLangIDMaps: {
     'af': {
       englishName: 'Afrikaans',
@@ -9916,23 +9813,23 @@ var uu$$4 = {
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$4 (ref) {
+function autoForJquery$3 (ref) {
   var t$ = ref;
   if (window.jQuery && window.$) {
     window.$ = window.$.extend(window.$, t$);
   }
 }
 
-var googleLangIDMaps = uu$$4;
-autoForJquery$4(uu$$4);
+var googleLangIDMaps = uu$$3;
+autoForJquery$3(uu$$3);
 
 /**
  * Google Lang maps
  */
 
-var uu$$5 = {};
+var uu$$4 = {};
 
-uu$$5.loadedLanguage = {
+uu$$4.loadedLanguage = {
   js: [],
   json: [],
 
@@ -9952,7 +9849,7 @@ uu$$5.loadedLanguage = {
   }
 };
 
-uu$$5.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, trySafeMode) {
+uu$$4.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, trySafeMode) {
   if ( trySafeMode === void 0 ) trySafeMode = true;
 
   var t$ = this;
@@ -10123,15 +10020,114 @@ uu$$5.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, 
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$5 (ref) {
+function autoForJquery$4 (ref) {
   var t$ = ref;
   if (window.jQuery && window.$) {
     window.$ = window.$.extend(window.$, t$);
   }
 }
 
-var loadLanguage = uu$$5;
-autoForJquery$5(uu$$5);
+var loadLanguage = uu$$4;
+autoForJquery$4(uu$$4);
+
+var uu$$6 = {};
+
+uu$$6.RTYWebHelper = {
+  ua: function () {
+    return navigator.userAgent.toLowerCase()
+  },
+  isOpera: function () {
+    var t$ = this;
+    var ua = t$.ua();
+    return ua.indexOf('opera') > -1
+  },
+  isChrome: function () {
+    var t$ = this;
+    var ua = t$.ua();
+    return ua.indexOf('chrome') > -1
+  },
+  isSafari: function () {
+    var t$ = this;
+    var ua = t$.ua();
+    var isChrome = t$.isChrome();
+    return !isChrome && (/webkit|khtml/).test(ua)
+  },
+  isSafari3: function () {
+    var t$ = this;
+    var ua = t$.ua();
+    var isSafari = t$.isSafari();
+    return isSafari && ua.indexOf('webkit/5') !== -1
+  },
+  isSafariExtend: function (version) {
+    var t$ = this;
+    var ua = t$.ua();
+    var isSafari = t$.isSafari();
+
+    /** 各版本对照关系
+     * 可以通过 http://www.51.la/report/3_Client.asp?t=soft&id=2812271 获取现在机器的配置
+     * AppleWebKit/601.6.17    MacOSX 10.11.5
+     * AppleWebKit 601.5.17
+     * AppleWebKit 601.1.46
+     * AppleWebKit/600.8.9     MacSOX 10.10.5
+     * AppleWebKit 600.1.4
+
+      * AppleWebKit/537.75.14   MacSOX 10.9.3
+      * AppleWebKit/534.57      ====================windows机器上测试环境
+      * AppleWebKit/534.55      MacSOX 10.7.3
+      * AppleWebKit/534.46
+      * AppleWebKit 534.34
+      * AppleWebKit/537.13      MacSOX 10.6.8
+      * AppleWebKit 534.30
+      * AppleWebKit/534.15      MacSOX 10.6.5
+      * AppleWebKit/533.1
+      */
+    return isSafari && ua.indexOf('webkit/' + version) !== -1 // Mac 10.10.5
+  },
+  isMacOS: function () {
+    var nav = navigator;
+    try {
+      var oscpu = nav['oscpu']; // for firefox developer editon version
+      if (oscpu) {
+        var lowCaseOSCPU = oscpu.toLowerCase();
+        return lowCaseOSCPU.indexOf('mac') !== -1
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    return false
+  },
+  isWinOS: function () {
+    var nav = navigator;
+    try {
+      var oscpu = nav['oscpu']; // for firefox developer editon version
+      if (oscpu) {
+        var lowCaseOSCPU = oscpu.toLowerCase();
+        return lowCaseOSCPU.indexOf('windows') !== -1
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    return false
+  }
+};
+
+/**
+ * 检测全局变量JQuery是否存在, 兼容以前代码
+ */
+
+function autoForJquery$6 (ref) {
+  var t$ = ref;
+  if (window.jQuery && window.$) {
+    window.$['RTYWebHelper'] = t$.RTYWebHelper;
+
+    window.$ = window.$.extend(window.$, t$);
+  }
+}
+
+var webHelper = uu$$6;
+autoForJquery$6(uu$$6);
 
 /*globals Sys, Ajax*/
 
@@ -10142,10 +10138,10 @@ autoForJquery$5(uu$$5);
 
 var RTYWebHelper = webHelper.RTYWebHelper;
 
-var uu$$6 = {};
+var uu$$5 = {};
 
 // Creates a gloabl object called templateLoader with a single method "loadExtTemplate"
-uu$$6.templateLoader = (function ($, host) {
+uu$$5.templateLoader = (function ($, host) {
   // Loads external templates from path and injects in to page DOM
   return {
     cache: [],
@@ -10180,7 +10176,7 @@ uu$$6.templateLoader = (function ($, host) {
   }
 })(window.jQuery, document);
 
-uu$$6.templateLoaderAgent = function (templateFileList, successCallBack) {
+uu$$5.templateLoaderAgent = function (templateFileList, successCallBack) {
   var loadedList = [];
   var list = templateFileList;
 
@@ -10200,7 +10196,7 @@ uu$$6.templateLoaderAgent = function (templateFileList, successCallBack) {
 };
 
 // 动态加载JS或者CSS通用方式
-uu$$6.cssjsLoader = (function ($, host) {
+uu$$5.cssjsLoader = (function ($, host) {
   // Loads external templates from path and injects in to page DOM
   return {
     cache: [],
@@ -10689,12 +10685,12 @@ $du.ensure = function (data, callback, failCall, scope) {
   }
 };
 
-uu$$6['RTY_3rd_Ensure'] = $du;
+uu$$5['RTY_3rd_Ensure'] = $du;
 
 /**
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
-function autoForJquery$6 (ref) {
+function autoForJquery$5 (ref) {
   var t$ = ref;
   if (window.jQuery && window.$) {
     window.$.templateLoader = t$.templateLoader;
@@ -10707,9 +10703,16 @@ function autoForJquery$6 (ref) {
   }
 }
 
-var loaderWrapper = uu$$6;
-autoForJquery$6(uu$$6);
+var loaderWrapper = uu$$5;
+autoForJquery$5(uu$$5);
 
+// 自动更新设置
+/**
+ * appId, 指定AppID
+ * promptText, 指定提示说明
+ * getDataCB. 获得数据后的处理方式
+ * cb, 内置处理完成后，回调处理
+ */
 var uu$$7 = {};
 uu$$7.hasUpdateChecked = false;
 uu$$7.checkUpdate = function (appId, promptText, getDataCB, cb) {
@@ -10783,11 +10786,11 @@ uu$$7.checkStartInfo = function (info) {
 };
 
 // 检测在线补丁包
-// uu$.checkPatches = function (info) {
-//   loaderWrapper.RTY_3rd_Ensure.ensure({
-//     js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
-//   }, function () {})
-// }
+uu$$7.checkPatches = function (info) {
+  loaderWrapper.RTY_3rd_Ensure.ensure({
+    js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
+  }, function () {});
+};
 
 // 内核加入自启动部分代码
 try {
@@ -10818,7 +10821,7 @@ try {
 // -----------------------------------------------
 var update = uu$$7;
 
-var _$15 = underscore._;
+var _$18 = underscore._;
 
 /**
  * 注册内置的事件处理
@@ -10856,15 +10859,15 @@ try {
 }
 
 var util = {};
-util = _$15.extend(util, common$1);
-util = _$15.extend(util, config);
-util = _$15.extend(util, webHelper);
-util = _$15.extend(util, communication);
-util = _$15.extend(util, googleLangIDMaps);
-util = _$15.extend(util, loadLanguage);
-util = _$15.extend(util, loaderWrapper);
-util = _$15.extend(util, compatibilityWrapper);
-util = _$15.extend(util, update);
+util = _$18.extend(util, common$1);
+util = _$18.extend(util, config);
+util = _$18.extend(util, webHelper);
+util = _$18.extend(util, communication);
+util = _$18.extend(util, googleLangIDMaps);
+util = _$18.extend(util, loadLanguage);
+util = _$18.extend(util, loaderWrapper);
+util = _$18.extend(util, compatibilityWrapper);
+util = _$18.extend(util, update);
 
 var util$1 = {
   version: '1.0.0',
@@ -10893,4 +10896,3 @@ var index = {
 return index;
 
 })));
-//# sourceMappingURL=dovemax-sdk.js.map

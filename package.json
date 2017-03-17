@@ -20,12 +20,8 @@
     "lint": "npm run lint:src",
     "lint:src": "eslint src",
     "lint:test": "eslint test",
-    "test": "npm run lint",
-    "#test": "npm run lint && npm run test:types && npm run test:unit && npm run test:e2e",
-    "test:unit": "rollup -c build/rollup.config.js && jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
-    "test:e2e": "node test/e2e/runner.js",
+    "test": "npm run lint && npm run test:sdk",
     "test:sdk": "jasmine JASMINE_CONFIG_PATH=test/sdk/jasmine.json",
-    "test:types": "tsc -p types/test",
     "release": "bash build/release.sh",
     "docs": "cd docs && gitbook serve",
     "docs:deploy": "cd docs && ./deploy.sh"

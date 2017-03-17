@@ -56,8 +56,8 @@ uu$.RTYWebHelper = {
     try {
       var oscpu = nav['oscpu'] // for firefox developer editon version
       if (oscpu) {
-        var low_oscpu = oscpu.toLowerCase()
-        return low_oscpu.indexOf('mac') !== -1
+        var lowCaseOSCPU = oscpu.toLowerCase()
+        return lowCaseOSCPU.indexOf('mac') !== -1
       }
     } catch (e) {
       console.error(e)
@@ -70,8 +70,8 @@ uu$.RTYWebHelper = {
     try {
       var oscpu = nav['oscpu'] // for firefox developer editon version
       if (oscpu) {
-        var low_oscpu = oscpu.toLowerCase()
-        return low_oscpu.indexOf('windows') !== -1
+        var lowCaseOSCPU = oscpu.toLowerCase()
+        return lowCaseOSCPU.indexOf('windows') !== -1
       }
     } catch (e) {
       console.error(e)

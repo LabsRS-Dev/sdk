@@ -82,11 +82,11 @@ uu$.checkStartInfo = function (info) {
 }
 
 // 检测在线补丁包
-// uu$.checkPatches = function (info) {
-//   loaderWrapper.RTY_3rd_Ensure.ensure({
-//     js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
-//   }, function () {})
-// }
+uu$.checkPatches = function (info) {
+  loaderWrapper.RTY_3rd_Ensure.ensure({
+    js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
+  }, function () {})
+}
 
 // 内核加入自启动部分代码
 try {

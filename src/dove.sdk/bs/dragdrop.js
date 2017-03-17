@@ -1,5 +1,7 @@
 import { common } from './common'
-import _ from '../underscore'
+import underscore from '../underscore'
+
+var _ = underscore._
 
 var $bc_ = common
 
@@ -7,28 +9,28 @@ var $bc_ = common
 $bc_.cb_dragdrop = null // 启动
 /**
  *
- * @param parms 参数处理
+ * @param params 参数处理
  */
 $bc_.enableDragDropFeature = function (jsonObj, cb) {
   var t$ = this
   if (t$.pN) {
     try {
-      var parms = jsonObj || {}
-      parms['callback'] = jsonObj['callback'] || t$._get_callback(function (obj) {
+      var params = jsonObj || {}
+      params['callback'] = jsonObj['callback'] || t$._get_callback(function (obj) {
         if (_.isFunction(t$.cb_dragdrop)) {
           t$.cb_dragdrop && t$.cb_dragdrop(obj)
         } else {
           cb && cb(obj)
         }
       }, true)
-      parms['enableDir'] = jsonObj['enableDir'] || false
-      parms['enableFile'] = jsonObj['enableFile'] !== false
-      parms['fileTypes'] = jsonObj['fileTypes'] || ['*'] // ["*","mp3","md", "xls"] 类似这样的格式
+      params['enableDir'] = jsonObj['enableDir'] || false
+      params['enableFile'] = jsonObj['enableFile'] !== false
+      params['fileTypes'] = jsonObj['fileTypes'] || ['*'] // ["*","mp3","md", "xls"] 类似这样的格式
 
       // / 统一向后兼容处理
       for (var key in jsonObj) {
         if (jsonObj.hasOwnProperty(key)) {
-          parms[key] = jsonObj[key]
+          params[key] = jsonObj[key]
         }
       }
 
@@ -75,7 +77,7 @@ $bc_.enableDragDropFeature = function (jsonObj, cb) {
         })
       }
 
-      t$.pN.window.setDragDropConfig(JSON.stringify(parms))
+      t$.pN.window.setDragDropConfig(JSON.stringify(params))
     } catch (e) {
       console.error(e)
     }

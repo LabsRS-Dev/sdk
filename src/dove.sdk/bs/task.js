@@ -1,6 +1,7 @@
 import { common } from './common'
-import _ from '../underscore'
+import underscore from '../underscore'
 
+var _ = underscore._
 var $bc_ = common
 
 const TypeTriggerMsg = {
@@ -84,17 +85,17 @@ $bc_.formatCommand = function (commandList) {
   var formatArgs = []
 
   _.each(commandList || [], function (ele, index, list) {
-    var fm_ele = ''
-    if (_.isBoolean(ele)) fm_ele = "'" + ele + "'"
-    if (_.isNumber(ele)) fm_ele = ele
-    if (_.isString(ele)) fm_ele = "'" + ele + "'"
-    if (_.isFunction(ele)) fm_ele = null
-    if (_.isArray(ele)) fm_ele = "'" + JSON.stringify(ele) + "'"
-    if (_.isDate(ele)) fm_ele = "'" + JSON.stringify(ele) + "'"
-    if (_.isRegExp(ele)) fm_ele = "'" + ele.toString() + "'"
-    if (_.isObject(ele)) fm_ele = "'" + JSON.stringify(ele) + "'"
-    if (fm_ele !== null) {
-      formatArgs.push(fm_ele)
+    var formatEle = ''
+    if (_.isBoolean(ele)) formatEle = "'" + ele + "'"
+    if (_.isNumber(ele)) formatEle = ele
+    if (_.isString(ele)) formatEle = "'" + ele + "'"
+    if (_.isFunction(ele)) formatEle = null
+    if (_.isArray(ele)) formatEle = "'" + JSON.stringify(ele) + "'"
+    if (_.isDate(ele)) formatEle = "'" + JSON.stringify(ele) + "'"
+    if (_.isRegExp(ele)) formatEle = "'" + ele.toString() + "'"
+    if (_.isObject(ele)) formatEle = "'" + JSON.stringify(ele) + "'"
+    if (formatEle !== null) {
+      formatArgs.push(formatEle)
     }
   })
 

@@ -1,6 +1,7 @@
+import { Observable } from '../observable'
 import { common } from './common'
 import underscore from '../underscore'
-import { Observable } from '../observable'
+
 var _ = underscore._
 
 var $bc_ = common
@@ -127,12 +128,12 @@ $bc_.IAP = {
     return false
   },
 
-  enableIAP: function (in_parms, cb) {
+  enableIAP: function (paramOptions, cb) {
     var t$ = this
 
     try {
-      var parms = {}
-      parms['cb_IAP_js'] = in_parms['cb_IAP_js'] || $bc_._get_callback(function (obj) {
+      var params = {}
+      params['cb_IAP_js'] = paramOptions['cb_IAP_js'] || $bc_._get_callback(function (obj) {
         // ////////////////////////内部处理//////////////////////////////////
         try {
           if (_.isObject(obj)) {
@@ -176,27 +177,27 @@ $bc_.IAP = {
       }, true)
 
       // / 数据校验
-      console.assert(_.isString(parms['cb_IAP_js']) === true, 'must be function string')
+      console.assert(_.isString(params['cb_IAP_js']) === true, 'must be function string')
 
       // /Ian(原先的方式)
-      if (_.isArray(in_parms['productIds'])) {
-        parms['productIds'] = in_parms['productIds'] || []
+      if (_.isArray(paramOptions['productIds'])) {
+        params['productIds'] = paramOptions['productIds'] || []
       }
 
       // /Ian 2016.12.06 现在的方式. 支持更高级的商品属性定义传入
-      parms['products'] = []
-      if (_.isArray(in_parms['products'])) { // [{productIdentifier, description, buyUrl, price}]
+      params['products'] = []
+      if (_.isArray(paramOptions['products'])) { // [{productIdentifier, description, buyUrl, price}]
         try {
           var productIds = []
-          _.each(in_parms['products'], function (product, index, list) {
+          _.each(paramOptions['products'], function (product, index, list) {
             productIds.push(product.productIdentifier)
           })
 
-          if (_.isUndefined(parms['productIds'] || _.isNull(parms['productIds']))) {
-            parms['productIds'] = productIds
+          if (_.isUndefined(params['productIds'] || _.isNull(params['productIds']))) {
+            params['productIds'] = productIds
           }
 
-          parms['products'] = in_parms['products']
+          params['products'] = paramOptions['products']
         } catch (e) {
           console.error(e)
           alert(e)
@@ -204,15 +205,15 @@ $bc_.IAP = {
       }
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key]
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key]
         }
       }
 
       if ($bc_.pN) {
         // 注册IAP回调
-        $bc_.pN.iap.regeditIAPCallbackJs(parms.cb_IAP_js)
+        $bc_.pN.iap.regeditIAPCallbackJs(params.cb_IAP_js)
 
         // 注册IAPBundle
         $bc_.pN.iap.regeditIAPCore(JSON.stringify({
@@ -226,8 +227,8 @@ $bc_.IAP = {
 
           // 发送商品请求
           $bc_.pN.iap.requestProducts(JSON.stringify({
-            productIdentifiers: parms.productIds || [],
-            products: parms['products'] || []
+            productIdentifiers: params.productIds || [],
+            products: params['products'] || []
           }))
         }
 
@@ -235,19 +236,19 @@ $bc_.IAP = {
 
         // /注册模拟IAP回调
         $bc_.IAP_SE_Wrapper.caller().add(function (obj) {
-          console.assert(_.isString(parms.cb_IAP_js) === true, 'must be function string')
+          console.assert(_.isString(params.cb_IAP_js) === true, 'must be function string')
 
-          var fnc = window.eval(parms.cb_IAP_js)
+          var fnc = window.eval(params.cb_IAP_js)
           if (_.isFunction(fnc)) {
             fnc && fnc(obj)
           }
         })
 
         // /注册商品ID
-        $bc_.IAP_SE_Wrapper.productIdentifiers = parms.productIds || []
+        $bc_.IAP_SE_Wrapper.productIdentifiers = params.productIds || []
 
         var productsInfo = []
-        _.each(parms.productIds, function (id, index, list) {
+        _.each(params.productIds, function (id, index, list) {
           var productObj = {
             productIdentifier: id,
             description: 'Plugin Description and price demo for ' + id,
@@ -367,13 +368,13 @@ $bc_.IAP = {
 
   /**
    * 购买商品
-   * @param parms {} 参数productIdentifier： 购买的商品唯一标识， quantity： 购买的商品数量
+   * @param params {} 参数productIdentifier： 购买的商品唯一标识， quantity： 购买的商品数量
    * @param successCallback 购买成功后的回调, 传值参数为商品标识，和消息内容
    * @param failCallback 购买失败后的回调，传值参数为商品标识，和消息内容
    */
-  buyProduct: function (parms, successCallback, failCallback) {
+  buyProduct: function (params, successCallback, failCallback) {
     var t$ = this
-    if (!t$._check(parms.productIdentifier)) return
+    if (!t$._check(params.productIdentifier)) return
 
     // ////////////////////////////////////////////////////////////////////////////
     var _cb = function (obj) {
@@ -383,7 +384,7 @@ $bc_.IAP = {
           var info = obj.info
           var notifyType = obj.notifyType
 
-          if (info.productIdentifier === parms.productIdentifier) {
+          if (info.productIdentifier === params.productIdentifier) {
             if (notifyType === t$.MessageType['ProductPurchased']) {
               successCallback && successCallback(info.productIdentifier, obj)
             } else if (t$.MessageType['ProductPurchaseFailed']) {
@@ -402,8 +403,8 @@ $bc_.IAP = {
     if ($bc_.pN) {
       // 发送购买请求
       $bc_.pN.iap.buyProduct(JSON.stringify({
-        identifier: parms.productIdentifier,
-        quantity: parms.quantity || 1
+        identifier: params.productIdentifier,
+        quantity: params.quantity || 1
       }))
     } else {
       console.log('Romanysoft SDK simulation environment....')
@@ -412,21 +413,21 @@ $bc_.IAP = {
       $bc_.IAP_SE_OBJ = JSON.parse(obj)
       var orgQuantity = 0
       var saveQuantity = 0
-      if ($bc_.IAP_SE_OBJ[parms.productIdentifier]) {
-        orgQuantity = $bc_.IAP_SE_OBJ[parms.productIdentifier]
-        saveQuantity = orgQuantity + parms.quantity || 1
+      if ($bc_.IAP_SE_OBJ[params.productIdentifier]) {
+        orgQuantity = $bc_.IAP_SE_OBJ[params.productIdentifier]
+        saveQuantity = orgQuantity + params.quantity || 1
       } else {
-        saveQuantity = parms.quantity || 1
+        saveQuantity = params.quantity || 1
       }
 
-      $bc_.IAP_SE_OBJ[parms.productIdentifier] = saveQuantity
+      $bc_.IAP_SE_OBJ[params.productIdentifier] = saveQuantity
       window.localStorage.setItem($bc_.IAP_SE_KEY, JSON.stringify($bc_.IAP_SE_OBJ))
 
       // 模拟发送成功购买信息
       $bc_.IAP_SE_Wrapper.caller().fire({
         notifyType: t$.MessageType['ProductPurchased'],
         info: {
-          productIdentifier: parms.productIdentifier,
+          productIdentifier: params.productIdentifier,
           quantity: saveQuantity
         }
       })
@@ -435,7 +436,7 @@ $bc_.IAP = {
       $bc_.IAP_SE_Wrapper.caller().fire({
         notifyType: t$.MessageType['ProductCompletePurchased'],
         info: {
-          productIdentifier: parms.productIdentifier,
+          productIdentifier: params.productIdentifier,
           transactionId: 'transactionId' + Math.round(999),
           receipt: 'receipt' + Math.round(999)
         }

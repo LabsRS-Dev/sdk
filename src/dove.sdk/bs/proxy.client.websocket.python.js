@@ -151,9 +151,18 @@ var __$p$ = {
       ++that.autoCWSTimesIndex
     }
   },
-  createWS: (url) => { // 建立Websocket 客户端
+  createWS: function (url) { // 建立Websocket 客户端
     var __agent = this
-    var WebSocket = window.WebSocket || window.MozWebSocket
+
+    var WebSocket = function () {}
+    try {
+      if (!Tool.isUndefinedOrNullOrFalse(window)) {
+        WebSocket = window.WebSocket || window.MozWebSocket || {}
+      }
+    } catch (error) {
+      console.error('can not found WebSocket Object')
+    }
+
     __agent.log(logCord, 'create new socket connect, wsurl = ' + url)
 
     try {

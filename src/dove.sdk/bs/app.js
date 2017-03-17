@@ -204,21 +204,21 @@ $bc_.App = {
   sendEmail: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['sendAddress'] = jsonObj['sendAddress'] || 'admin@gmail.com'
-        parms['toAddress'] = jsonObj['toAddress'] || 'admin@gmail.com'
-        parms['subject'] = jsonObj['subject'] || 'Hello'
-        parms['body'] = jsonObj['body'] || 'Hello!!'
+        params['sendAddress'] = jsonObj['sendAddress'] || 'admin@gmail.com'
+        params['toAddress'] = jsonObj['toAddress'] || 'admin@gmail.com'
+        params['subject'] = jsonObj['subject'] || 'Hello'
+        params['body'] = jsonObj['body'] || 'Hello!!'
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.app.sendEmailWithMail(JSON.stringify(parms))
+        $bc_.pN.app.sendEmailWithMail(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -607,15 +607,15 @@ $bc_.App = {
   createDir: $bc_.createDir = function (dir_path, atts, cb) {
     if ($bc_.pN) {
       try {
-        var parms = {}
+        var params = {}
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['path'] = dir_path || ($bc_.pN.path.tempDir() + 'tmp_dir001')
-        if (atts) parms['atts'] = atts || {}
+        params['path'] = dir_path || ($bc_.pN.path.tempDir() + 'tmp_dir001')
+        if (atts) params['atts'] = atts || {}
 
-        $bc_.pN.window.createDir(JSON.stringify(parms))
+        $bc_.pN.window.createDir(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -639,14 +639,14 @@ $bc_.App = {
   removeDir: $bc_.removeDir = function (dir_path, cb) {
     if ($bc_.pN) {
       try {
-        var parms = {}
+        var params = {}
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['path'] = dir_path || ($bc_.pN.path.tempDir() + '/tmp_dir001')
+        params['path'] = dir_path || ($bc_.pN.path.tempDir() + '/tmp_dir001')
 
-        $bc_.pN.window.removeDir(JSON.stringify(parms))
+        $bc_.pN.window.removeDir(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -657,22 +657,22 @@ $bc_.App = {
   copyFile: $bc_.copyFile = function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['src'] = jsonObj['src'] || ''
-        parms['dest'] = jsonObj['dest'] || ''
+        params['src'] = jsonObj['src'] || ''
+        params['dest'] = jsonObj['dest'] || ''
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.copyFile(JSON.stringify(parms))
+        $bc_.pN.window.copyFile(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -683,22 +683,22 @@ $bc_.App = {
   copyDir: $bc_.copyDir = function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['src'] = jsonObj['src'] || ''
-        parms['dest'] = jsonObj['dest'] || ''
+        params['src'] = jsonObj['src'] || ''
+        params['dest'] = jsonObj['dest'] || ''
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.copyDir(JSON.stringify(parms))
+        $bc_.pN.window.copyDir(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -709,22 +709,22 @@ $bc_.App = {
   moveFile: $bc_.moveFile = function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['src'] = jsonObj['src'] || ''
-        parms['dest'] = jsonObj['dest'] || ''
+        params['src'] = jsonObj['src'] || ''
+        params['dest'] = jsonObj['dest'] || ''
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.moveFile(JSON.stringify(parms))
+        $bc_.pN.window.moveFile(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -735,22 +735,22 @@ $bc_.App = {
   moveDir: $bc_.moveDir = function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = jsonObj['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['src'] = jsonObj['src'] || ''
-        parms['dest'] = jsonObj['dest'] || ''
+        params['src'] = jsonObj['src'] || ''
+        params['dest'] = jsonObj['dest'] || ''
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.moveDir(JSON.stringify(parms))
+        $bc_.pN.window.moveDir(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -763,7 +763,7 @@ $bc_.App = {
       var _dir = dir || $bc_.pN.path.tempDir()
       var _fileName = fileName || 'tmp.txt'
 
-      var parms = {
+      var params = {
         callback: cbName || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true),
@@ -771,7 +771,7 @@ $bc_.App = {
         fileName: _fileName
       }
 
-      return $bc_.pN.window.findFile(JSON.stringify(parms))
+      return $bc_.pN.window.findFile(JSON.stringify(params))
     }
 
     return null
@@ -896,14 +896,14 @@ $bc_.App = {
   getOtherAppInfo: function (path, cb) {
     if ($bc_.pN) {
       try {
-        var parms = {}
+        var params = {}
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['path'] = path || ($bc_.pN.path.tempDir() + '/tmp_dir001')
+        params['path'] = path || ($bc_.pN.path.tempDir() + '/tmp_dir001')
 
-        return $bc_.pN.window.getOtherAppInfo(JSON.stringify(parms))
+        return $bc_.pN.window.getOtherAppInfo(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -1264,7 +1264,7 @@ $bc_.App = {
 
     var defaultLanguage = 'en'
     // 本地对应浏览器的语言标识
-    var NativeApple2WebKit_LanguageMap = {
+    var NativeApple2WebKitLanguageMap = {
       'Unknown': [''],
       'en': ['en', 'en-US', 'en-us'], // 英语
 
@@ -1336,16 +1336,16 @@ $bc_.App = {
     }
 
     if (getType === 'Native2Webkit') { // 先获取Native的语言，然后查找Map
-      var apple_lng = 'en-US'
+      var appleLanguage = 'en-US'
       if ($bc_.pN) {
-        apple_lng = $bc_.pN.app.curAppleLanguage()
+        appleLanguage = $bc_.pN.app.curAppleLanguage()
       }
 
-      if (NativeApple2WebKit_LanguageMap.hasOwnProperty(apple_lng)) {
-        return NativeApple2WebKit_LanguageMap[apple_lng]
+      if (NativeApple2WebKitLanguageMap.hasOwnProperty(appleLanguage)) {
+        return NativeApple2WebKitLanguageMap[appleLanguage]
       }
 
-      return NativeApple2WebKit_LanguageMap[defaultLanguage]
+      return NativeApple2WebKitLanguageMap[defaultLanguage]
     } else if (getType === 'webkitCompatible') {
       var mapValue = null
       var webLanguage = navigator.language || 'en'
@@ -1361,9 +1361,9 @@ $bc_.App = {
         }
       }
 
-      for (var key in NativeApple2WebKit_LanguageMap) {
-        if (NativeApple2WebKit_LanguageMap.hasOwnProperty(key)) {
-          var languageArray = NativeApple2WebKit_LanguageMap[key]
+      for (var key in NativeApple2WebKitLanguageMap) {
+        if (NativeApple2WebKitLanguageMap.hasOwnProperty(key)) {
+          var languageArray = NativeApple2WebKitLanguageMap[key]
           if (inArray(webLanguage, languageArray) > -1) {
             mapValue = languageArray
             break
@@ -1397,21 +1397,21 @@ $bc_.App = {
   captureFull: function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
         // 限制内部属性：
-        parms['callback'] = parms['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['filePath'] = parms['filePath'] || ($bc_.pN.path.tempDir() +
+        params['filePath'] = params['filePath'] || ($bc_.pN.path.tempDir() +
           'cap_screen.png') // 保存文件
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
-        $bc_.pN.window.capture(JSON.stringify(parms))
+        $bc_.pN.window.capture(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -1422,9 +1422,9 @@ $bc_.App = {
   addDirPathToChangeWatcher: function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
 
-        parms['callback'] = parms['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileWritten"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileAttributesChanged"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileSizeIncreased"} (app.js, line 270)
@@ -1434,16 +1434,16 @@ $bc_.App = {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileDeleted"} (app.js, line 270)
           cb && cb(obj)
         }, true)
-        parms['path'] = parms['path'] || ($bc_.pN.path.tempDir())
+        params['path'] = params['path'] || ($bc_.pN.path.tempDir())
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.createDirChangeWatcher(JSON.stringify(parms))
+        $bc_.pN.window.createDirChangeWatcher(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -1454,9 +1454,9 @@ $bc_.App = {
   addFilePathToChangeWatcher: function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
+        var params = jsonObj || {}
 
-        parms['callback'] = parms['callback'] || $bc_._get_callback(function (obj) {
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileWritten"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileAttributesChanged"} (app.js, line 270)
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileSizeIncreased"} (app.js, line 270)
@@ -1466,16 +1466,16 @@ $bc_.App = {
           // [Log] {"path":"/Users/Ian/Documents/New_1433573622398.md","flag":"FileDeleted"} (app.js, line 270)
           cb && cb(obj)
         }, true)
-        parms['path'] = parms['path'] || ($bc_.pN.path.tempDir())
+        params['path'] = params['path'] || ($bc_.pN.path.tempDir())
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        $bc_.pN.window.createFileChangeWatcher(JSON.stringify(parms))
+        $bc_.pN.window.createFileChangeWatcher(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -1486,17 +1486,17 @@ $bc_.App = {
   removeFromChangeWatcher: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
-        parms['path'] = parms['path'] || ($bc_.pN.path.tempDir())
+        var params = jsonObj || {}
+        params['path'] = params['path'] || ($bc_.pN.path.tempDir())
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        return $bc_.pN.window.removeFromChangeWatcher(JSON.stringify(parms))
+        return $bc_.pN.window.removeFromChangeWatcher(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -1509,18 +1509,18 @@ $bc_.App = {
   print: function (jsonObj) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
-        parms['silent'] = parms['silent'] || false
-        parms['printBackground'] = parms['printBackground'] || false
+        var params = jsonObj || {}
+        params['silent'] = params['silent'] || false
+        params['printBackground'] = params['printBackground'] || false
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        return $bc_.pN.window.print(JSON.stringify(parms))
+        return $bc_.pN.window.print(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
@@ -1531,26 +1531,26 @@ $bc_.App = {
   printToPDF: function (jsonObj, cb) {
     if ($bc_.pN) {
       try {
-        var parms = jsonObj || {}
-        parms['callback'] = parms['callback'] || $bc_._get_callback(function (obj) {
+        var params = jsonObj || {}
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        parms['marginsType'] = parms['marginsType'] || 0
-        parms['pageSize'] = parms['pageSize'] || 'A4'
-        parms['printBackground'] = parms['printBackground'] || false
-        parms['printSelectionOnly'] = parms['printSelectionOnly'] || false
-        parms['landscape'] = parms['landscape'] || false
-        parms['filePath'] = parms['filePath'] || ($bc_.pN.path.tempDir() + '/' + Date
+        params['marginsType'] = params['marginsType'] || 0
+        params['pageSize'] = params['pageSize'] || 'A4'
+        params['printBackground'] = params['printBackground'] || false
+        params['printSelectionOnly'] = params['printSelectionOnly'] || false
+        params['landscape'] = params['landscape'] || false
+        params['filePath'] = params['filePath'] || ($bc_.pN.path.tempDir() + '/' + Date
           .now() + '.pdf')
 
         // 统一向后兼容处理
         for (var key in jsonObj) {
           if (jsonObj.hasOwnProperty(key)) {
-            parms[key] = jsonObj[key]
+            params[key] = jsonObj[key]
           }
         }
 
-        return $bc_.pN.window.printToPDF(JSON.stringify(parms))
+        return $bc_.pN.window.printToPDF(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }

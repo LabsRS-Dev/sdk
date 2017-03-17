@@ -107,24 +107,24 @@ $bc_.revealInFinder = function (path, cb) {
 }
 
 // 预览文件
-$bc_.previewFile = function (in_parms, cb) {
+$bc_.previewFile = function (paramOptions, cb) {
   if ($bc_.pN) {
     try {
-      var parms = in_parms || {}
+      var params = paramOptions || {}
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_._get_callback(function (obj) {
         cb && cb(obj)
       }, true)
-      parms['filePath'] = in_parms['filePath'] || ''
+      params['filePath'] = paramOptions['filePath'] || ''
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key]
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key]
         }
       }
 
-      $bc_.pN.window.preveiwFile(JSON.stringify(parms))
+      $bc_.pN.window.preveiwFile(JSON.stringify(params))
     } catch (e) {
       console.error(e)
     }

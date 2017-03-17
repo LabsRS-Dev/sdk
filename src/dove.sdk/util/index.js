@@ -1,14 +1,13 @@
-import underscore from '../underscore'
-import { compatibilityWrapper } from './compatibilityWrapper'
 import { common } from './common'
-import { config } from './config'
-import { webHelper } from './webHelper'
 import { communication } from './communication'
+import { compatibilityWrapper } from './compatibilityWrapper'
+import { config } from './config'
 import { googleLangIDMaps } from './googleLangIDMaps'
 import { loadLanguage } from './loadLanguage'
 import { loaderWrapper } from './loaderWrapper'
+import underscore from '../underscore'
 import { update } from './update'
-
+import { webHelper } from './webHelper'
 
 var _ = underscore._
 

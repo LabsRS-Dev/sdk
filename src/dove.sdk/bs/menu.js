@@ -7,30 +7,30 @@ var $bc_ = common
  * @type {{setMenuProperty: Function, maxRecentDocumentCount: Function, addRecentDocument: Function, clearAllRecentDocuments: Function}}
  */
 $bc_.SystemMenus = {
-  setMenuProperty: function (in_parms, cb, actionCB) {
+  setMenuProperty: function (paramOptions, cb, actionCB) {
     try {
-      var parms = {}
+      var params = {}
       // 限制内部属性：
-      parms['callback'] = in_parms['callback'] || $bc_._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_._get_callback(function (obj) {
         cb && cb(obj)
       }, true)
-      parms['menuTag'] = in_parms['menuTag'] || 999
-      parms['hideMenu'] = in_parms['hideMenu'] || false
-      parms['isSeparatorItem'] = in_parms['isSeparatorItem'] || false // 是否为分割线，用来创建新的Item
-      parms['title'] = in_parms['title'] || '##**' // "MenuTitle";
-      parms['action'] = in_parms['action'] || $bc_._get_callback(function (obj) {
+      params['menuTag'] = paramOptions['menuTag'] || 999
+      params['hideMenu'] = paramOptions['hideMenu'] || false
+      params['isSeparatorItem'] = paramOptions['isSeparatorItem'] || false // 是否为分割线，用来创建新的Item
+      params['title'] = paramOptions['title'] || '##**' // "MenuTitle";
+      params['action'] = paramOptions['action'] || $bc_._get_callback(function (obj) {
         actionCB && actionCB(obj)
       }, true)
 
       // / 统一向后兼容处理
-      for (var key in in_parms) {
-        if (in_parms.hasOwnProperty(key)) {
-          parms[key] = in_parms[key]
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key]
         }
       }
 
       if ($bc_.pN) {
-        $bc_.pN.window.setMenuProperty(JSON.stringify(parms))
+        $bc_.pN.window.setMenuProperty(JSON.stringify(params))
       } else {
         alert('启动系统菜单控制!')
       }
@@ -45,22 +45,22 @@ $bc_.SystemMenus = {
 
     return 0
   },
-  addRecentDocument: function (in_parms) {
+  addRecentDocument: function (paramOptions) {
     if ($bc_.pN) {
       try {
-        var parms = in_parms || {}
+        var params = paramOptions || {}
         // 限制内部属性：
-        parms['url'] = in_parms['url'] || ''
-        parms['mustWritable'] = in_parms['mustWritable'] || false
+        params['url'] = paramOptions['url'] || ''
+        params['mustWritable'] = paramOptions['mustWritable'] || false
 
         // / 统一向后兼容处理
-        for (var key in in_parms) {
-          if (in_parms.hasOwnProperty(key)) {
-            parms[key] = in_parms[key]
+        for (var key in paramOptions) {
+          if (paramOptions.hasOwnProperty(key)) {
+            params[key] = paramOptions[key]
           }
         }
 
-        $bc_.pN.window.addRecentDocument(JSON.stringify(parms))
+        $bc_.pN.window.addRecentDocument(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
