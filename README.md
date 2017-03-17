@@ -2,6 +2,12 @@
 
 > SDK for Romanysoft Desktop App
 
+Install from npm
+
+``` bash
+npm install dove.max.sdk
+```
+
 
 
 Running the build:
