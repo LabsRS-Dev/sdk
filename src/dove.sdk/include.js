@@ -328,7 +328,6 @@ var Tool = {
         version2 += ''
       }
 
-
       var version1Array = version1.split('.')
       var version2Array = version2.split('.')
 

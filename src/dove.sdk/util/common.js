@@ -102,7 +102,7 @@ function autoForJquery (ref) {
       window.$ = window.$.extend(window.$, t$)
     }
   } catch (error) {
-    console.warn(error)
+    // console.warn(error)
   }
 }
 
