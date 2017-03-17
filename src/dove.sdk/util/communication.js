@@ -1,9 +1,10 @@
 /**
  * 依赖Jquery的信息交互
  */
-import underscore from '../underscore'
+
 import { common } from './common'
 import { config } from './config'
+import underscore from '../underscore'
 
 var _ = underscore._
 
@@ -206,19 +207,26 @@ uu$.feedbackInfoEx = function (subject, want2Email = false, info, cb) {
 
 function autoForJquery (ref) {
   var t$ = ref
-  if (window.jQuery && window.$) {
-    window.$['tmpl'] = t$.tmpl
-    window.$['flush_cache'] = t$['flush_cache']
-    window.$['setp'] = t$.setp
-    window.$['getp'] = t$.getp
 
-    window.$['reportInfo'] = t$.reportInfo
-    window.$['reportErrorInfo'] = t$.reportErrorInfo
-    window.$['feedbackInfo'] = t$.feedbackInfo
-    window.$['feedbackInfoEx'] = t$.feedbackInfoEx
+  try {
+    if (window.jQuery && window.$) {
+      window.$['tmpl'] = t$.tmpl
+      window.$['flush_cache'] = t$['flush_cache']
+      window.$['setp'] = t$.setp
+      window.$['getp'] = t$.getp
 
-    window.$ = window.$.extend(window.$, t$)
+      window.$['reportInfo'] = t$.reportInfo
+      window.$['reportErrorInfo'] = t$.reportErrorInfo
+      window.$['feedbackInfo'] = t$.feedbackInfo
+      window.$['feedbackInfoEx'] = t$.feedbackInfoEx
+
+      window.$ = window.$.extend(window.$, t$)
+    }
+  } catch (error) {
+    console.warn(error)
   }
+
+
 }
 
 const communication = uu$

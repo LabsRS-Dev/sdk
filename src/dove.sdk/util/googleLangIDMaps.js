@@ -197,7 +197,7 @@ const uu$ = {
       englishName: 'English',
       localName: 'English',
       zhName: '英语',
-      compatible: ['en', 'en-US', 'en__us'],
+      compatible: ['en', 'en-US', 'en_us'],
       compatibleForKendoUI: {
         culture: 'en-US',
         message: 'en-US'
@@ -935,11 +935,14 @@ const uu$ = {
 /**
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
-
 function autoForJquery (ref) {
   var t$ = ref
-  if (window.jQuery && window.$) {
-    window.$ = window.$.extend(window.$, t$)
+  try {
+    if (window.jQuery && window.$) {
+      window.$ = window.$.extend(window.$, t$)
+    }
+  } catch (error) {
+    console.warn(error)
   }
 }
 

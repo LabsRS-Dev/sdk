@@ -87,17 +87,22 @@ uu$.RSTestUnit = {}
 
 function autoForJquery (ref) {
   var t$ = ref
-  if (window.jQuery && window.$) {
-    window.$['objClone'] = t$.objClone
-    window.$['getMyDateStr'] = t$.getMyDateStr
-    window.$['getFormatDateStr'] = t$.getFormatDateStr
-    window.$['obj2string'] = t$.obj2string
-    window.$['stringFormat'] = t$.stringFormat
-    window.$['compareVersion'] = t$.compareVersion
-    window.$['testObjectType'] = t$.testObjectType
-    window.$['RSTestUnit'] = t$.RSTestUnit
 
-    window.$ = window.$.extend(window.$, t$)
+  try {
+    if (window.jQuery && window.$) {
+      window.$['objClone'] = t$.objClone
+      window.$['getMyDateStr'] = t$.getMyDateStr
+      window.$['getFormatDateStr'] = t$.getFormatDateStr
+      window.$['obj2string'] = t$.obj2string
+      window.$['stringFormat'] = t$.stringFormat
+      window.$['compareVersion'] = t$.compareVersion
+      window.$['testObjectType'] = t$.testObjectType
+      window.$['RSTestUnit'] = t$.RSTestUnit
+
+      window.$ = window.$.extend(window.$, t$)
+    }
+  } catch (error) {
+    console.warn(error)
   }
 }
 

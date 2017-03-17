@@ -31,4 +31,16 @@ describe('SDK.Include', () => {
     expect(Tool.getErrorMessage({ data: 'error' })).toEqual('data=error')
     expect(Tool.getErrorMessage(new Error('error'))).toEqual('error')
   })
+
+  it('Tool compareVersion', () => {
+    expect(Tool.compareVersion(10101, 10100)).toEqual(1)
+    expect(Tool.compareVersion('10101', '10100')).toEqual(1)
+    expect(Tool.compareVersion('10101', 10100)).toEqual(1)
+
+    expect(Tool.compareVersion('1.1.0', '1.0')).toEqual(1)
+    expect(Tool.compareVersion('1.1.0', '1.1')).toEqual(0)
+    expect(Tool.compareVersion('1.1.10', '1.1.0')).toEqual(1)
+    expect(Tool.compareVersion('1.0.0', '1.0.20')).toEqual(-1)
+    expect(Tool.compareVersion('1.1.0', '1.0.20')).toEqual(1)
+  })
 })

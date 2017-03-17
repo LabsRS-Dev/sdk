@@ -310,9 +310,25 @@ var Tool = {
 
     return fmt
   },
-  // 比较两个版本号
+
+  /**
+   * 比较两个版本号
+   * @param version1 {String} || {Number} 版本号1
+   * @param version2 {String} || {Number} 版本号2
+   * @return {Number} 1, 大于；0 等于；-1 小于
+   */
   compareVersion: function (version1, version2) {
     try {
+      if (_.isNumber(version1) && _.isNumber(version2)) {
+        if (version1 > version2) return 1
+        if (version1 === version2) return 0
+        if (version1 < version2) return -1
+      } else if (_.isNumber(version1) || _.isNumber(version2)) {
+        version1 += ''
+        version2 += ''
+      }
+
+
       var version1Array = version1.split('.')
       var version2Array = version2.split('.')
 
@@ -327,23 +343,22 @@ var Tool = {
         ver2IntList.push(parseInt(value))
       })
 
-      let i = 0
       // format
       if (ver1IntList.length < ver2IntList.length) {
-        i = 0
+        let i = 0
         for (; i < (ver2IntList.length - ver1IntList.length); ++i) {
           ver1IntList.push(0)
         }
       }
 
       if (ver1IntList.length > ver2IntList.length) {
-        i = 0
+        let i = 0
         for (; i < (ver1IntList.length - ver2IntList.length); ++i) {
           ver2IntList.push(0)
         }
       }
 
-      i = 0
+      let i = 0
       for (; i < ver1IntList.length; ++i) {
         var cVer1 = ver1IntList[i]
         var cVer2 = ver2IntList[i]
