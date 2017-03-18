@@ -188,21 +188,21 @@ var Tool = {
           args.length ? (args[0] = callback) : (args = [callback])
           return next.apply(null, args)
         }
+        return _done.apply(null, arguments)
       }
     }
 
     var r = {
       next: function (fn) {
         _next.push(fn)
-        return this
+        return r
       },
       done: function (fn) {
         _done = fn
-        return this
+        r.start()
       },
       start: function () {
         callback(null, callback)
-        return this
       }
     }
 

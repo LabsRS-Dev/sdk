@@ -45,13 +45,33 @@ describe('SDK.Include', () => {
     expect(Tool.compareVersion('1.20.6', '1.0.20')).toEqual(1)
   })
 
-  it('Tool Queue', () => {
-    Tool.queue().next(function (nxt) {
-      nxt && nxt()
-    }).next(function (nxt) {
-      nxt && nxt()
-    }).done(function (done) {
-      expect(Tool.compareVersion(10101, 10100)).toEqual(1)
+  describe('Test Tool.queue', function () {
+    var foo = null
+
+    beforeEach(function () {
+      foo = {
+        setBar: function (value) {
+          value++
+        }
+      }
+
+      spyOn(foo, 'setBar')
+    })
+
+    it('Tool Queue', function () {
+      Tool.queue().next(function (nxt) {
+        foo.setBar(123)
+        nxt && nxt()
+      }).next(function (nxt) {
+        foo.setBar(456, 'another param')
+        nxt && nxt()
+      }).done(function (done) {
+        foo.setBar(456, 'another param')
+      })
+
+      expect(foo.setBar).toHaveBeenCalledTimes(3)
     })
   })
 })
+
+
