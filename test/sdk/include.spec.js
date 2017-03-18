@@ -44,4 +44,14 @@ describe('SDK.Include', () => {
     expect(Tool.compareVersion('1.1.0', '1.0.20')).toEqual(1)
     expect(Tool.compareVersion('1.20.6', '1.0.20')).toEqual(1)
   })
+
+  it('Tool Queue', () => {
+    Tool.queue().next(function (nxt) {
+      nxt && nxt()
+    }).next(function (nxt) {
+      nxt && nxt()
+    }).done(function (done) {
+      expect(Tool.compareVersion(10101, 10100)).toEqual(1)
+    })
+  })
 })

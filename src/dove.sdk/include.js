@@ -194,12 +194,15 @@ var Tool = {
     var r = {
       next: function (fn) {
         _next.push(fn)
+        return this
       },
       done: function (fn) {
         _done = fn
+        return this
       },
       start: function () {
         callback(null, callback)
+        return this
       }
     }
 
