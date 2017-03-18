@@ -6226,9 +6226,24 @@ var Tool = {
 
     return fmt
   },
-  // 比较两个版本号
+
+  /**
+   * 比较两个版本号
+   * @param version1 {String} || {Number} 版本号1
+   * @param version2 {String} || {Number} 版本号2
+   * @return {Number} 1, 大于；0 等于；-1 小于
+   */
   compareVersion: function (version1, version2) {
     try {
+      if (_$12.isNumber(version1) && _$12.isNumber(version2)) {
+        if (version1 > version2) { return 1 }
+        if (version1 === version2) { return 0 }
+        if (version1 < version2) { return -1 }
+      } else if (_$12.isNumber(version1) || _$12.isNumber(version2)) {
+        version1 += '';
+        version2 += '';
+      }
+
       var version1Array = version1.split('.');
       var version2Array = version2.split('.');
 
@@ -6243,26 +6258,25 @@ var Tool = {
         ver2IntList.push(parseInt(value));
       });
 
-      var i = 0;
       // format
       if (ver1IntList.length < ver2IntList.length) {
-        i = 0;
+        var i = 0;
         for (; i < (ver2IntList.length - ver1IntList.length); ++i) {
           ver1IntList.push(0);
         }
       }
 
       if (ver1IntList.length > ver2IntList.length) {
-        i = 0;
-        for (; i < (ver1IntList.length - ver2IntList.length); ++i) {
+        var i$1 = 0;
+        for (; i$1 < (ver1IntList.length - ver2IntList.length); ++i$1) {
           ver2IntList.push(0);
         }
       }
 
-      i = 0;
-      for (; i < ver1IntList.length; ++i) {
-        var cVer1 = ver1IntList[i];
-        var cVer2 = ver2IntList[i];
+      var i$2 = 0;
+      for (; i$2 < ver1IntList.length; ++i$2) {
+        var cVer1 = ver1IntList[i$2];
+        var cVer2 = ver2IntList[i$2];
 
         if (cVer1 > cVer2) { return 1 }
         if (cVer1 < cVer2) { return -1 }
@@ -7149,7 +7163,6 @@ _$9.each(TypeMsg, function (eventType, key, list) {
 
 var AgentClient = SelfClass.extend(__$p$);
 
-var this$1$1 = undefined;
 var _$16 = underscore._;
 
 var $bc_$16 = task;
@@ -7200,7 +7213,7 @@ var __$p$$6 = {
   },
 
   __startNodeWebServer: function (cg) {
-    var that = this$1$1;
+    var that = this;
     that.log(logCord$5, 'start node web server');
 
     var taskID = __key$5 + _$16.now();
@@ -7654,7 +7667,6 @@ var __$p$$5 = {
 
 var ProxyServer = SelfClass.extend(__$p$$5);
 
-var this$1 = undefined;
 var _$14 = underscore._;
 
 // -----------------------------------------------------------------------
@@ -7671,7 +7683,7 @@ var __$p$$4 = {
   name: __key$3,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
-    var that = this$1;
+    var that = this;
     return that.mc
   },
   getInternalMessageType: function () {
@@ -7761,6 +7773,14 @@ uu$.RTYUtils = {
   isUndefinedOrNull: Tool.isUndefinedOrNull,
   isUndefinedOrNullOrFalse: Tool.isUndefinedOrNullOrFalse,
   isObject: Tool.isObject,
+  isError: Tool.isError,
+  isNaN: Tool.isNaN,
+  isFinite: Tool.isFinite,
+  isArguments: Tool.isArguments,
+  isElement: Tool.isElement,
+  isEmpty: Tool.isEmpty,
+  isMatch: Tool.isMatch,
+  isEqual: Tool.isEqual,
   isPromise: Tool.isPromise,
   isArray: Tool.isArray,
   isBoolean: Tool.isBoolean,
@@ -7829,17 +7849,22 @@ uu$.RSTestUnit = {};
 
 function autoForJquery (ref) {
   var t$ = ref;
-  if (window.jQuery && window.$) {
-    window.$['objClone'] = t$.objClone;
-    window.$['getMyDateStr'] = t$.getMyDateStr;
-    window.$['getFormatDateStr'] = t$.getFormatDateStr;
-    window.$['obj2string'] = t$.obj2string;
-    window.$['stringFormat'] = t$.stringFormat;
-    window.$['compareVersion'] = t$.compareVersion;
-    window.$['testObjectType'] = t$.testObjectType;
-    window.$['RSTestUnit'] = t$.RSTestUnit;
 
-    window.$ = window.$.extend(window.$, t$);
+  try {
+    if (window.jQuery && window.$) {
+      window.$['objClone'] = t$.objClone;
+      window.$['getMyDateStr'] = t$.getMyDateStr;
+      window.$['getFormatDateStr'] = t$.getFormatDateStr;
+      window.$['obj2string'] = t$.obj2string;
+      window.$['stringFormat'] = t$.stringFormat;
+      window.$['compareVersion'] = t$.compareVersion;
+      window.$['testObjectType'] = t$.testObjectType;
+      window.$['RSTestUnit'] = t$.RSTestUnit;
+
+      window.$ = window.$.extend(window.$, t$);
+    }
+  } catch (error) {
+    // console.warn(error)
   }
 }
 
@@ -7906,6 +7931,7 @@ autoForJquery$2(uu$$2);
 /**
  * 依赖Jquery的信息交互
  */
+
 var _$20 = underscore._;
 
 var uu$$1 = {};
@@ -8111,18 +8137,23 @@ uu$$1.feedbackInfoEx = function (subject, want2Email, info, cb) {
 
 function autoForJquery$1 (ref) {
   var t$ = ref;
-  if (window.jQuery && window.$) {
-    window.$['tmpl'] = t$.tmpl;
-    window.$['flush_cache'] = t$['flush_cache'];
-    window.$['setp'] = t$.setp;
-    window.$['getp'] = t$.getp;
 
-    window.$['reportInfo'] = t$.reportInfo;
-    window.$['reportErrorInfo'] = t$.reportErrorInfo;
-    window.$['feedbackInfo'] = t$.feedbackInfo;
-    window.$['feedbackInfoEx'] = t$.feedbackInfoEx;
+  try {
+    if (window.jQuery && window.$) {
+      window.$['tmpl'] = t$.tmpl;
+      window.$['flush_cache'] = t$['flush_cache'];
+      window.$['setp'] = t$.setp;
+      window.$['getp'] = t$.getp;
 
-    window.$ = window.$.extend(window.$, t$);
+      window.$['reportInfo'] = t$.reportInfo;
+      window.$['reportErrorInfo'] = t$.reportErrorInfo;
+      window.$['feedbackInfo'] = t$.feedbackInfo;
+      window.$['feedbackInfoEx'] = t$.feedbackInfoEx;
+
+      window.$ = window.$.extend(window.$, t$);
+    }
+  } catch (error) {
+    // console.warn(error)
   }
 }
 
@@ -9074,7 +9105,7 @@ var uu$$3 = {
       englishName: 'English',
       localName: 'English',
       zhName: '英语',
-      compatible: ['en', 'en-US', 'en__us'],
+      compatible: ['en', 'en-US', 'en_us'],
       compatibleForKendoUI: {
         culture: 'en-US',
         message: 'en-US'
@@ -9812,11 +9843,14 @@ var uu$$3 = {
 /**
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
-
 function autoForJquery$3 (ref) {
   var t$ = ref;
-  if (window.jQuery && window.$) {
-    window.$ = window.$.extend(window.$, t$);
+  try {
+    if (window.jQuery && window.$) {
+      window.$ = window.$.extend(window.$, t$);
+    }
+  } catch (error) {
+    console.warn(error);
   }
 }
 
@@ -10155,7 +10189,7 @@ uu$$5.templateLoader = (function ($, host) {
       }
 
       // Use jQuery Ajax to fetch the template file
-      var tmplLoader = $.get(path)
+      var _templateLoader = $.get(path)
         .success(function (result) {
           if ($.inArray(path, t$.cache) === -1) {
             t$.cache.push(path);
@@ -10167,7 +10201,7 @@ uu$$5.templateLoader = (function ($, host) {
           alert('Error Loading Templates -- TODO: Better Error Handling');
         });
 
-      tmplLoader.complete(function () {
+      _templateLoader.complete(function () {
         // Publish an event that indicates when a template is done loading
         $(host).trigger('TEMPLATE_LOADED', [path]);
         next && next();

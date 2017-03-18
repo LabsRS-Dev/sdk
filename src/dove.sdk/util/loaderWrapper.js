@@ -6,6 +6,7 @@
  */
 
 import { webHelper } from './webHelper'
+
 const RTYWebHelper = webHelper.RTYWebHelper
 
 var uu$ = {}
@@ -25,7 +26,7 @@ uu$.templateLoader = (function ($, host) {
       }
 
       // Use jQuery Ajax to fetch the template file
-      var tmplLoader = $.get(path)
+      var _templateLoader = $.get(path)
         .success(function (result) {
           if ($.inArray(path, t$.cache) === -1) {
             t$.cache.push(path)
@@ -37,7 +38,7 @@ uu$.templateLoader = (function ($, host) {
           alert('Error Loading Templates -- TODO: Better Error Handling')
         })
 
-      tmplLoader.complete(function () {
+      _templateLoader.complete(function () {
         // Publish an event that indicates when a template is done loading
         $(host).trigger('TEMPLATE_LOADED', [path])
         next && next()

@@ -51,7 +51,7 @@ var __$p$ = {
     that.__startNodeWebServer(cg)
   },
 
-  __startNodeWebServer: (cg) => {
+  __startNodeWebServer: function (cg) {
     var that = this
     that.log(logCord, 'start node web server')
 

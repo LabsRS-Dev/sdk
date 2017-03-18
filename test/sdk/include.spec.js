@@ -42,5 +42,6 @@ describe('SDK.Include', () => {
     expect(Tool.compareVersion('1.1.10', '1.1.0')).toEqual(1)
     expect(Tool.compareVersion('1.0.0', '1.0.20')).toEqual(-1)
     expect(Tool.compareVersion('1.1.0', '1.0.20')).toEqual(1)
+    expect(Tool.compareVersion('1.20.6', '1.0.20')).toEqual(1)
   })
 })

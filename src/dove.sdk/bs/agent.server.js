@@ -18,7 +18,7 @@ const TypeMsg = {
 var __$p$ = {
   name: __key,
   mc: new ProxyMessageCenter(),
-  getMsgHelper: () => {
+  getMsgHelper: function () {
     var that = this
     return that.mc
   },
