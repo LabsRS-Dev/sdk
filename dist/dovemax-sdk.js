@@ -1720,12 +1720,11 @@ $bc_$1.pIsUseElectron = false; // 是否使用了Electron引擎,默认是没有�
 $bc_$1.pIsUseMacCocoEngine = false; // 是否使用了MacOSX本地引擎
 
 // 定义临时回调处理函数定义接口
-$bc_$1._ncb_idx = 0;
+
 $bc_$1._get_callback = function (func, noDelete) {
-  var that = this;
   window._nativeCallback = window._nativeCallback || {};
   var _nativeCallback = window._nativeCallback;
-  var r = 'ncb' + that._ncb_idx++;
+  var r = _$2.uniqueId('ncb' + _$2.now()) + _$2.uniqueId('n' + _$2.random(0, 99999));
   var rFnc = r + '_fnc';
 
   _nativeCallback[rFnc] = func;
@@ -4986,7 +4985,7 @@ $bc_$7.SystemMenus = {
       var params = {};
       // 限制内部属性：
       // Note: 做兼容处理，callback 和 action 使用通用方法来处理
-      params['callback'] = paramOptions['callback'] || paramOptions['action'] || $bc_$7._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_$7._get_callback(function (obj) {
         console.log('call callback.cb ...');
         cb && cb(obj);
       }, true);

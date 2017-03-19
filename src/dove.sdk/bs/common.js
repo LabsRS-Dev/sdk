@@ -11,12 +11,11 @@ $bc_.pIsUseElectron = false // 是否使用了Electron引擎,默认是没有使�
 $bc_.pIsUseMacCocoEngine = false // 是否使用了MacOSX本地引擎
 
 // 定义临时回调处理函数定义接口
-$bc_._ncb_idx = 0
+
 $bc_._get_callback = function (func, noDelete) {
-  var that = this
   window._nativeCallback = window._nativeCallback || {}
   var _nativeCallback = window._nativeCallback
-  var r = 'ncb' + that._ncb_idx++
+  var r = _.uniqueId('ncb' + _.now()) + _.uniqueId('n' + _.random(0, 99999))
   var rFnc = r + '_fnc'
 
   _nativeCallback[rFnc] = func

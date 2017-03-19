@@ -12,7 +12,7 @@ $bc_.SystemMenus = {
       var params = {}
       // 限制内部属性：
       // Note: 做兼容处理，callback 和 action 使用通用方法来处理
-      params['callback'] = paramOptions['callback'] || paramOptions['action'] || $bc_._get_callback(function (obj) {
+      params['callback'] = paramOptions['callback'] || $bc_._get_callback(function (obj) {
         console.log('call callback.cb ...')
         cb && cb(obj)
       }, true)
