@@ -11,7 +11,9 @@ $bc_.SystemMenus = {
     try {
       var params = {}
       // 限制内部属性：
-      params['callback'] = paramOptions['callback'] || $bc_._get_callback(function (obj) {
+      // Note: 做兼容处理，callback 和 action 使用通用方法来处理
+      params['callback'] = paramOptions['callback'] || paramOptions['action'] || $bc_._get_callback(function (obj) {
+        console.log('call callback.cb ...')
         cb && cb(obj)
       }, true)
       params['menuTag'] = paramOptions['menuTag'] || 999
@@ -19,6 +21,7 @@ $bc_.SystemMenus = {
       params['isSeparatorItem'] = paramOptions['isSeparatorItem'] || false // 是否为分割线，用来创建新的Item
       params['title'] = paramOptions['title'] || '##**' // "MenuTitle";
       params['action'] = paramOptions['action'] || $bc_._get_callback(function (obj) {
+        console.log('call actionCB ...')
         actionCB && actionCB(obj)
       }, true)
 

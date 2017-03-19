@@ -1720,15 +1720,22 @@ $bc_$1._get_callback = function (func, noDelete) {
   window._nativeCallback = window._nativeCallback || {};
   var _nativeCallback = window._nativeCallback;
   var r = 'ncb' + that._ncb_idx++;
+  var rFnc = r + '_fnc';
+
+  _nativeCallback[rFnc] = func;
   _nativeCallback[r] = function () {
     try {
       if (!noDelete) {
         delete _nativeCallback[r];
+        delete _nativeCallback[rFnc];
       }
     } catch (e) {
       console.error(e);
     }
-    func && func.apply(null, arguments);
+
+    if (_$2.isFunction(func)) {
+      func.apply(null, arguments);
+    }
   };
   return '_nativeCallback.' + r
 };
@@ -4972,7 +4979,9 @@ $bc_$7.SystemMenus = {
     try {
       var params = {};
       // 限制内部属性：
-      params['callback'] = paramOptions['callback'] || $bc_$7._get_callback(function (obj) {
+      // Note: 做兼容处理，callback 和 action 使用通用方法来处理
+      params['callback'] = paramOptions['callback'] || paramOptions['action'] || $bc_$7._get_callback(function (obj) {
+        console.log('call callback.cb ...');
         cb && cb(obj);
       }, true);
       params['menuTag'] = paramOptions['menuTag'] || 999;
@@ -4980,6 +4989,7 @@ $bc_$7.SystemMenus = {
       params['isSeparatorItem'] = paramOptions['isSeparatorItem'] || false; // 是否为分割线，用来创建新的Item
       params['title'] = paramOptions['title'] || '##**'; // "MenuTitle";
       params['action'] = paramOptions['action'] || $bc_$7._get_callback(function (obj) {
+        console.log('call actionCB ...');
         actionCB && actionCB(obj);
       }, true);
 

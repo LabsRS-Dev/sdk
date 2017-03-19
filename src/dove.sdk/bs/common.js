@@ -17,15 +17,22 @@ $bc_._get_callback = function (func, noDelete) {
   window._nativeCallback = window._nativeCallback || {}
   var _nativeCallback = window._nativeCallback
   var r = 'ncb' + that._ncb_idx++
+  var rFnc = r + '_fnc'
+
+  _nativeCallback[rFnc] = func
   _nativeCallback[r] = function () {
     try {
       if (!noDelete) {
         delete _nativeCallback[r]
+        delete _nativeCallback[rFnc]
       }
     } catch (e) {
       console.error(e)
     }
-    func && func.apply(null, arguments)
+
+    if (_.isFunction(func)) {
+      func.apply(null, arguments)
+    }
   }
   return '_nativeCallback.' + r
 }
