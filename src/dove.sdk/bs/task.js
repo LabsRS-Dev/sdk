@@ -61,6 +61,9 @@ const TypeNativeMessageType = {
 
 }
 
+/**
+ * 调用Task的方法
+ */
 const TaskMethodWay = {
   InitCore: 'initCore',
   Task: 'task',

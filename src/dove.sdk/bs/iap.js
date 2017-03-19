@@ -116,14 +116,18 @@ $bc_.IAP = {
       }
     } else {
       console.log('Romanysoft SDK simulation environment....')
-      var obj = window.localStorage.getItem($bc_.IAP_SE_KEY)
-      if (!obj) {
-        window.localStorage.setItem($bc_.IAP_SE_KEY, JSON.stringify($bc_.IAP_SE_OBJ))
-      } else {
-        $bc_.IAP_SE_OBJ = JSON.parse(obj)
-      }
+      try {
+        var obj = window.localStorage.getItem($bc_.IAP_SE_KEY)
+        if (!obj) {
+          window.localStorage.setItem($bc_.IAP_SE_KEY, JSON.stringify($bc_.IAP_SE_OBJ))
+        } else {
+          $bc_.IAP_SE_OBJ = JSON.parse(obj)
+        }
 
-      return true // 非本地环境返回True，方便测试
+        return true // 非本地环境返回True，方便测试
+      } catch (error) {
+        console.error(error)
+      }
     }
     return false
   },
