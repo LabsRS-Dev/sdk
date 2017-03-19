@@ -12,9 +12,15 @@ $bc_.pIsUseMacCocoEngine = false // 是否使用了MacOSX本地引擎
 
 // 定义临时回调处理函数定义接口
 
-$bc_._get_callback = function (func, noDelete) {
-  window._nativeCallback = window._nativeCallback || {}
-  var _nativeCallback = window._nativeCallback
+$bc_._get_callback = function (func, noDelete = true) {
+  var _nativeCallback = {}
+  try {
+    window._nativeCallback = window._nativeCallback || {}
+    _nativeCallback = window._nativeCallback
+  } catch (error) {
+    console.error(error)
+  }
+
   var r = _.uniqueId('ncb' + _.now()) + _.uniqueId('n' + _.random(0, 99999))
   var rFnc = r + '_fnc'
 
@@ -51,37 +57,41 @@ $bc_.pIAPPlugin = {
 
 // 自动匹配检测
 var __auto = function (ref) {
-  if ((typeof window.maccocojs !== 'undefined') && (typeof window.maccocojs === 'object') && window.maccocojs.hasOwnProperty('app')) {
-    ref.pN = ref.pNative = window.maccocojs // 原MacOSX本地引擎
-    ref.pIsUseMacCocoEngine = true
-    ref.pIsUseElectron = false
-  } else if ((typeof process === 'object') && (typeof require === 'function') && (process.hasOwnProperty('pid'))) {
-    try {
-      console.log('============= must first load =================')
+  try {
+    if ((typeof window.maccocojs !== 'undefined') && (typeof window.maccocojs === 'object') && window.maccocojs.hasOwnProperty('app')) {
+      ref.pN = ref.pNative = window.maccocojs // 原MacOSX本地引擎
+      ref.pIsUseMacCocoEngine = true
+      ref.pIsUseElectron = false
+    } else if ((typeof process === 'object') && (typeof require === 'function') && (process.hasOwnProperty('pid'))) {
       try {
-        window['eletron_require'] = window.require
-        window['eletron_module'] = window.module
-
-        // Electron引擎加载方式，兼容新的及老的版本。支持：最新1.1.3和0.34版本系列
+        console.log('============= must first load =================')
         try {
-          ref.pN = ref.pNative = window.eval('require("remote").require("./romanysoft/maccocojs")')
-        } catch (error) {
-          ref.pN = ref.pNative = window.eval('require("electron").remote.require("./romanysoft/maccocojs")')
-        }
+          window['eletron_require'] = window.require
+          window['eletron_module'] = window.module
 
-        // 重新处理require,module的关系
-        window.require = undefined
-        window.module.exports = undefined
-        window.module = undefined
+          // Electron引擎加载方式，兼容新的及老的版本。支持：最新1.1.3和0.34版本系列
+          try {
+            ref.pN = ref.pNative = window.eval('require("remote").require("./romanysoft/maccocojs")')
+          } catch (error) {
+            ref.pN = ref.pNative = window.eval('require("electron").remote.require("./romanysoft/maccocojs")')
+          }
+
+          // 重新处理require,module的关系
+          window.require = undefined
+          window.module.exports = undefined
+          window.module = undefined
+        } catch (error) {
+          console.error(error)
+        }
+        ref.pIsUseElectron = true
+        ref.pIsUseMacCocoEngine = false
+        console.log('============= must first load [end]=================')
       } catch (error) {
         console.error(error)
       }
-      ref.pIsUseElectron = true
-      ref.pIsUseMacCocoEngine = false
-      console.log('============= must first load [end]=================')
-    } catch (error) {
-      console.error(error)
     }
+  } catch (error) {
+    console.error(error)
   }
 
   return ref
@@ -130,7 +140,7 @@ $bc_.previewFile = function (paramOptions, cb) {
         }
       }
 
-      $bc_.pN.window.preveiwFile(JSON.stringify(params))
+      $bc_.pN.window.previewFile(JSON.stringify(params))
     } catch (e) {
       console.error(e)
     }
@@ -159,26 +169,39 @@ $bc_.saveDefaultManifest = function (newManifest) {
     manifest: newManifest || $bc_.defaultManifest
   }
   var encoded = JSON.stringify(obj)
-  window.localStorage.setItem($bc_.defaultManifest_key, encoded)
+  try {
+    window.localStorage.setItem($bc_.defaultManifest_key, encoded)
+  } catch (error) {
+    console.error(error)
+  }
+
   return true
 }
 
 // 还原默认Manifest对象
 $bc_.revertDefaultManifest = function () {
-  if (!$bc_.check_supportHtml5Storage()) return false
-  var encoded = window.localStorage.getItem($bc_.defaultManifest_key)
-  if (encoded != null) {
-    var obj = JSON.parse(encoded)
-    $bc_.defaultManifest = obj.manifest
+  try {
+    if (!$bc_.check_supportHtml5Storage()) return false
+    var encoded = window.localStorage.getItem($bc_.defaultManifest_key)
+    if (encoded != null) {
+      var obj = JSON.parse(encoded)
+      $bc_.defaultManifest = obj.manifest
+    }
+  } catch (error) {
+    console.error(error)
   }
 
   return true
 }
 
 $bc_.getJQuery$ = function () {
-  var $ = window.jQuery || window.$ || undefined
-  console.assert(_.isObject($), 'Must be loaded jQuery library first \n')
-  return $
+  try {
+    var $ = window.jQuery || window.$ || undefined
+    console.assert(_.isObject($), 'Must be loaded jQuery library first \n')
+    return $
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 //
