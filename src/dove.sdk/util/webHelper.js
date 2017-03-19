@@ -33,21 +33,26 @@ uu$.RTYWebHelper = {
 
     /** 各版本对照关系
      * 可以通过 http://www.51.la/report/3_Client.asp?t=soft&id=2812271 获取现在机器的配置
+     * AppleWebKit 602.4.6,Safari 10.0
+     * AppleWebKit 602.3.12,Safari 10.0
+     * AppleWebKit 602.1.50,Safari 10.0
      * AppleWebKit/601.6.17    MacOSX 10.11.5
      * AppleWebKit 601.5.17
-     * AppleWebKit 601.1.46
+     * AppleWebKit 601.1.46,Safari 9.0
      * AppleWebKit/600.8.9     MacSOX 10.10.5
-     * AppleWebKit 600.1.4
+     * AppleWebKit 600.1.4,Safari 8.0
 
       * AppleWebKit/537.75.14   MacSOX 10.9.3
-      * AppleWebKit/534.57      ====================windows机器上测试环境
+      * AppleWebKit/537.71      MacOSX 10.9
+      * AppleWebKit 537.36,Safari 4.0
+      * AppleWebKit/534.57      ==================== Windows机器上测试环境, Safari Windows最高版本
       * AppleWebKit/534.55      MacSOX 10.7.3
       * AppleWebKit/534.46
       * AppleWebKit 534.34
       * AppleWebKit/537.13      MacSOX 10.6.8
-      * AppleWebKit 534.30
+      * AppleWebKit 534.30,Safari 4.0
       * AppleWebKit/534.15      MacSOX 10.6.5
-      * AppleWebKit/533.1
+      * AppleWebKit 533.1,Safari 4.0
       */
     return isSafari && ua.indexOf('webkit/' + version) !== -1 // Mac 10.10.5
   },
