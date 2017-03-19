@@ -47,6 +47,7 @@ try {
 }
 
 var util = {}
+util = _.extend(util, compatibilityWrapper)
 util = _.extend(util, common)
 util = _.extend(util, config)
 util = _.extend(util, webHelper)
@@ -54,7 +55,6 @@ util = _.extend(util, communication)
 util = _.extend(util, googleLangIDMaps)
 util = _.extend(util, loadLanguage)
 util = _.extend(util, loaderWrapper)
-util = _.extend(util, compatibilityWrapper)
 util = _.extend(util, update)
 
 export default {
