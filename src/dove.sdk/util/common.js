@@ -81,10 +81,26 @@ uu$.getBSb$ = function () {
   return BS.b$
 }
 
+/**
+ * 获取Jquery的接口
+ */
 uu$.getJQuery$ = function () {
   var $ = window.jQuery || window.$ || undefined
   console.assert(_.isObject($), 'Must be loaded jQuery library first \n')
   return $
+}
+
+/**
+ * 获取SnapSVG的接口
+ * @see https://www.npmjs.com/package/snapsvg
+ * @see http://snapsvg.io
+ */
+uu$.getSnapSVG$ = function () {
+  if (window) {
+    var ref = window.Snap || undefined
+    return ref
+  }
+  return undefined
 }
 
 uu$.RSTestUnit = {}
