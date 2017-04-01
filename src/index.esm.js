@@ -28,3 +28,8 @@ export default {
   SelfClass: SelfClass,
   version: '__VERSION__'
 }
+
+export { util }
+export { b$ }
+export { Observable }
+export { SelfClass }
