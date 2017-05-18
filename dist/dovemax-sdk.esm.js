@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.0.0
+ * DoveMaxSDK v1.0.1
  * (c) 2017 Romanysoft LAB.
  * @license MIT
  */
@@ -7787,7 +7787,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.0.0',
+  version: '1.0.1',
   b$: $bc_
 };
 
@@ -10989,7 +10989,7 @@ util = _$18.extend(util, loaderWrapper);
 util = _$18.extend(util, update);
 
 var util$1 = {
-  version: '1.0.0',
+  version: '1.0.1',
   util: util
 };
 
@@ -11004,6 +11004,7 @@ try {
       BS: BS
     };
     window.DoveMax = window.Romanysoft;
+    window.GmagonSDK = window.Romanysoft;
   }
 } catch (error) {
   console.warn(error);
@@ -11015,7 +11016,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.0.0'
+  version: '1.0.1'
 };
 
-export default index_esm;
+export { util$1 as util, BS as b$, Observable, SelfClass };export default index_esm;

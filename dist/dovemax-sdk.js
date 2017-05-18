@@ -1,13 +1,13 @@
 /**
- * DoveMaxSDK v1.0.0
+ * DoveMaxSDK v1.0.1
  * (c) 2017 Romanysoft LAB.
  * @license MIT
  */
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.DoveMaxSDK = factory());
-}(this, (function () { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.DoveMaxSDK = global.DoveMaxSDK || {})));
+}(this, (function (exports) { 'use strict';
 
 /*eslint-disable*/
 //     Underscore.js 1.8.3
@@ -7793,7 +7793,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.0.0',
+  version: '1.0.1',
   b$: $bc_
 };
 
@@ -10995,7 +10995,7 @@ util = _$18.extend(util, loaderWrapper);
 util = _$18.extend(util, update);
 
 var util$1 = {
-  version: '1.0.0',
+  version: '1.0.1',
   util: util
 };
 
@@ -11010,6 +11010,7 @@ try {
       BS: BS
     };
     window.DoveMax = window.Romanysoft;
+    window.GmagonSDK = window.Romanysoft;
   }
 } catch (error) {
   console.warn(error);
@@ -11021,9 +11022,15 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.0.0'
+  version: '1.0.1'
 };
 
-return index;
+exports['default'] = index;
+exports.util = util$1;
+exports.b$ = BS;
+exports.Observable = Observable;
+exports.SelfClass = SelfClass;
+
+Object.defineProperty(exports, '__esModule', { value: true });
 
 })));

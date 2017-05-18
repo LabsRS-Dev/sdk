@@ -15,6 +15,7 @@ try {
       BS: b$
     }
     window.DoveMax = window.Romanysoft
+    window.GmagonSDK = window.Romanysoft
   }
 } catch (error) {
   console.warn(error)
