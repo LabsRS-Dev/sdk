@@ -60,7 +60,7 @@ var __$p$ = {
       // 定义一个处理该任务的回调
       var cbName = $bc_._get_callback((obj) => {
         if (obj.type === TNMT.AddCallTaskQueueSuccess) {
-          return $bc_.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'callback', obj.queueInfo.id])
+          return $bc_.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'calltask', obj.queueInfo.id])
         } else if (obj.type === TNMT.CallTaskStart) {
           console.log('server start url: ', obj)
         }

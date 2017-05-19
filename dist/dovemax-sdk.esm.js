@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.0.1
+ * DoveMaxSDK v1.0.2
  * (c) 2017 Romanysoft LAB.
  * @license MIT
  */
@@ -7258,7 +7258,7 @@ var __$p$$6 = {
       // 定义一个处理该任务的回调
       var cbName = $bc_$16._get_callback(function (obj) {
         if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
-          return $bc_$16.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'callback', obj.queueInfo.id])
+          return $bc_$16.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'calltask', obj.queueInfo.id])
         } else if (obj.type === TNMT$1.CallTaskStart) {
           console.log('server start url: ', obj);
         }
@@ -7445,11 +7445,15 @@ var __$p$$5 = {
   _isStarted: false,
   baseConfig: {
     nativePlugins: [],     // 跟随系统启动的插件
+    fnOnPluginInit: function () {},
+    fnOnExecTaskUpdateInfo: function () {},
     fnIAP: function () {},       // 内置购买配置接口
     fnMenuPreferences: '', // 用户参数化选择菜单配置接口
     dropDragConfig: {      // 拖拽处理配置接口
       enable: false,       // 默认是不开启的
-      allowTypes: [],      // 允许拖拽的文件类型
+      enableDir: false,    // 是否允许拖拽文件夹
+      enableFile: true,    // 是否拖拽文件
+      allowTypes: ['*'],   // 允许拖拽的文件类型
       handler: function (data) {
         console.log(JSON.stringify(data));
       }
@@ -7484,10 +7488,9 @@ var __$p$$5 = {
     // 自动要加载的本地插件
     var nativePluginList = cg.nativePlugins;
 
-    that.mc.bind(MT.onCreate, function (gFnPluginCallName) {
-      if ( gFnPluginCallName === void 0 ) gFnPluginCallName = $bc_$15.pCorePlugin.passBack;
-
+    that.mc.bind(MT.onCreate, function (data) {
       try {
+        var gFnPluginCallName = data.fnCallbackName || $bc_$15.pCorePlugin.passBack;
         // 1.注册核心插件
         $bc_$15.enablePluginCore(nativePluginList, gFnPluginCallName);
         // 2.检测时候配置IAP
@@ -7512,7 +7515,9 @@ var __$p$$5 = {
             callback: $bc_$15._get_callback(function (obj) {
               cg.dropDragConfig.handler(obj);
             }, true),
-            fileTypes: cg.dropDragConfig.allowTypes
+            fileTypes: cg.dropDragConfig.allowTypes,
+            enableDir: cg.dropDragConfig.enableDir,
+            enableFile: cg.dropDragConfig.enableFile
           });
         }
       } catch (error) {
@@ -7542,9 +7547,9 @@ var __$p$$5 = {
     // ------------------------------------------------------------------
     // call start
     try {
-      that.configOnNativeEngineInitSuccessCallback();
-      var _fnCallName = that.configExecTaskUpdateInfoCallback();
-      that.mc.trigger(MT.onCreate, _fnCallName);
+      that.configOnNativeEngineInitSuccessCallback(cg.fnOnPluginInit);
+      var _fnCallName = that.configExecTaskUpdateInfoCallback(cg.fnOnExecTaskUpdateInfo);
+      that.mc.trigger(MT.onCreate, { fnCallbackName: _fnCallName });
     } catch (error) {
       console.error(logCord$4, error);
       that._isStarted = false;
@@ -7787,7 +7792,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.0.1',
+  version: '1.0.2',
   b$: $bc_
 };
 
@@ -10989,7 +10994,7 @@ util = _$18.extend(util, loaderWrapper);
 util = _$18.extend(util, update);
 
 var util$1 = {
-  version: '1.0.1',
+  version: '1.0.2',
   util: util
 };
 
@@ -11016,7 +11021,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.0.1'
+  version: '1.0.2'
 };
 
 export { util$1 as util, BS as b$, Observable, SelfClass };export default index_esm;
