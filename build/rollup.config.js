@@ -14,7 +14,7 @@ module.exports = {
   banner:
 `/**
  * DoveMaxSDK v${version}
- * (c) ${new Date().getFullYear()} Romanysoft LAB.
+ * (c) ${new Date().getFullYear()} Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */`
 }
