@@ -1,5 +1,6 @@
 import { ProxyClientWebsocketForNode } from './proxy.client.websocket.node'
 import { ProxyClientWebsocketForPython } from './proxy.client.websocket.python'
+import { ProxyClientNativeFork } from './proxy.client.native.fork'
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
 import underscore from '../underscore'
@@ -28,7 +29,8 @@ let ChancelTypeIndex = 0
 const ChancelType = {
   websocketForPython: ++ChancelTypeIndex,
   websocketForNode: ++ChancelTypeIndex,
-  httpX: ++ChancelTypeIndex
+  httpX: ++ChancelTypeIndex,
+  nativeFork: ++ChancelTypeIndex
 }
 
 class Chancel {
@@ -47,9 +49,13 @@ class Chancel {
 
     if (config.type === ChancelType.websocketForPython) {
       this.proxyObj = new ProxyClientWebsocketForPython()
-      this.proxyObj.initWithConfig(config)
     } else if (config.type === ChancelType.websocketForNode) {
       this.proxyObj = new ProxyClientWebsocketForNode()
+    } else if (config.type === ChancelType.nativeFork) {
+      this.proxyObj = new ProxyClientNativeFork()
+    }
+
+    if (this.proxyObj) {
       this.proxyObj.initWithConfig(config)
     }
   }
@@ -145,12 +151,21 @@ var __$p$ = {
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython
     ) {
-      console.log(chancel.server)
+      console.dir(chancel.server)
       _cs.registerOnWSGetServerMessage(_c2hhFn(_msgType.OnWSGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
       _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, (message) => { }))
       _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, (message) => { that.onBuildChannelError(message) }))
       _cs.registerOnWSClose(_c2hhFn(_msgType.OnWSClose, _cs, (message) => { that.onChannelFault(message) }))
       _cs.registerOnWSOpen(_c2hhFn(_msgType.OnWSOpen, _cs, (message) => { that.onFinishBuildChannel(message) }))
+
+      chancel.active()
+    } else if (chancel.type === ChancelType.nativeFork) {
+      console.dir(chancel.server)
+      _cs.registerOnGetServerMessage(_c2hhFn(_msgType.OnGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
+      _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, (message) => { that.onNoticeToServer(message) }))
+
+      _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, (message) => { that.onBuildChannelError(message) }))
+      _cs.registerOnRunning(_c2hhFn(_msgType.OnRunning, _cs, (message) => { that.onFinishBuildChannel(message) }))
 
       chancel.active()
     }
@@ -182,6 +197,19 @@ var __$p$ = {
       _.each(_c2hhFn(_msgType.OnWSOpen, _cs), function (fnc) {
         _cs.unregisterOnWSOpen(fnc)
       })
+    } else if (chancel.type === ChancelType.nativeFork) {
+      _.each(_c2hhFn(_msgType.OnGetServerMessage, _cs), function (fnc) {
+        _cs.unregisterOnGetServerMessage(fnc)
+      })
+      _.each(_c2hhFn(_msgType.OnSendMessageToServer, _cs), function (fnc) {
+        _cs.unregisterOnSendMessageToServer(fnc)
+      })
+      _.each(_c2hhFn(_msgType.OnCreateError, _cs), function (fnc) {
+        _cs.unregisterOnCreateError(fnc)
+      })
+      _.each(_c2hhFn(_msgType.OnRunning, _cs), function (fnc) {
+        _cs.unregisterOnRunning(fnc)
+      })
     }
   },
   // -------------------------------------------------
@@ -200,6 +228,7 @@ var __$p$ = {
     that.mc.trigger(TypeMsg.OnNoticeToServer, message)
     return that
   },
+
   onReceiveFromServer: function (message) {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')

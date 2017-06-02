@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.0.2
+ * DoveMaxSDK v1.0.3
  * (c) 2017 Romanysoft LAB.
  * @license MIT
  */
@@ -6945,6 +6945,173 @@ _$13.each(TypeMsg$2, function (eventType, key, list) {
 
 var ProxyClientWebsocketForPython = SelfClass.extend(__$p$$3);
 
+var _$14 = underscore._;
+var $bc_$15 = task;
+
+var logCord$3 = '[SDK.Proxy.Client.NativeFork]';
+var __key$3 = 'proxy-client-native-fork';
+var __msgPrefix$2 = __key$3 + '-' + _$14.now() + _$14.random(1, Number.MAX_SAFE_INTEGER) + '-';
+
+var TNMT = TypeNativeMessageType;
+var TypeMsg$3 = {
+  OnCreateError: __msgPrefix$2 + 'OnCreateError', // 创建失败
+  OnRunning: __msgPrefix$2 + 'OnRunning',         // 创建并连接上
+
+  OnGetServerMessage: __msgPrefix$2 + 'OnGetServerMessage',  // 从服务器获取到信息
+  OnSendMessageToServer: __msgPrefix$2 + 'OnSendMessageToServer' // 向服务器发送信息
+};
+
+var initializedTip$2 = "\nYou must use init(config) function first, the use listen to start!!!!\n";
+
+// ------------------------------------------------------------------------
+// Class ProxyClientNativeForkPrivate
+var __$p$$4 = {
+  name: __key$3,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return this.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (this.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$3
+  },
+  // ------------------ log -------------------------------------------------
+  _traceLogEventsCount: function () {
+    var _events = this.mc.getEvents();
+    this.log(logCord$3, ' _events count = ' + _$14.keys(_events).length);
+  },
+  _traceLogCacheSendMessageCount: function () {
+    this.log(logCord$3, ' cacheMessage count = ' + this.cacheSendMessage.length);
+  },
+  // -------------------------------------------------------------------------
+  initialized: false, // 是否初始化配置
+  config: {},
+  isRunning: false,
+  initWithConfig: function (inConfig) {
+    if ( inConfig === void 0 ) inConfig = {};
+
+    this.log(logCord$3, __key$3 + ' call initWithConfig function ....');
+    this.config = _$14.extend(this.config, inConfig);
+    this.debug = this.config.debug;
+    this.initialized = true;
+  },
+  run: function () {
+    if (!this.initialized) {
+      return this.showInitializedTip()
+    }
+
+    this.isRunning = true;
+    this.noticeOnRunning({});
+  },
+
+  // --------------- 核心消息 ------------------------
+  cacheSendMessage: [],         // 缓存发送信息部分
+  sendMessage: function (message, first) {
+    if ( first === void 0 ) first = false;
+   // 客户端向服务器发送消息
+    var that = this;
+    if (!that.isRunning) {
+      that.cacheSendMessage.push(message);
+      return console.warn(logCord$3, 'NativeFork is not running .....')
+    }
+
+    first ? that.cacheSendMessage.unshift(message) : that.cacheSendMessage.push(message);
+
+    that._traceLogCacheSendMessageCount();
+    _$14.each(that.cacheSendMessage, function (curMessage) {
+      // 发送信息
+      that._processNativeForkMessage(curMessage);
+
+      that._traceLogEventsCount();
+      that.mc.trigger(TypeMsg$3.OnSendMessageToServer, curMessage);
+      that.cacheSendMessage.shift();
+    });
+    that._traceLogCacheSendMessageCount();
+  },
+  onReceiveMessage: function (message) {
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$3.OnGetServerMessage, message);
+  },
+  // ---------------- 创建失败是回话被关闭交互 ----------------
+  noticeCreateError: function (message) {
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$3.OnCreateError, message);
+  },
+  noticeOnRunning: function (message) {
+    var that = this;
+    that._traceLogEventsCount();
+    that.mc.trigger(TypeMsg$3.OnRunning, message);
+  },
+  // -------------------------------------------------------
+  showInitializedTip: function () {
+    console.warn(logCord$3, initializedTip$2);
+  },
+  _processNativeForkMessage: function (message) {
+    this.__processNativeTask(message);
+  },
+  __processNativeTask: function (message) {
+    var that = this;
+    var dataObj = message;
+
+    var cbName = $bc_$15._get_callback(function (obj) {
+      console.log('-------- from native callback ---------------');
+      var msgPackage = '';
+      try {
+        msgPackage = JSON.stringify(obj);
+      } catch (e) {
+        console.error(e);
+      }
+
+      if (obj.type === TNMT.AddCallTaskQueueSuccess) {
+        return $bc_$15.runTaskSample(TaskMethodWay.SendEvent,
+              cbName, ['start', 'calltask', obj.queueInfo.id])
+      } else if (obj.type === TNMT.CallTaskStart) {
+        console.log('call task start .... ');
+        that.noticeOnRunning(msgPackage);
+      } else if (obj.type === TNMT.CallTaskFailed) {
+        console.log('call task failed .... ');
+        that.noticeCreateError(msgPackage);
+      } else if (obj.type === TNMT.CallTaskSuccess) {
+        console.log('call task success .... ');
+        that.onReceiveMessage(msgPackage);
+      } else if (obj.type === TNMT.CancelCallTask) {
+        console.log('call task cancel .... ');
+        that.onReceiveMessage(msgPackage);
+      }
+    }, true);
+
+    var taskID = dataObj.task_id;
+    var commands = dataObj.commands;
+    $bc_$15.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands]);
+  }
+};
+
+// 批量处理注册及接收方式
+_$14.each(TypeMsg$3, function (eventType, key, list) {
+  var registerKey = 'register' + key;
+  var unregisterKey = 'unregister' + key;
+
+  __$p$$4[registerKey] = function (handler, one) {
+    if ( one === void 0 ) one = false;
+
+    __$p$$4.mc.bind(eventType, handler, one);
+  };
+  __$p$$4[unregisterKey] = function (handler) {
+    __$p$$4.mc.unbind(eventType, handler);
+  };
+});
+
+var ProxyClientNativeFork = SelfClass.extend(__$p$$4);
+
 var _$9 = underscore._;
 
 // -----------------------------------------------------------------------
@@ -6969,7 +7136,8 @@ var ChancelTypeIndex = 0;
 var ChancelType = {
   websocketForPython: ++ChancelTypeIndex,
   websocketForNode: ++ChancelTypeIndex,
-  httpX: ++ChancelTypeIndex
+  httpX: ++ChancelTypeIndex,
+  nativeFork: ++ChancelTypeIndex
 };
 
 var Chancel = function Chancel () {};
@@ -6993,9 +7161,13 @@ Chancel.prototype.build = function build (config) {
 
   if (config.type === ChancelType.websocketForPython) {
     this.proxyObj = new ProxyClientWebsocketForPython();
-    this.proxyObj.initWithConfig(config);
   } else if (config.type === ChancelType.websocketForNode) {
     this.proxyObj = new ProxyClientWebsocketForNode();
+  } else if (config.type === ChancelType.nativeFork) {
+    this.proxyObj = new ProxyClientNativeFork();
+  }
+
+  if (this.proxyObj) {
     this.proxyObj.initWithConfig(config);
   }
 };
@@ -7091,12 +7263,21 @@ var __$p$ = {
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython
     ) {
-      console.log(chancel.server);
+      console.dir(chancel.server);
       _cs.registerOnWSGetServerMessage(_c2hhFn(_msgType.OnWSGetServerMessage, _cs, function (message) { that.onReceiveFromServer(message); }));
       _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, function (message) { }));
       _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, function (message) { that.onBuildChannelError(message); }));
       _cs.registerOnWSClose(_c2hhFn(_msgType.OnWSClose, _cs, function (message) { that.onChannelFault(message); }));
       _cs.registerOnWSOpen(_c2hhFn(_msgType.OnWSOpen, _cs, function (message) { that.onFinishBuildChannel(message); }));
+
+      chancel.active();
+    } else if (chancel.type === ChancelType.nativeFork) {
+      console.dir(chancel.server);
+      _cs.registerOnGetServerMessage(_c2hhFn(_msgType.OnGetServerMessage, _cs, function (message) { that.onReceiveFromServer(message); }));
+      _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, function (message) { that.onNoticeToServer(message); }));
+
+      _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, function (message) { that.onBuildChannelError(message); }));
+      _cs.registerOnRunning(_c2hhFn(_msgType.OnRunning, _cs, function (message) { that.onFinishBuildChannel(message); }));
 
       chancel.active();
     }
@@ -7128,6 +7309,19 @@ var __$p$ = {
       _$9.each(_c2hhFn(_msgType.OnWSOpen, _cs), function (fnc) {
         _cs.unregisterOnWSOpen(fnc);
       });
+    } else if (chancel.type === ChancelType.nativeFork) {
+      _$9.each(_c2hhFn(_msgType.OnGetServerMessage, _cs), function (fnc) {
+        _cs.unregisterOnGetServerMessage(fnc);
+      });
+      _$9.each(_c2hhFn(_msgType.OnSendMessageToServer, _cs), function (fnc) {
+        _cs.unregisterOnSendMessageToServer(fnc);
+      });
+      _$9.each(_c2hhFn(_msgType.OnCreateError, _cs), function (fnc) {
+        _cs.unregisterOnCreateError(fnc);
+      });
+      _$9.each(_c2hhFn(_msgType.OnRunning, _cs), function (fnc) {
+        _cs.unregisterOnRunning(fnc);
+      });
     }
   },
   // -------------------------------------------------
@@ -7146,6 +7340,7 @@ var __$p$ = {
     that.mc.trigger(TypeMsg.OnNoticeToServer, message);
     return that
   },
+
   onReceiveFromServer: function (message) {
     var that = this;
     console.assert(this !== undefined, '[SDK] this !== undefined');
@@ -7200,114 +7395,18 @@ _$9.each(TypeMsg, function (eventType, key, list) {
 
 var AgentClient = SelfClass.extend(__$p$);
 
-var _$16 = underscore._;
+var _$17 = underscore._;
 
-var $bc_$16 = task;
+var $bc_$17 = task;
 
-var logCord$5 = '[SDK.Proxy.WebServer.Node]';
-var __key$5 = 'proxy-sever-plugin-Node';
+var logCord$6 = '[SDK.Proxy.WebServer.Node]';
+var __key$6 = 'proxy-sever-plugin-Node';
 
-var TypeMsg$5 = _$16.extend({}, TypeTriggerMsg);
-var TNMT$1 = TypeNativeMessageType;
+var TypeMsg$6 = _$17.extend({}, TypeTriggerMsg);
+var TNMT$2 = TypeNativeMessageType;
 
 // ====================================================================
 // Node 插件服务器引擎
-var __$p$$6 = {
-  name: __key$5,
-  mc: new ProxyMessageCenter(),
-  getMsgHelper: function () {
-    return this.mc
-  },
-  debug: false, // 时候开启Debug模式
-  log: function (title, message, end) {
-    if ( end === void 0 ) end = '';
-
-    if (this.debug) {
-      console.log(title, message, end);
-    }
-  },
-  getInternalMessageType: function () {
-    return TypeMsg$5
-  },
-  // ---------------------------------------------------------------
-  isRunning: false,
-  baseConfig: {
-    port: '8080'
-  },
-
-  _isStarted: false,
-  start: function (config) {
-    var that = this;
-    if (that._isStarted) {
-      console.warn(logCord$5, 'is started .... you can use bind message to process you data');
-      return
-    }
-    // 整理config信息
-    var cg = that.baseConfig = _$16.extend(that.baseConfig, config);
-    // const MT = that.getInternalMessageType()
-    that._isStarted = true;
-    that.__startNodeWebServer(cg);
-  },
-
-  __startNodeWebServer: function (cg) {
-    var that = this;
-    that.log(logCord$5, 'start node web server');
-
-    var taskID = __key$5 + _$16.now();
-    if ($bc_$16.pNative) {
-      // 定义一个处理该任务的回调
-      var cbName = $bc_$16._get_callback(function (obj) {
-        if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
-          return $bc_$16.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'calltask', obj.queueInfo.id])
-        } else if (obj.type === TNMT$1.CallTaskStart) {
-          console.log('server start url: ', obj);
-        }
-      }, true);
-
-      var serverURL = $bc_$16.App.getAppDataHomeDir() + '/server/www';
-      // 优先使用系统DataHome目录下面的服务器引擎文件
-      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/server/www';
-      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/www';
-      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/www';
-
-      // 检测是否使用了www.js 作为
-      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppDataHomeDir() + '/server/www.js';
-      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/server/www.js';
-      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/public/www.js';
-      serverURL = $bc_$16.App.checkPathIsExist(serverURL) ? serverURL : $bc_$16.App.getAppResourceDir() + '/www.js';
-
-      if ($bc_$16.App.checkPathIsExist(serverURL) === false) {
-        console.error(logCord$5, 'not found www file');
-        return
-      }
-
-      return $bc_$16.runTaskSample(TaskMethodWay.Task, cbName, [taskID, [{
-        appPath: $bc_$16.App.getAppPluginDir() + '/node',
-        command: [
-          serverURL,
-          cg.port.toString()
-        ],
-        mainThread: false
-      }]])
-    } else {
-      console.warn(logCord$5, 'please run you or remote python server for process');
-    }
-  }
-};
-
-var ProxyServerPluginWebServerNode = SelfClass.extend(__$p$$6);
-
-var _$17 = underscore._;
-
-var $bc_$17 = common;
-
-var logCord$6 = '[SDK.Proxy.WebServer.Python]';
-var __key$6 = 'proxy-sever-plugin-python';
-
-var TypeMsg$6 = {};
-
-// ====================================================================
-// python 插件服务器引擎
 var __$p$$7 = {
   name: __key$6,
   mc: new ProxyMessageCenter(),
@@ -7326,15 +7425,111 @@ var __$p$$7 = {
     return TypeMsg$6
   },
   // ---------------------------------------------------------------
+  isRunning: false,
+  baseConfig: {
+    port: '8080'
+  },
+
+  _isStarted: false,
+  start: function (config) {
+    var that = this;
+    if (that._isStarted) {
+      console.warn(logCord$6, 'is started .... you can use bind message to process you data');
+      return
+    }
+    // 整理config信息
+    var cg = that.baseConfig = _$17.extend(that.baseConfig, config);
+    // const MT = that.getInternalMessageType()
+    that._isStarted = true;
+    that.__startNodeWebServer(cg);
+  },
+
+  __startNodeWebServer: function (cg) {
+    var that = this;
+    that.log(logCord$6, 'start node web server');
+
+    var taskID = __key$6 + _$17.now();
+    if ($bc_$17.pNative) {
+      // 定义一个处理该任务的回调
+      var cbName = $bc_$17._get_callback(function (obj) {
+        if (obj.type === TNMT$2.AddCallTaskQueueSuccess) {
+          return $bc_$17.runTaskSample(TaskMethodWay.SendEvent, cbName, ['start', 'calltask', obj.queueInfo.id])
+        } else if (obj.type === TNMT$2.CallTaskStart) {
+          console.log('server start url: ', obj);
+        }
+      }, true);
+
+      var serverURL = $bc_$17.App.getAppDataHomeDir() + '/server/www';
+      // 优先使用系统DataHome目录下面的服务器引擎文件
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/server/www';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/www';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/www';
+
+      // 检测是否使用了www.js 作为
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppDataHomeDir() + '/server/www.js';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/server/www.js';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/public/www.js';
+      serverURL = $bc_$17.App.checkPathIsExist(serverURL) ? serverURL : $bc_$17.App.getAppResourceDir() + '/www.js';
+
+      if ($bc_$17.App.checkPathIsExist(serverURL) === false) {
+        console.error(logCord$6, 'not found www file');
+        return
+      }
+
+      return $bc_$17.runTaskSample(TaskMethodWay.Task, cbName, [taskID, [{
+        appPath: $bc_$17.App.getAppPluginDir() + '/node',
+        command: [
+          serverURL,
+          cg.port.toString()
+        ],
+        mainThread: false
+      }]])
+    } else {
+      console.warn(logCord$6, 'please run you or remote python server for process');
+    }
+  }
+};
+
+var ProxyServerPluginWebServerNode = SelfClass.extend(__$p$$7);
+
+var _$18 = underscore._;
+
+var $bc_$18 = common;
+
+var logCord$7 = '[SDK.Proxy.WebServer.Python]';
+var __key$7 = 'proxy-sever-plugin-python';
+
+var TypeMsg$7 = {};
+
+// ====================================================================
+// python 插件服务器引擎
+var __$p$$8 = {
+  name: __key$7,
+  mc: new ProxyMessageCenter(),
+  getMsgHelper: function () {
+    return this.mc
+  },
+  debug: false, // 时候开启Debug模式
+  log: function (title, message, end) {
+    if ( end === void 0 ) end = '';
+
+    if (this.debug) {
+      console.log(title, message, end);
+    }
+  },
+  getInternalMessageType: function () {
+    return TypeMsg$7
+  },
+  // ---------------------------------------------------------------
   getPath: function () {
-    var pluginDir = $bc_$17.App.getAppPluginDir();
-    var runOS = $bc_$17.App.getAppRunOnOS();
+    var pluginDir = $bc_$18.App.getAppPluginDir();
+    var runOS = $bc_$18.App.getAppRunOnOS();
     if (runOS === 'MacOSX') {
       return pluginDir + '/pythonCLI.app/Contents/MacOS/pythonCLI'
     } else if (runOS === 'win32') {
       return pluginDir + '/python/pythonCLI/romanysoft.services.exe'
     } else {
-      console.error(logCord$6, 'not found plugin config');
+      console.error(logCord$7, 'not found plugin config');
     }
   },
   getInfo: function () {
@@ -7360,11 +7555,11 @@ var __$p$$7 = {
   start: function (config) {
     var that = this;
     if (that._isStarted) {
-      console.warn(logCord$6, 'is started .... you can use bind message to process you data');
+      console.warn(logCord$7, 'is started .... you can use bind message to process you data');
       return
     }
     // 整理config信息
-    var cg = that.baseConfig = _$17.extend(that.baseConfig, config);
+    var cg = that.baseConfig = _$18.extend(that.baseConfig, config);
     // const MT = that.getInternalMessageType()
     that._isStarted = true;
     that.__startPyWebServer(cg);
@@ -7374,14 +7569,14 @@ var __$p$$7 = {
     var that = this;
     var __agent = that;
 
-    var taskID = __key$6 + _$17.now();
-    if ($bc_$17.pNative) {
+    var taskID = __key$7 + _$18.now();
+    if ($bc_$18.pNative) {
       var copyPlugin = __agent.getInfo();
 
       var regCommand, formatCommonStr, command, pythonCommand;
-      var runOS = $bc_$17.App.getAppRunOnOS();
+      var runOS = $bc_$18.App.getAppRunOnOS();
       // const workDir = $bc_.App.getAppResourceDir() + '/data/python'
-      var resourceDir = $bc_$17.App.getAppDataHomeDir() + '/Resources';
+      var resourceDir = $bc_$18.App.getAppDataHomeDir() + '/Resources';
       // const configFile = 'Resources/config.plist'
 
       if (runOS === 'MacOSX') {
@@ -7399,32 +7594,32 @@ var __$p$$7 = {
       command = window.eval(formatCommonStr); // 转换成command
       copyPlugin.tool.command = command;
 
-      $bc_$17.createTask(copyPlugin.callMethod, taskID, [copyPlugin.tool]);
+      $bc_$18.createTask(copyPlugin.callMethod, taskID, [copyPlugin.tool]);
     } else {
-      console.warn(logCord$6, 'please run you or remote python server for process');
+      console.warn(logCord$7, 'please run you or remote python server for process');
     }
 
     return taskID
   }
 };
 
-var ProxyServerPluginWebServerPython = SelfClass.extend(__$p$$7);
+var ProxyServerPluginWebServerPython = SelfClass.extend(__$p$$8);
 
-var _$15 = underscore._;
-var $bc_$15 = task;
+var _$16 = underscore._;
+var $bc_$16 = task;
 
 var debugBand = "\nYou are running Vue in development mode.\nMake sure to turn on production mode when deploying for production.\nSee more tips at https://github.com/LabsRS-Dev/sdk\nProxy.debug = false\n";
-var logCord$4 = '[SDK.Proxy]';
+var logCord$5 = '[SDK.Proxy]';
 
-var __key$4 = 'agent-sever';
-var TypeMsg$4 = TypeTriggerMsg;
-var TNMT = TypeNativeMessageType;
+var __key$5 = 'agent-sever';
+var TypeMsg$5 = TypeTriggerMsg;
+var TNMT$1 = TypeNativeMessageType;
 
 /**
  * 复杂的一些处理，全部通过代理一致性封装掉，方便以后统一处理
  */
-var __$p$$5 = {
-  name: __key$4,
+var __$p$$6 = {
+  name: __key$5,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
     return this.mc
@@ -7438,7 +7633,7 @@ var __$p$$5 = {
     }
   },
   getInternalMessageType: function () {
-    return TypeMsg$4
+    return TypeMsg$5
   },
 
   // --------------------------------------------------------------
@@ -7475,14 +7670,14 @@ var __$p$$5 = {
   start: function (config) {
     var that = this;
     if (that._isStarted) {
-      console.warn(logCord$4, '[SDK.proxy] is started .... you can use bind message to process you data');
+      console.warn(logCord$5, '[SDK.proxy] is started .... you can use bind message to process you data');
       return
     }
 
     that._isStarted = true;
 
     // 整理config信息
-    var cg = that.baseConfig = _$15.extend(that.baseConfig, config);
+    var cg = that.baseConfig = _$16.extend(that.baseConfig, config);
     var MT = that.getInternalMessageType();
 
     // 自动要加载的本地插件
@@ -7490,20 +7685,20 @@ var __$p$$5 = {
 
     that.mc.bind(MT.onCreate, function (data) {
       try {
-        var gFnPluginCallName = data.fnCallbackName || $bc_$15.pCorePlugin.passBack;
+        var gFnPluginCallName = data.fnCallbackName || $bc_$16.pCorePlugin.passBack;
         // 1.注册核心插件
-        $bc_$15.enablePluginCore(nativePluginList, gFnPluginCallName);
+        $bc_$16.enablePluginCore(nativePluginList, gFnPluginCallName);
         // 2.检测时候配置IAP
-        if ($bc_$15.IAP.getEnable()) {
-          if (_$15.isFunction(cg.fnIAP)) {
+        if ($bc_$16.IAP.getEnable()) {
+          if (_$16.isFunction(cg.fnIAP)) {
             cg.fnIAP();
           }
         }
         // 3. 注册[参数选择]菜单命令回调
-        if (_$15.isFunction(cg.fnMenuPreferences)) {
-          $bc_$15.SystemMenus.setMenuProperty({
+        if (_$16.isFunction(cg.fnMenuPreferences)) {
+          $bc_$16.SystemMenus.setMenuProperty({
             menuTag: 903, // onMenuPreferencesAction
-            action: $bc_$15._get_callback(function (obj) {
+            action: $bc_$16._get_callback(function (obj) {
               cg.fnMenuPreferences();
             }, true)
           });
@@ -7511,8 +7706,8 @@ var __$p$$5 = {
 
         // 4. 注册拖拽回调及注册文件类型
         if (cg.dropDragConfig.enable) {
-          $bc_$15.enableDragDropFeature({
-            callback: $bc_$15._get_callback(function (obj) {
+          $bc_$16.enableDragDropFeature({
+            callback: $bc_$16._get_callback(function (obj) {
               cg.dropDragConfig.handler(obj);
             }, true),
             fileTypes: cg.dropDragConfig.allowTypes,
@@ -7521,7 +7716,7 @@ var __$p$$5 = {
           });
         }
       } catch (error) {
-        console.error(logCord$4, error);
+        console.error(logCord$5, error);
         that._isStarted = false;
       }
     });
@@ -7551,7 +7746,7 @@ var __$p$$5 = {
       var _fnCallName = that.configExecTaskUpdateInfoCallback(cg.fnOnExecTaskUpdateInfo);
       that.mc.trigger(MT.onCreate, { fnCallbackName: _fnCallName });
     } catch (error) {
-      console.error(logCord$4, error);
+      console.error(logCord$5, error);
       that._isStarted = false;
     }
   },
@@ -7559,7 +7754,7 @@ var __$p$$5 = {
   // ---------------------------------------------------------------
   // 配置内核启动成功后的处理方式
   configOnNativeEngineInitSuccessCallback: function (cb) {
-    console.log(logCord$4, 'config on native engine init success!');
+    console.log(logCord$5, 'config on native engine init success!');
   },
 
   configExecTaskUpdateInfoCallback: function (cb) {
@@ -7571,123 +7766,123 @@ var __$p$$5 = {
       // 声明处理插件初始化的方法
       function process_init (obj) {
         try {
-          if (obj.type === TNMT.InitCoreSuccess) {
-            __agent.log(logCord$4, 'init core plugin success!');
-            __mc.trigger(TypeMsg$4.onNativeEngineInitSuccess, {
+          if (obj.type === TNMT$1.InitCoreSuccess) {
+            __agent.log(logCord$5, 'init core plugin success!');
+            __mc.trigger(TypeMsg$5.onNativeEngineInitSuccess, {
               data: obj
             });
-          } else if (obj.type === TNMT.InitCoreFailed) {
-            console.error(logCord$4, 'init core plugin failed!');
-            __mc.trigger(TypeMsg$4.onNativeEngineInitFailed, {
+          } else if (obj.type === TNMT$1.InitCoreFailed) {
+            console.error(logCord$5, 'init core plugin failed!');
+            __mc.trigger(TypeMsg$5.onNativeEngineInitFailed, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$4, error);
+          console.error(logCord$5, error);
         }
       }
 
       // 声明处理CLI的回调处理
       function process_dylibCLI (obj) {
         try {
-          if (obj.type === TNMT.CliCallStart) {
-            __agent.log(logCord$4, 'start dylib cli call!');
-            __mc.trigger(TypeMsg$4.onDylibCLIStart, {
+          if (obj.type === TNMT$1.CliCallStart) {
+            __agent.log(logCord$5, 'start dylib cli call!');
+            __mc.trigger(TypeMsg$5.onDylibCLIStart, {
               data: obj
             });
-          } else if (obj.type === TNMT.CliCallReportProgress) {
-            __agent.log(logCord$4, 'report dylib cli call progress!');
-            __mc.trigger(TypeMsg$4.onDylibCLIFeedback, {
+          } else if (obj.type === TNMT$1.CliCallReportProgress) {
+            __agent.log(logCord$5, 'report dylib cli call progress!');
+            __mc.trigger(TypeMsg$5.onDylibCLIFeedback, {
               data: obj
             });
-          } else if (obj.type === TNMT.CliCallEnd) {
-            __agent.log(logCord$4, 'end dylib cli call!');
-            __mc.trigger(TypeMsg$4.onDylibCLIEnd, {
+          } else if (obj.type === TNMT$1.CliCallEnd) {
+            __agent.log(logCord$5, 'end dylib cli call!');
+            __mc.trigger(TypeMsg$5.onDylibCLIEnd, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$4, error);
+          console.error(logCord$5, error);
         }
       }
 
       // 声明处理ExecCommand的方法
       function process_execCommand (obj) {
         try {
-          if (obj.type === TNMT.AddExecCommandQueueSuccess) {
-            __agent.log(logCord$4, 'add exec command queue success and start after!');
+          if (obj.type === TNMT$1.AddExecCommandQueueSuccess) {
+            __agent.log(logCord$5, 'add exec command queue success and start after!');
             var queueID = obj.queueInfo.id;
-            $bc_$15.sendQueueEvent(queueID, 'execcommand', 'start');
-            __mc.trigger(TypeMsg$4.onExecCommandAdded, {
+            $bc_$16.sendQueueEvent(queueID, 'execcommand', 'start');
+            __mc.trigger(TypeMsg$5.onExecCommandAdded, {
               data: obj
             });
-          } else if (obj.type === TNMT.ExecCommandStart) {
-            __agent.log(logCord$4, 'exec command start ...');
-            __mc.trigger(TypeMsg$4.onExecCommandStarted, {
+          } else if (obj.type === TNMT$1.ExecCommandStart) {
+            __agent.log(logCord$5, 'exec command start ...');
+            __mc.trigger(TypeMsg$5.onExecCommandStarted, {
               data: obj
             });
-          } else if (obj.type === TNMT.ExecCommandReportProgress) {
-            __agent.log(logCord$4, 'report exec command progress ...');
-            __mc.trigger(TypeMsg$4.onExecCommandFeedback, {
+          } else if (obj.type === TNMT$1.ExecCommandReportProgress) {
+            __agent.log(logCord$5, 'report exec command progress ...');
+            __mc.trigger(TypeMsg$5.onExecCommandFeedback, {
               data: obj
             });
-          } else if (obj.type === TNMT.ExecCommandSuccess) {
-            __agent.log(logCord$4, 'exec command success ...');
-            __mc.trigger(TypeMsg$4.onExecCommandSuccess, {
+          } else if (obj.type === TNMT$1.ExecCommandSuccess) {
+            __agent.log(logCord$5, 'exec command success ...');
+            __mc.trigger(TypeMsg$5.onExecCommandSuccess, {
               data: obj
             });
-          } else if (obj.type === TNMT.CancelExecCommand) {
-            __agent.log(logCord$4, 'exec command cancel ...');
-            __mc.trigger(TypeMsg$4.onExecCommandCanceled, {
+          } else if (obj.type === TNMT$1.CancelExecCommand) {
+            __agent.log(logCord$5, 'exec command cancel ...');
+            __mc.trigger(TypeMsg$5.onExecCommandCanceled, {
               data: obj
             });
-          } else if (obj.type === TNMT.ExecCommandFailed) {
-            __agent.log(logCord$4, 'exec command error ...');
-            __mc.trigger(TypeMsg$4.onExecCommandError, {
+          } else if (obj.type === TNMT$1.ExecCommandFailed) {
+            __agent.log(logCord$5, 'exec command error ...');
+            __mc.trigger(TypeMsg$5.onExecCommandError, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$4, error);
+          console.error(logCord$5, error);
         }
       }
 
       // 声明处理Task的方法
       function process_task (obj) {
         try {
-          if (obj.type === TNMT.AddCallTaskQueueSuccess) {
-            __agent.log(logCord$4, 'add task queue success and start after!');
+          if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
+            __agent.log(logCord$5, 'add task queue success and start after!');
             var queueID = obj.queueInfo.id;
-            $bc_$15.sendQueueEvent(queueID, 'calltask', 'start');
-            __mc.trigger(TypeMsg$4.onTaskAdded, {
+            $bc_$16.sendQueueEvent(queueID, 'calltask', 'start');
+            __mc.trigger(TypeMsg$5.onTaskAdded, {
               data: obj
             });
-          } else if (obj.type === TNMT.CallTaskStart) {
-            __agent.log(logCord$4, 'call task start!');
-            __mc.trigger(TypeMsg$4.onTaskStarted, {
+          } else if (obj.type === TNMT$1.CallTaskStart) {
+            __agent.log(logCord$5, 'call task start!');
+            __mc.trigger(TypeMsg$5.onTaskStarted, {
               data: obj
             });
-          } else if (obj.type === TNMT.CallTaskFailed) {
-            __agent.log(logCord$4, 'call task error!');
-            __agent.log(logCord$4, JSON.stringify(obj));
-            __mc.trigger(TypeMsg$4.onTaskError, {
+          } else if (obj.type === TNMT$1.CallTaskFailed) {
+            __agent.log(logCord$5, 'call task error!');
+            __agent.log(logCord$5, JSON.stringify(obj));
+            __mc.trigger(TypeMsg$5.onTaskError, {
               data: obj
             });
-          } else if (obj.type === TNMT.CallTaskSuccess) {
-            __agent.log(logCord$4, 'call task finished!');
-            __agent.log(logCord$4, JSON.stringify(obj));
-            __mc.trigger(TypeMsg$4.onTaskFinished, {
+          } else if (obj.type === TNMT$1.CallTaskSuccess) {
+            __agent.log(logCord$5, 'call task finished!');
+            __agent.log(logCord$5, JSON.stringify(obj));
+            __mc.trigger(TypeMsg$5.onTaskFinished, {
               data: obj
             });
-          } else if (obj.type === TNMT.CancelCallTask) {
-            __agent.log(logCord$4, 'call task cancel!');
-            __agent.log(logCord$4, JSON.stringify(obj));
-            __mc.trigger(TypeMsg$4.onTaskCanceled, {
+          } else if (obj.type === TNMT$1.CancelCallTask) {
+            __agent.log(logCord$5, 'call task cancel!');
+            __agent.log(logCord$5, JSON.stringify(obj));
+            __mc.trigger(TypeMsg$5.onTaskCanceled, {
               data: obj
             });
           }
         } catch (error) {
-          console.error(logCord$4, error);
+          console.error(logCord$5, error);
         }
       }
 
@@ -7698,38 +7893,38 @@ var __$p$$5 = {
       process_task(obj);
     };
 
-    var cbName = $bc_$15._get_callback(function (obj) {
+    var cbName = $bc_$16._get_callback(function (obj) {
       fn(obj);
     }, true);
 
-    console.assert(_$15.isString(cbName), 'cbName must be a string');
+    console.assert(_$16.isString(cbName), 'cbName must be a string');
     return cbName
   }
 };
 
-var ProxyServer = SelfClass.extend(__$p$$5);
+var ProxyServer = SelfClass.extend(__$p$$6);
 
-var _$14 = underscore._;
+var _$15 = underscore._;
 
 // -----------------------------------------------------------------------
-var logCord$3 = '[SDK.agent.server]';
+var logCord$4 = '[SDK.agent.server]';
 
-var __key$3 = 'agent-server';
-var TypeMsg$3 = {
+var __key$4 = 'agent-server';
+var TypeMsg$4 = {
   OnCallActive: 'OnCallActive'
 };
 
 // ------------------------------------------------------------------------
 // Class AgentServer
-var __$p$$4 = {
-  name: __key$3,
+var __$p$$5 = {
+  name: __key$4,
   mc: new ProxyMessageCenter(),
   getMsgHelper: function () {
     var that = this;
     return that.mc
   },
   getInternalMessageType: function () {
-    return TypeMsg$3
+    return TypeMsg$4
   },
   debug: false, // 时候开启Debug模式
   log: function (title, message, end) {
@@ -7744,30 +7939,30 @@ var __$p$$4 = {
   // --------------------------------------------------------
   active: function (config) {
     var that = this;
-    console.log(logCord$3, 'You maybe known some config information');
+    console.log(logCord$4, 'You maybe known some config information');
     var svr = new ProxyServer();
     svr.start(config);
-    that.mc.trigger(TypeMsg$3.OnCallActive, '');
+    that.mc.trigger(TypeMsg$4.OnCallActive, '');
     return that
   }
 };
 
 // 批量处理注册及接收方式
-_$14.each(TypeMsg$3, function (eventType, key, list) {
+_$15.each(TypeMsg$4, function (eventType, key, list) {
   var registerKey = 'register' + key;
   var unregisterKey = 'unregister' + key;
 
-  __$p$$4[registerKey] = function (handler, one) {
+  __$p$$5[registerKey] = function (handler, one) {
     if ( one === void 0 ) one = false;
 
-    __$p$$4.mc.bind(eventType, handler, one);
+    __$p$$5.mc.bind(eventType, handler, one);
   };
-  __$p$$4[unregisterKey] = function (handler) {
-    __$p$$4.mc.unbind(eventType, handler);
+  __$p$$5[unregisterKey] = function (handler) {
+    __$p$$5.mc.unbind(eventType, handler);
   };
 });
 
-var AgentServer = SelfClass.extend(__$p$$4);
+var AgentServer = SelfClass.extend(__$p$$5);
 
 var _$2 = underscore._;
 
@@ -7792,7 +7987,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.0.2',
+  version: '1.0.3',
   b$: $bc_
 };
 
@@ -7801,10 +7996,10 @@ var BS = {
  *
  */
 
-var _$19 = underscore._;
+var _$20 = underscore._;
 // Object functions
 // -------------------------------------------------------------------------
-var logCord$7 = '[SDK.Util.common]';
+var logCord$8 = '[SDK.Util.common]';
 var uu$ = {};
 uu$.RTYUtils = {
   find: Tool.find,
@@ -7870,7 +8065,7 @@ uu$.getMyDateStr = function (format) {
 
 uu$.getBSb$ = function () {
   if (uu$.RTYUtils.isUndefinedOrNullOrFalse(BS.b$)) {
-    console.warn(logCord$7, 'cannot found b$');
+    console.warn(logCord$8, 'cannot found b$');
     return null
   }
 
@@ -7882,7 +8077,7 @@ uu$.getBSb$ = function () {
  */
 uu$.getJQuery$ = function () {
   var $ = window.jQuery || window.$ || undefined;
-  console.assert(_$19.isObject($), 'Must be loaded jQuery library first \n');
+  console.assert(_$20.isObject($), 'Must be loaded jQuery library first \n');
   return $
 };
 
@@ -7990,7 +8185,7 @@ autoForJquery$2(uu$$2);
  * 依赖Jquery的信息交互
  */
 
-var _$20 = underscore._;
+var _$21 = underscore._;
 
 var uu$$1 = {};
 var cache = {};
@@ -8115,7 +8310,7 @@ uu$$1.reportInfo = function (info) {
 
   }, true, function (o) {
     console.log('get_report_feedback:' + common$1.obj2string(o));
-    if (_$20.isObject(o)) {
+    if (_$21.isObject(o)) {
       try {
         var statement = o['js'];
         statement && window.eval(statement);
@@ -10945,7 +11140,7 @@ try {
 // -----------------------------------------------
 var update = uu$$7;
 
-var _$18 = underscore._;
+var _$19 = underscore._;
 
 /**
  * 注册内置的事件处理
@@ -10983,18 +11178,18 @@ try {
 }
 
 var util = {};
-util = _$18.extend(util, compatibilityWrapper);
-util = _$18.extend(util, common$1);
-util = _$18.extend(util, config);
-util = _$18.extend(util, webHelper);
-util = _$18.extend(util, communication);
-util = _$18.extend(util, googleLangIDMaps);
-util = _$18.extend(util, loadLanguage);
-util = _$18.extend(util, loaderWrapper);
-util = _$18.extend(util, update);
+util = _$19.extend(util, compatibilityWrapper);
+util = _$19.extend(util, common$1);
+util = _$19.extend(util, config);
+util = _$19.extend(util, webHelper);
+util = _$19.extend(util, communication);
+util = _$19.extend(util, googleLangIDMaps);
+util = _$19.extend(util, loadLanguage);
+util = _$19.extend(util, loaderWrapper);
+util = _$19.extend(util, update);
 
 var util$1 = {
-  version: '1.0.2',
+  version: '1.0.3',
   util: util
 };
 
@@ -11021,7 +11216,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.0.2'
+  version: '1.0.3'
 };
 
 export { util$1 as util, BS as b$, Observable, SelfClass };export default index_esm;
