@@ -938,9 +938,11 @@ const uu$ = {
 function autoForJquery (ref) {
   var t$ = ref
   try {
-    if (window.jQuery && window.$) {
-      window.$.RTYUtils = window.$.extend(window.$.RTYUtils, uu$)
-      window.$ = window.$.extend(window.$, t$)
+    if (window) {
+      if (window.jQuery && window.$) {
+        window.$.RTYUtils = window.$.extend(window.$.RTYUtils, uu$)
+        window.$ = window.$.extend(window.$, t$)
+      }
     }
   } catch (error) {
     console.warn(error)

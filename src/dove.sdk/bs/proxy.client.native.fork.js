@@ -111,7 +111,8 @@ var __$p$ = {
     console.warn(logCord, initializedTip)
   },
   _processNativeForkMessage: function (message) {
-    this.__processNativeTask(message)
+    var that = this
+    that.__processNativeTask(message)
   },
   __processNativeTask: function (message) {
     var that = this

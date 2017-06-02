@@ -92,10 +92,12 @@ uu$.RTYWebHelper = {
 
 function autoForJquery (ref) {
   var t$ = ref
-  if (window.jQuery && window.$) {
-    window.$['RTYWebHelper'] = t$.RTYWebHelper
+  if (window) {
+    if (window.jQuery && window.$) {
+      window.$['RTYWebHelper'] = t$.RTYWebHelper
 
-    window.$ = window.$.extend(window.$, t$)
+      window.$ = window.$.extend(window.$, t$)
+    }
   }
 }
 

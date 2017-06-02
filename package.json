@@ -30,7 +30,7 @@
     "type": "git",
     "url": "git+https://github.com/LabsRS-Dev/sdk.git"
   },
-  "author": "Romanysoft LAB.",
+  "author": "Gmagon Inc. && Romanysoft LAB.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/LabsRS-Dev/sdk/issues"
@@ -66,9 +66,6 @@
     "todomvc-app-css": "^2.1.0",
     "typescript": "^2.3.0",
     "uglify-js": "^2.8.22",
-    "vue": "^2.2.6",
-    "vue-loader": "^11.3.4",
-    "vue-template-compiler": "^2.2.6",
     "webpack": "^2.4.1",
     "webpack-dev-middleware": "^1.10.2",
     "webpack-hot-middleware": "^2.18.0"

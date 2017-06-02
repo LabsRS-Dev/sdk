@@ -198,8 +198,10 @@ uu$.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, tr
 
 function autoForJquery (ref) {
   var t$ = ref
-  if (window.jQuery && window.$) {
-    window.$ = window.$.extend(window.$, t$)
+  if (window) {
+    if (window.jQuery && window.$) {
+      window.$ = window.$.extend(window.$, t$)
+    }
   }
 }
 

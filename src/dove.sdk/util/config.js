@@ -41,10 +41,12 @@ uu$['RTY_Config'] = {
 
 function autoForJquery (ref) {
   var t$ = ref
-  if (window.jQuery && window.$) {
-    window.$['RTY_Config'] = t$['RTY_Config']
+  if (window) {
+    if (window.jQuery && window.$) {
+      window.$['RTY_Config'] = t$['RTY_Config']
 
-    window.$ = window.$.extend(window.$, t$)
+      window.$ = window.$.extend(window.$, t$)
+    }
   }
 }
 

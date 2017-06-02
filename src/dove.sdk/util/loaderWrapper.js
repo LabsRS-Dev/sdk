@@ -561,14 +561,16 @@ uu$['RTY_3rd_Ensure'] = $du
  */
 function autoForJquery (ref) {
   var t$ = ref
-  if (window.jQuery && window.$) {
-    window.$.templateLoader = t$.templateLoader
-    window.$.templateLoaderAgent = t$.templateLoaderAgent
-    window.$.cssjsLoader = t$.cssjsLoader
+  if (window) {
+    if (window.jQuery && window.$) {
+      window.$.templateLoader = t$.templateLoader
+      window.$.templateLoaderAgent = t$.templateLoaderAgent
+      window.$.cssjsLoader = t$.cssjsLoader
 
-    window.$['RTY_3rd_Ensure'] = t$['RTY_3rd_Ensure']
+      window.$['RTY_3rd_Ensure'] = t$['RTY_3rd_Ensure']
 
-    window.$ = window.$.extend(window.$, t$)
+      window.$ = window.$.extend(window.$, t$)
+    }
   }
 }
 
