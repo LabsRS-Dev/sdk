@@ -184,6 +184,14 @@ $bc_.autoStartTask = function (obj, cbFuncName) {
 }
 
 // 发送任务事件
+/**
+* @function {function name}
+* @param  {String/Number} queueID    内部队列ID
+* @param  {String} queueType  队列类型：1.import; 2.export; 3.execcommand; 4.calltask
+* @param  {String} event      队列事件类型：1.start; 2.pause; 3.stop
+* @param  {String} cbFuncName 回调函数名称，全局类型
+* @return {type} {description}
+*/
 $bc_.sendQueueEvent = function (queueID, queueType, event, cbFuncName) {
   try {
     var extendObj = _.clone($bc_.pCorePlugin)

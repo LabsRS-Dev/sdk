@@ -116,7 +116,11 @@ var __$p$ = {
   },
   __processNativeTask: function (message) {
     var that = this
-    const dataObj = message
+    const dataObj = _.extend({
+      task_id: '',
+      commands: '',
+      taskMethodWay: TaskMethodWay.Task
+    }, message)
 
     var cbName = $bc_._get_callback(function (obj) {
       console.log('-------- from native callback ---------------')
@@ -147,7 +151,12 @@ var __$p$ = {
 
     const taskID = dataObj.task_id
     const commands = dataObj.commands
-    $bc_.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands])
+
+    if (TaskMethodWay.Task === dataObj.taskMethodWay) {
+      $bc_.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands])
+    } else if (TaskMethodWay.SendEvent === dataObj.taskMethodWay) {
+      $bc_.runTaskSample(TaskMethodWay.SendEvent, cbName, commands.push(taskID))
+    }
   }
 }
 

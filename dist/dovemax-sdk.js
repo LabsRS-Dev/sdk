@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.0
+ * DoveMaxSDK v1.1.1
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -3686,6 +3686,16 @@ $bc_$4.App = {
     return ''
   },
 
+  // 获取文件名称，不带扩展名
+  getFileNameWithoutExt: function (path) {
+    if ($bc_$4.pN) {
+      var _path = path || ($bc_$4.pN.path.tempDir() + 'tmp.txt');
+      return $bc_$4.pN.path.getFileNameWithoutExt(_path)
+    }
+
+    return ''
+  },
+
   // 获取路径上一级目录路径
   getPathParentPath: function (path) {
     if ($bc_$4.pN) {
@@ -5649,6 +5659,14 @@ $bc_$13.autoStartTask = function (obj, cbFuncName) {
 };
 
 // 发送任务事件
+/**
+* @function {function name}
+* @param  {String/Number} queueID    内部队列ID
+* @param  {String} queueType  队列类型：1.import; 2.export; 3.execcommand; 4.calltask
+* @param  {String} event      队列事件类型：1.start; 2.pause; 3.stop
+* @param  {String} cbFuncName 回调函数名称，全局类型
+* @return {type} {description}
+*/
 $bc_$13.sendQueueEvent = function (queueID, queueType, event, cbFuncName) {
   try {
     var extendObj = _$7.clone($bc_$13.pCorePlugin);
@@ -7067,7 +7085,11 @@ var __$p$$4 = {
   },
   __processNativeTask: function (message) {
     var that = this;
-    var dataObj = message;
+    var dataObj = _$14.extend({
+      task_id: '',
+      commands: '',
+      taskMethodWay: TaskMethodWay.Task
+    }, message);
 
     var cbName = $bc_$15._get_callback(function (obj) {
       console.log('-------- from native callback ---------------');
@@ -7098,7 +7120,12 @@ var __$p$$4 = {
 
     var taskID = dataObj.task_id;
     var commands = dataObj.commands;
-    $bc_$15.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands]);
+
+    if (TaskMethodWay.Task === dataObj.taskMethodWay) {
+      $bc_$15.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands]);
+    } else if (TaskMethodWay.SendEvent === dataObj.taskMethodWay) {
+      $bc_$15.runTaskSample(TaskMethodWay.SendEvent, cbName, commands.push(taskID));
+    }
   }
 };
 
@@ -7994,7 +8021,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.0',
+  version: '1.1.1',
   b$: $bc_
 };
 
@@ -11208,7 +11235,7 @@ util = _$19.extend(util, loaderWrapper);
 util = _$19.extend(util, update);
 
 var util$1 = {
-  version: '1.1.0',
+  version: '1.1.1',
   util: util
 };
 
@@ -11235,7 +11262,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.0'
+  version: '1.1.1'
 };
 
 return index;

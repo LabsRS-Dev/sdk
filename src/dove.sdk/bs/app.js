@@ -846,6 +846,16 @@ $bc_.App = {
     return ''
   },
 
+  // 获取文件名称，不带扩展名
+  getFileNameWithoutExt: function (path) {
+    if ($bc_.pN) {
+      var _path = path || ($bc_.pN.path.tempDir() + 'tmp.txt')
+      return $bc_.pN.path.getFileNameWithoutExt(_path)
+    }
+
+    return ''
+  },
+
   // 获取路径上一级目录路径
   getPathParentPath: function (path) {
     if ($bc_.pN) {
