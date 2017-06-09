@@ -162,7 +162,7 @@ var __$p$ = {
     } else if (chancel.type === ChancelType.nativeFork) {
       console.dir(chancel.server)
       _cs.registerOnGetServerMessage(_c2hhFn(_msgType.OnGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
-      _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, (message) => { that.onNoticeToServer(message) }))
+      _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, (message) => { }))
 
       _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, (message) => { that.onBuildChannelError(message) }))
       _cs.registerOnRunning(_c2hhFn(_msgType.OnRunning, _cs, (message) => { that.onFinishBuildChannel(message) }))
@@ -228,7 +228,6 @@ var __$p$ = {
     that.mc.trigger(TypeMsg.OnNoticeToServer, message)
     return that
   },
-
   onReceiveFromServer: function (message) {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')

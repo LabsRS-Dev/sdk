@@ -122,8 +122,11 @@ var __$p$ = {
       taskMethodWay: TaskMethodWay.Task
     }, message)
 
-    var cbName = $bc_._get_callback(function (obj) {
+    var cbName = $bc_._get_callback(function (_obj) {
       console.log('-------- from native callback ---------------')
+      const obj = _.extend({
+        type: 'UNKNOWN'
+      }, _obj)
       var msgPackage = ''
       try {
         msgPackage = JSON.stringify(obj)
@@ -146,6 +149,8 @@ var __$p$ = {
       } else if (obj.type === TNMT.CancelCallTask) {
         console.log('call task cancel .... ')
         that.onReceiveMessage(msgPackage)
+      } else {
+        console.warn('Warning: obj.type == UNKNOWN')
       }
     }, true)
 

@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.1
+ * DoveMaxSDK v1.1.2
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -7085,8 +7085,11 @@ var __$p$$4 = {
       taskMethodWay: TaskMethodWay.Task
     }, message);
 
-    var cbName = $bc_$15._get_callback(function (obj) {
+    var cbName = $bc_$15._get_callback(function (_obj) {
       console.log('-------- from native callback ---------------');
+      var obj = _$14.extend({
+        type: 'UNKNOWN'
+      }, _obj);
       var msgPackage = '';
       try {
         msgPackage = JSON.stringify(obj);
@@ -7109,6 +7112,8 @@ var __$p$$4 = {
       } else if (obj.type === TNMT.CancelCallTask) {
         console.log('call task cancel .... ');
         that.onReceiveMessage(msgPackage);
+      } else {
+        console.warn('Warning: obj.type == UNKNOWN');
       }
     }, true);
 
@@ -7302,7 +7307,7 @@ var __$p$ = {
     } else if (chancel.type === ChancelType.nativeFork) {
       console.dir(chancel.server);
       _cs.registerOnGetServerMessage(_c2hhFn(_msgType.OnGetServerMessage, _cs, function (message) { that.onReceiveFromServer(message); }));
-      _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, function (message) { that.onNoticeToServer(message); }));
+      _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, function (message) { }));
 
       _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, function (message) { that.onBuildChannelError(message); }));
       _cs.registerOnRunning(_c2hhFn(_msgType.OnRunning, _cs, function (message) { that.onFinishBuildChannel(message); }));
@@ -7368,7 +7373,6 @@ var __$p$ = {
     that.mc.trigger(TypeMsg.OnNoticeToServer, message);
     return that
   },
-
   onReceiveFromServer: function (message) {
     var that = this;
     console.assert(this !== undefined, '[SDK] this !== undefined');
@@ -7793,6 +7797,7 @@ var __$p$$6 = {
 
       // 声明处理插件初始化的方法
       function process_init (obj) {
+        console.assert(obj);
         try {
           if (obj.type === TNMT$1.InitCoreSuccess) {
             __agent.log(logCord$5, 'init core plugin success!');
@@ -7812,6 +7817,7 @@ var __$p$$6 = {
 
       // 声明处理CLI的回调处理
       function process_dylibCLI (obj) {
+        console.assert(obj);
         try {
           if (obj.type === TNMT$1.CliCallStart) {
             __agent.log(logCord$5, 'start dylib cli call!');
@@ -7836,6 +7842,7 @@ var __$p$$6 = {
 
       // 声明处理ExecCommand的方法
       function process_execCommand (obj) {
+        console.assert(obj);
         try {
           if (obj.type === TNMT$1.AddExecCommandQueueSuccess) {
             __agent.log(logCord$5, 'add exec command queue success and start after!');
@@ -7877,6 +7884,7 @@ var __$p$$6 = {
 
       // 声明处理Task的方法
       function process_task (obj) {
+        console.assert(obj);
         try {
           if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
             __agent.log(logCord$5, 'add task queue success and start after!');
@@ -8015,7 +8023,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.1',
+  version: '1.1.2',
   b$: $bc_
 };
 
@@ -11229,7 +11237,7 @@ util = _$19.extend(util, loaderWrapper);
 util = _$19.extend(util, update);
 
 var util$1 = {
-  version: '1.1.1',
+  version: '1.1.2',
   util: util
 };
 
@@ -11256,7 +11264,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.1'
+  version: '1.1.2'
 };
 
 export default index_esm;

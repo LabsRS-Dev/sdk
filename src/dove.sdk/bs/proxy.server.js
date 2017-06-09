@@ -169,6 +169,7 @@ var __$p$ = {
 
       // 声明处理插件初始化的方法
       function process_init (obj) {
+        console.assert(obj)
         try {
           if (obj.type === TNMT.InitCoreSuccess) {
             __agent.log(logCord, 'init core plugin success!')
@@ -188,6 +189,7 @@ var __$p$ = {
 
       // 声明处理CLI的回调处理
       function process_dylibCLI (obj) {
+        console.assert(obj)
         try {
           if (obj.type === TNMT.CliCallStart) {
             __agent.log(logCord, 'start dylib cli call!')
@@ -212,6 +214,7 @@ var __$p$ = {
 
       // 声明处理ExecCommand的方法
       function process_execCommand (obj) {
+        console.assert(obj)
         try {
           if (obj.type === TNMT.AddExecCommandQueueSuccess) {
             __agent.log(logCord, 'add exec command queue success and start after!')
@@ -253,6 +256,7 @@ var __$p$ = {
 
       // 声明处理Task的方法
       function process_task (obj) {
+        console.assert(obj)
         try {
           if (obj.type === TNMT.AddCallTaskQueueSuccess) {
             __agent.log(logCord, 'add task queue success and start after!')
