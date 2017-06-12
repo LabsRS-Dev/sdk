@@ -140,6 +140,7 @@ var __$p$ = {
       } else if (obj.type === TNMT.CallTaskStart) {
         console.log('call task start .... ')
         that.noticeOnRunning(msgPackage)
+        that.onReceiveMessage(msgPackage)
       } else if (obj.type === TNMT.CallTaskFailed) {
         console.log('call task failed .... ')
         that.noticeCreateError(msgPackage)
@@ -148,6 +149,9 @@ var __$p$ = {
         that.onReceiveMessage(msgPackage)
       } else if (obj.type === TNMT.CancelCallTask) {
         console.log('call task cancel .... ')
+        that.onReceiveMessage(msgPackage)
+      } else if (obj.type === TNMT.CallTaskLog) {
+        console.log('call task log .... ')
         that.onReceiveMessage(msgPackage)
       } else {
         console.warn('Warning: obj.type == UNKNOWN')
