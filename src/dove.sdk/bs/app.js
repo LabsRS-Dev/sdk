@@ -994,6 +994,15 @@ $bc_.App = {
     return ''
   },
 
+  // 获得文件/目录转译的容量(以1000基数，还是1024基数。 )
+  getFileSizeString: function (bytes = 0, si = true) {
+    if ($bc_.pN) {
+      return (si ? $bc_.pN.app.getFileSizeString1000(bytes) : $bc_.pN.app.getFileSizeString1024(bytes))
+    }
+
+    return ''
+  },
+
   // 获得字符串的md5值
   md5Digest: function (str) {
     if ($bc_.pN) {
