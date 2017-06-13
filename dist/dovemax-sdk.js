@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.3
+ * DoveMaxSDK v1.1.4
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -3834,6 +3834,18 @@ $bc_$4.App = {
     return ''
   },
 
+  // 获得文件/目录转译的容量(以1000基数，还是1024基数。 )
+  getFileSizeString: function (bytes, si) {
+    if ( bytes === void 0 ) bytes = 0;
+    if ( si === void 0 ) si = true;
+
+    if ($bc_$4.pN) {
+      return (si ? $bc_$4.pN.app.getFileSizeString1000(bytes) : $bc_$4.pN.app.getFileSizeString1024(bytes))
+    }
+
+    return ''
+  },
+
   // 获得字符串的md5值
   md5Digest: function (str) {
     if ($bc_$4.pN) {
@@ -5406,8 +5418,9 @@ $bc_$12.enableDragDropFeature = function (jsonObj, cb) {
           cb && cb(obj);
         }
       }, true);
-      params['enableDir'] = jsonObj['enableDir'] || false;
+      params['enableDir'] = !!jsonObj['enableDir'] || false;
       params['enableFile'] = jsonObj['enableFile'] !== false;
+      params['enableCalculateFolderSize'] = !!jsonObj['enableCalculateFolderSize'] || false;
       params['fileTypes'] = jsonObj['fileTypes'] || ['*']; // ["*","mp3","md", "xls"] 类似这样的格式
 
       // / 统一向后兼容处理
@@ -5757,6 +5770,7 @@ $bc_$14.importFiles = function (paramOptions, noNcb, cb) {
     params['canChooseFiles'] = true;
     params['canChooseDir'] = false;
     params['canAddToRecent'] = true; // 是否添加到最近目录中
+    params['calculateDirSize'] = !!paramOptions['calculateDirSize'] || false;
     params['directory'] = paramOptions['directory'] || ''; // 默认指定的目录
     params['types'] = paramOptions['types'] || []; // eg. ['png','svg'] 或 ['*']
 
@@ -5828,6 +5842,7 @@ $bc_$14.selectDir = $bc_$14.selectOutDir = function (paramOptions, noNcb, cb) {
     params['canChooseDir'] = true;
     params['canChooseFiles'] = false; // 不可以选择文件
     params['canAddToRecent'] = true; // 是否添加到最近目录中
+    params['calculateDirSize'] = !!paramOptions['calculateDirSize'] || false;
     params['directory'] = paramOptions['directory'] || ''; // 默认指定的目录
     params['types'] = [];
 
@@ -5889,6 +5904,8 @@ $bc_$14.selectOutFile = function (paramOptions, noNcb, cb) {
       params['fileName'] = paramOptions['fileName'] || 'untitled';
       params['directory'] = paramOptions['directory'] || ''; // 默认指定的目录
       params['types'] = paramOptions['types'] || ['*']; // 要求的数组
+
+      params['calculateDirSize'] = !!paramOptions['calculateDirSize'] || false;
 
       // 下拉文件类型选择处理
       params['enableFileFormatCombox'] = paramOptions['enableFileFormatCombox'] || false;
@@ -8034,7 +8051,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.3',
+  version: '1.1.4',
   b$: $bc_
 };
 
@@ -11248,7 +11265,7 @@ util = _$19.extend(util, loaderWrapper);
 util = _$19.extend(util, update);
 
 var util$1 = {
-  version: '1.1.3',
+  version: '1.1.4',
   util: util
 };
 
@@ -11275,7 +11292,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.3'
+  version: '1.1.4'
 };
 
 return index;
