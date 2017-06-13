@@ -55,6 +55,7 @@ $bc_.importFiles = function (paramOptions, noNcb, cb) {
     params['canChooseFiles'] = true
     params['canChooseDir'] = false
     params['canAddToRecent'] = true // 是否添加到最近目录中
+    params['calculateDirSize'] = !!paramOptions['calculateDirSize'] || false
     params['directory'] = paramOptions['directory'] || '' // 默认指定的目录
     params['types'] = paramOptions['types'] || [] // eg. ['png','svg'] 或 ['*']
 
@@ -126,6 +127,7 @@ $bc_.selectDir = $bc_.selectOutDir = function (paramOptions, noNcb, cb) {
     params['canChooseDir'] = true
     params['canChooseFiles'] = false // 不可以选择文件
     params['canAddToRecent'] = true // 是否添加到最近目录中
+    params['calculateDirSize'] = !!paramOptions['calculateDirSize'] || false
     params['directory'] = paramOptions['directory'] || '' // 默认指定的目录
     params['types'] = []
 
@@ -187,6 +189,8 @@ $bc_.selectOutFile = function (paramOptions, noNcb, cb) {
       params['fileName'] = paramOptions['fileName'] || 'untitled'
       params['directory'] = paramOptions['directory'] || '' // 默认指定的目录
       params['types'] = paramOptions['types'] || ['*'] // 要求的数组
+
+      params['calculateDirSize'] = !!paramOptions['calculateDirSize'] || false
 
       // 下拉文件类型选择处理
       params['enableFileFormatCombox'] = paramOptions['enableFileFormatCombox'] || false

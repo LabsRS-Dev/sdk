@@ -23,8 +23,9 @@ $bc_.enableDragDropFeature = function (jsonObj, cb) {
           cb && cb(obj)
         }
       }, true)
-      params['enableDir'] = jsonObj['enableDir'] || false
+      params['enableDir'] = !!jsonObj['enableDir'] || false
       params['enableFile'] = jsonObj['enableFile'] !== false
+      params['enableCalculateFolderSize'] = !!jsonObj['enableCalculateFolderSize'] || false
       params['fileTypes'] = jsonObj['fileTypes'] || ['*'] // ["*","mp3","md", "xls"] 类似这样的格式
 
       // / 统一向后兼容处理
