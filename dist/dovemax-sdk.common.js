@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.4
+ * DoveMaxSDK v1.1.5
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -5538,6 +5538,7 @@ var TypeNativeMessageType = {
   CallTaskStart: 'type_calltask_start',
   CallTaskFailed: 'type_calltask_error',
   CallTaskLog: 'type_calltask_log',
+  CallTaskExit: 'type_calltask_exit',
   CallTaskSuccess: 'type_calltask_success',
   CancelCallTask: 'type_type_calltask_cancel'
 
@@ -7136,6 +7137,9 @@ var __$p$$4 = {
       } else if (obj.type === TNMT.CallTaskLog) {
         console.log('call task log .... ');
         that.onReceiveMessage(msgPackage);
+      } else if (obj.type === TNMT.CallTaskExit) {
+        console.log('call task exit .... ');
+        that.onReceiveMessage(msgPackage);
       } else {
         console.warn('Warning: obj.type == UNKNOWN');
       }
@@ -8047,7 +8051,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.4',
+  version: '1.1.5',
   b$: $bc_
 };
 
@@ -11261,7 +11265,7 @@ util = _$19.extend(util, loaderWrapper);
 util = _$19.extend(util, update);
 
 var util$1 = {
-  version: '1.1.4',
+  version: '1.1.5',
   util: util
 };
 
@@ -11288,7 +11292,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.4'
+  version: '1.1.5'
 };
 
 module.exports = index;

@@ -153,6 +153,9 @@ var __$p$ = {
       } else if (obj.type === TNMT.CallTaskLog) {
         console.log('call task log .... ')
         that.onReceiveMessage(msgPackage)
+      } else if (obj.type === TNMT.CallTaskExit) {
+        console.log('call task exit .... ')
+        that.onReceiveMessage(msgPackage)
       } else {
         console.warn('Warning: obj.type == UNKNOWN')
       }
