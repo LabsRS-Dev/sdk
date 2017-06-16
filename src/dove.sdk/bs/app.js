@@ -1287,71 +1287,71 @@ $bc_.App = {
       'Unknown': [''],
       'en': ['en', 'en-US', 'en-us'], // 英语
 
-      'fr': ['fr', 'fr-FR', 'fr-fr'], // French (fr) 法语
+      'fr': ['fr', 'fr-FR', 'fr-fr', 'fr-US'], // French (fr) 法语
 
-      'de': ['de', 'de-DE', 'de-de'], // German (de) 德语
+      'de': ['de', 'de-DE', 'de-de', 'de-US'], // German (de) 德语
 
-      'zh-Hans': ['zh', 'zh-CN', 'zh-cn', 'zh-Hans'], // Chinese (Simplified) (zh-Hans) 中文简体
+      'zh-Hans': ['zh', 'zh-CN', 'zh-cn', 'zh-Hans', 'zh-Hans-US'], // Chinese (Simplified) (zh-Hans) 中文简体
 
-      'zh-Hant': ['zh-TW', 'zh-tw', 'zh-Hant'], // Chinese (Traditional) (zh-Hant) 中文繁体
+      'zh-Hant': ['zh-TW', 'zh-tw', 'zh-Hant', 'zh-Hant-US'], // Chinese (Traditional) (zh-Hant) 中文繁体
 
-      'ja': ['ja', 'ja-JP', 'ja-jp'], // Japanese (ja) 日语
+      'ja': ['ja', 'ja-JP', 'ja-jp', 'ja-US'], // Japanese (ja) 日语
 
-      'es': ['es', 'es-ES', 'es-es'], // Spanish (es) 西班牙语
+      'es': ['es', 'es-ES', 'es-es', 'es-US'], // Spanish (es) 西班牙语
 
       'es-MX': ['es-MX', 'es-XL', 'es-xl'], // Spanish (Mexico) (es-MX) 西班牙语（墨西哥）
 
-      'it': ['it', 'it-IT', 'it-it'], // Italian (it) 意大利语
+      'it': ['it', 'it-IT', 'it-it', 'it-US'], // Italian (it) 意大利语
 
-      'nl': ['nl', 'nl-NL', 'nl-nl'], // Dutch (nl) 荷兰语
+      'nl': ['nl', 'nl-NL', 'nl-nl', 'nl-US'], // Dutch (nl) 荷兰语
 
-      'ko': ['ko', 'ko-KR', 'ko-kr'], // Korean (ko) 韩语
+      'ko': ['ko', 'ko-KR', 'ko-kr', 'ko-US'], // Korean (ko) 韩语
 
-      'pt': ['pt', 'pt-BR', 'pt-br'], // Portuguese (pt) 葡萄牙语
+      'pt': ['pt', 'pt-BR', 'pt-br', 'pt-US'], // Portuguese (pt) 葡萄牙语
 
-      'pt-PT': ['pt-PT', 'pt-pt'], // Portuguese (Portugal) (pt) 葡萄牙语（葡萄牙）
+      'pt-PT': ['pt-PT', 'pt-pt', 'pt-US'], // Portuguese (Portugal) (pt) 葡萄牙语（葡萄牙）
 
-      'da': ['da', 'da-DK', 'da-da'], // Danish (da) 丹麦语
+      'da': ['da', 'da-DK', 'da-da', 'da-US'], // Danish (da) 丹麦语
 
-      'fi': ['fi', 'fi-FI', 'fi-fi'], // Finnish (fi) 芬兰语
+      'fi': ['fi', 'fi-FI', 'fi-fi', 'fi-US'], // Finnish (fi) 芬兰语
 
-      'nb': ['nb', 'nb-NO', 'nb-no'], // Norwegian Bokmal (nb) 挪威语
+      'nb': ['nb', 'nb-NO', 'nb-no', 'nb-US'], // Norwegian Bokmal (nb) 挪威语
 
-      'sv': ['sv', 'sv-SE', 'sv-se'], // Swedish (sv) 瑞典语
+      'sv': ['sv', 'sv-SE', 'sv-se', 'sv-US'], // Swedish (sv) 瑞典语
 
-      'ru': ['ru', 'ru-RU', 'ru-ru'], // Russian (ru) 俄语
+      'ru': ['ru', 'ru-RU', 'ru-ru', 'ru-US'], // Russian (ru) 俄语
 
-      'pl': ['pl', 'pl-PL', 'pl-pl'], // Polish (pl) 波兰语
+      'pl': ['pl', 'pl-PL', 'pl-pl', 'pl-US'], // Polish (pl) 波兰语
 
-      'tr': ['tr', 'tr-TR', 'tr-tr'], // Turkish (tr) 土耳其语
+      'tr': ['tr', 'tr-TR', 'tr-tr', 'tr-US'], // Turkish (tr) 土耳其语
 
-      'ar': ['ar', 'AR'], // Arabic (ar) 阿拉伯语
+      'ar': ['ar', 'AR', 'ar-US'], // Arabic (ar) 阿拉伯语
 
-      'th': ['th', 'th-TH', 'th-th'], // Thai (th) 泰语
+      'th': ['th', 'th-TH', 'th-th', 'th-US'], // Thai (th) 泰语
 
-      'cs': ['cs', 'cs-CZ', 'cs-cz'], // Czech (cs) 捷克语
+      'cs': ['cs', 'cs-CZ', 'cs-cz', 'cs-US'], // Czech (cs) 捷克语
 
-      'hu': ['hu', 'hu-HU', 'hu-hu'], // Hungarian (hu) 匈牙利语
+      'hu': ['hu', 'hu-HU', 'hu-hu', 'hu-US'], // Hungarian (hu) 匈牙利语
 
-      'ca': ['ca', 'ca-ES', 'ca-es'], // Catalan (ca) 加泰罗尼亚语
+      'ca': ['ca', 'ca-ES', 'ca-es', 'ca-US'], // Catalan (ca) 加泰罗尼亚语
 
-      'hr': ['hr', 'hr-HR', 'hr-hr'], // Croatian (hr) 克罗地亚语
+      'hr': ['hr', 'hr-HR', 'hr-hr', 'hr-US'], // Croatian (hr) 克罗地亚语
 
-      'el': ['el', 'el-GR', 'el-gr'], // Greek (el) 希腊语
+      'el': ['el', 'el-GR', 'el-gr', 'el-US'], // Greek (el) 希腊语
 
-      'he': ['he', 'he-IL', 'he-il'], // Hebrew (he) 希伯来语
+      'he': ['he', 'he-IL', 'he-il', 'he-US'], // Hebrew (he) 希伯来语
 
-      'ro': ['ro', 'ro-RO', 'ro-ro'], // Romanian (ro) 罗马尼亚语
+      'ro': ['ro', 'ro-RO', 'ro-ro', 'ro-US'], // Romanian (ro) 罗马尼亚语
 
-      'sk': ['sk', 'sk-SK', 'sk-sk'], // Slovak (sk) 斯洛伐克语
+      'sk': ['sk', 'sk-SK', 'sk-sk', 'sk-US'], // Slovak (sk) 斯洛伐克语
 
-      'uk': ['uk', 'uk-UA', 'uk-ua'], // Ukrainian (uk) 乌克兰语
+      'uk': ['uk', 'uk-UA', 'uk-ua', 'uk-US'], // Ukrainian (uk) 乌克兰语
 
-      'id': ['id', 'ID', 'id-ID', 'id-id'], // Indonesian (id) 印尼语
+      'id': ['id', 'ID', 'id-ID', 'id-id', 'id-US'], // Indonesian (id) 印尼语
 
-      'ms': ['ms', 'MS', 'ms-MS', 'ms-ms'], // Malay (ms) 马来西亚语
+      'ms': ['ms', 'MS', 'ms-MS', 'ms-ms', 'ms-US'], // Malay (ms) 马来西亚语
 
-      'vi': ['vi', 'vi-VN', 'vi-vn'] // Vietnamese (vi) 越南语
+      'vi': ['vi', 'vi-VN', 'vi-vn', 'vi-US'] // Vietnamese (vi) 越南语
     }
 
     if (getType === 'Native2Webkit') { // 先获取Native的语言，然后查找Map
@@ -1396,10 +1396,23 @@ $bc_.App = {
     return console.error('调用方式不正确，需要的参数为:Native2Webkit 或者webkitCompatible')
   },
 
+  // 获得苹果系统内置的语言包
+  getAppleSupportLanguagList: function () {
+    if ($bc_.pN) {
+      var jsonstr = $bc_.pN.app.curAppleSupportLanguagesJSONString() || JSON.stringify([])
+      return JSON.parse(jsonstr)
+    }
+    return []
+  },
+
   // 设置用户的语言
   setUserLanguage: function (language) {
     if ($bc_.pN) {
       return $bc_.pN.app.setUserLanguage(language || 'en-US')
+    } else if (window) {
+      try {
+        window.localStorage.setItem('APP_USER_SETTING_LANGUAGE', language)
+      } catch (error) { console.error(error) }
     }
   },
 
@@ -1407,6 +1420,10 @@ $bc_.App = {
   getUserLanguage: function () {
     if ($bc_.pN) {
       return $bc_.pN.app.curUserLanguage()
+    } else if (window) {
+      try {
+        return window.localStorage.getItem('APP_USER_SETTING_LANGUAGE') || 'en-US'
+      } catch (error) { console.error(error) }
     }
 
     return 'en-US'
