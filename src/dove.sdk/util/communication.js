@@ -94,7 +94,7 @@ uu$.getp = function (url, data, noCache, cb, noCancel) {
 
     try {
       if (b$.App) {
-        data = window.$.extend(data, {
+        data = _.extend(data, {
           'app_name': b$.App.getAppName() || 'app_name',
           'app_bundle_id': b$.App.getAppId() || 'app_id',
           'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
@@ -117,6 +117,14 @@ uu$.getp = function (url, data, noCache, cb, noCancel) {
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * 通用的提交信息接口
+ */
+uu$.commitMessage = function (apiUrl = '/', messageObj = {}, cb = () => {}) {
+  console.log('--- $.commitMessage ---')
+  var t$ = this
+  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb)
+}
 
 /**
  * 向服务器提交信息,用途，与服务器上的交互，可以收集错误信息
@@ -125,9 +133,7 @@ uu$.reportInfo = function (info) {
   console.log('--- $.reportInfo ---')
   var t$ = this
 
-  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', {
-
-  }, true, function (o) {
+  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', info || {}, true, function (o) {
     console.log('get_report_feedback:' + common.obj2string(o))
     if (_.isObject(o)) {
       try {

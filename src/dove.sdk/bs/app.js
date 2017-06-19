@@ -82,6 +82,106 @@ $bc_.App = {
     }
     return false
   },
+  // /////////////////////////////////////////////////////////////////////////
+  // 查询是否需要授权证书
+  getIsNeedCertificate: function () {
+    var need = false
+    if ($bc_.pN) {
+      need = $bc_.pN.window.getIsNeedCertificate()
+    }
+    return need
+  },
+
+  // 获取所有安装的授权证书
+  getAllInstalledCertificates: function (cb) {
+    var certificatesList = null
+    if ($bc_.pN) {
+      try {
+        var params = {}
+        if (cb) {
+          params['callback'] = $bc_._get_callback(function (data) {
+            cb && cb(data)
+          }, true)
+        }
+        certificatesList = $bc_.pN.window.getAllInstalledCertificates(JSON.stringify(params))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    return certificatesList
+  },
+
+  // 获取所有安装且有效的授权证书
+  getAllValidCertificates: function (cb) {
+    var certificatesList = null
+    if ($bc_.pN) {
+      try {
+        var params = {}
+        if (cb) {
+          params['callback'] = $bc_._get_callback(function (data) {
+            cb && cb(data)
+          }, true)
+        }
+        certificatesList = $bc_.pN.window.getAllValidCertificates(JSON.stringify(params))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    return certificatesList
+  },
+
+  // 获取授权安装且无效的授权证书
+  getAllUnValidCertificates: function (cb) {
+    var certificatesList = null
+    if ($bc_.pN) {
+      try {
+        var params = {}
+        if (cb) {
+          params['callback'] = $bc_._get_callback(function (data) {
+            cb && cb(data)
+          }, true)
+        }
+        certificatesList = $bc_.pN.window.getAllUnValidCertificates(JSON.stringify(params))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    return certificatesList
+  },
+
+  // 安装授权证书
+  installCertificates: function (jsonObj, cb) {
+    if ($bc_.pN) {
+      try {
+        var params = jsonObj || {}
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
+          cb && cb(obj)
+        }, true)
+        params['certificates'] = params['certificates'] || ''
+
+        $bc_.pN.window.installCertificates(JSON.stringify(params))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  },
+
+  // 卸载授权证书
+  uninstallCertificates: function (jsonObj, cb) {
+    if ($bc_.pN) {
+      try {
+        var params = jsonObj || {}
+        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
+          cb && cb(obj)
+        }, true)
+        params['certificates'] = params['certificates'] || ''
+
+        $bc_.pN.window.uninstallCertificates(JSON.stringify(params))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  },
 
   // 获取App是否已经注册
   getIsRegistered: function () {
@@ -1598,107 +1698,6 @@ $bc_.App = {
         }
 
         return $bc_.pN.window.printToPDF(JSON.stringify(params))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-  },
-
-  // /////////////////////////////////////////////////////////////////////////
-  // 查询是否需要授权证书
-  getIsNeedCertificate: function () {
-    var need = false
-    if ($bc_.pN) {
-      need = $bc_.pN.window.getIsNeedCertificate()
-    }
-    return need
-  },
-
-  // 获取所有安装的授权证书
-  getAllInstalledCertificates: function (cb) {
-    var certificatesList = null
-    if ($bc_.pN) {
-      try {
-        var params = {}
-        if (cb) {
-          params['callback'] = $bc_._get_callback(function (data) {
-            cb && cb(data)
-          }, true)
-        }
-        certificatesList = $bc_.pN.window.getAllInstalledCertificates(JSON.stringify(params))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    return certificatesList
-  },
-
-  // 获取所有安装且有效的授权证书
-  getAllValidCertificates: function (cb) {
-    var certificatesList = null
-    if ($bc_.pN) {
-      try {
-        var params = {}
-        if (cb) {
-          params['callback'] = $bc_._get_callback(function (data) {
-            cb && cb(data)
-          }, true)
-        }
-        certificatesList = $bc_.pN.window.getAllValidCertificates(JSON.stringify(params))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    return certificatesList
-  },
-
-  // 获取授权安装且无效的授权证书
-  getAllUnValidCertificates: function (cb) {
-    var certificatesList = null
-    if ($bc_.pN) {
-      try {
-        var params = {}
-        if (cb) {
-          params['callback'] = $bc_._get_callback(function (data) {
-            cb && cb(data)
-          }, true)
-        }
-        certificatesList = $bc_.pN.window.getAllUnValidCertificates(JSON.stringify(params))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    return certificatesList
-  },
-
-  // 安装授权证书
-  installCertificates: function (jsonObj, cb) {
-    if ($bc_.pN) {
-      try {
-        var params = jsonObj || {}
-        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
-          cb && cb(obj)
-        }, true)
-        params['certificates'] = params['certificates'] || ''
-
-        $bc_.pN.window.installCertificates(JSON.stringify(params))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-  },
-
-  // 卸载授权证书
-  uninstallCertificates: function (jsonObj, cb) {
-    if ($bc_.pN) {
-      try {
-        var params = jsonObj || {}
-        params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
-          cb && cb(obj)
-        }, true)
-        params['certificates'] = params['certificates'] || ''
-
-        $bc_.pN.window.uninstallCertificates(JSON.stringify(params))
       } catch (e) {
         console.error(e)
       }
