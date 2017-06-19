@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.6
+ * DoveMaxSDK v1.1.7
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -4120,82 +4120,85 @@ $bc_$4.App = {
     return info
   },
 
+  // 获取本地与浏览器语言标识映射表
+  nativeApple2WebKitLanguageMap: {
+    'Unknown': [''],
+    'en': ['en', 'en-US', 'en-us'], // 英语
+
+    'fr': ['fr', 'fr-FR', 'fr-fr', 'fr-US'], // French (fr) 法语
+
+    'de': ['de', 'de-DE', 'de-de', 'de-US'], // German (de) 德语
+
+    'zh-Hans': ['zh', 'zh-CN', 'zh-cn', 'zh-Hans', 'zh-Hans-US'], // Chinese (Simplified) (zh-Hans) 中文简体
+
+    'zh-Hant': ['zh-TW', 'zh-tw', 'zh-Hant', 'zh-Hant-US'], // Chinese (Traditional) (zh-Hant) 中文繁体
+
+    'ja': ['ja', 'ja-JP', 'ja-jp', 'ja-US'], // Japanese (ja) 日语
+
+    'es': ['es', 'es-ES', 'es-es', 'es-US'], // Spanish (es) 西班牙语
+
+    'es-MX': ['es-MX', 'es-XL', 'es-xl'], // Spanish (Mexico) (es-MX) 西班牙语（墨西哥）
+
+    'it': ['it', 'it-IT', 'it-it', 'it-US'], // Italian (it) 意大利语
+
+    'nl': ['nl', 'nl-NL', 'nl-nl', 'nl-US'], // Dutch (nl) 荷兰语
+
+    'ko': ['ko', 'ko-KR', 'ko-kr', 'ko-US'], // Korean (ko) 韩语
+
+    'pt': ['pt', 'pt-BR', 'pt-br', 'pt-US'], // Portuguese (pt) 葡萄牙语
+
+    'pt-PT': ['pt-PT', 'pt-pt', 'pt-US'], // Portuguese (Portugal) (pt) 葡萄牙语（葡萄牙）
+
+    'da': ['da', 'da-DK', 'da-da', 'da-US'], // Danish (da) 丹麦语
+
+    'fi': ['fi', 'fi-FI', 'fi-fi', 'fi-US'], // Finnish (fi) 芬兰语
+
+    'nb': ['nb', 'nb-NO', 'nb-no', 'nb-US'], // Norwegian Bokmal (nb) 挪威语
+
+    'sv': ['sv', 'sv-SE', 'sv-se', 'sv-US'], // Swedish (sv) 瑞典语
+
+    'ru': ['ru', 'ru-RU', 'ru-ru', 'ru-US'], // Russian (ru) 俄语
+
+    'pl': ['pl', 'pl-PL', 'pl-pl', 'pl-US'], // Polish (pl) 波兰语
+
+    'tr': ['tr', 'tr-TR', 'tr-tr', 'tr-US'], // Turkish (tr) 土耳其语
+
+    'ar': ['ar', 'AR', 'ar-US'], // Arabic (ar) 阿拉伯语
+
+    'th': ['th', 'th-TH', 'th-th', 'th-US'], // Thai (th) 泰语
+
+    'cs': ['cs', 'cs-CZ', 'cs-cz', 'cs-US'], // Czech (cs) 捷克语
+
+    'hu': ['hu', 'hu-HU', 'hu-hu', 'hu-US'], // Hungarian (hu) 匈牙利语
+
+    'ca': ['ca', 'ca-ES', 'ca-es', 'ca-US'], // Catalan (ca) 加泰罗尼亚语
+
+    'hr': ['hr', 'hr-HR', 'hr-hr', 'hr-US'], // Croatian (hr) 克罗地亚语
+
+    'el': ['el', 'el-GR', 'el-gr', 'el-US'], // Greek (el) 希腊语
+
+    'he': ['he', 'he-IL', 'he-il', 'he-US'], // Hebrew (he) 希伯来语
+
+    'ro': ['ro', 'ro-RO', 'ro-ro', 'ro-US'], // Romanian (ro) 罗马尼亚语
+
+    'sk': ['sk', 'sk-SK', 'sk-sk', 'sk-US'], // Slovak (sk) 斯洛伐克语
+
+    'uk': ['uk', 'uk-UA', 'uk-ua', 'uk-US'], // Ukrainian (uk) 乌克兰语
+
+    'id': ['id', 'ID', 'id-ID', 'id-id', 'id-US'], // Indonesian (id) 印尼语
+
+    'ms': ['ms', 'MS', 'ms-MS', 'ms-ms', 'ms-US'], // Malay (ms) 马来西亚语
+
+    'vi': ['vi', 'vi-VN', 'vi-vn', 'vi-US'] // Vietnamese (vi) 越南语
+  },
+
   // 获得兼容浏览器的语言标识, 发起者，为Native
   getCompatibleWebkitLanguageList: function (_getType) {
     var getType = _getType || 'Native2Webkit'; // 获取类型，默认是获取兼容WebKit的语言标识数组
 
     var defaultLanguage = 'en';
     // 本地对应浏览器的语言标识
-    var NativeApple2WebKitLanguageMap = {
-      'Unknown': [''],
-      'en': ['en', 'en-US', 'en-us'], // 英语
-
-      'fr': ['fr', 'fr-FR', 'fr-fr', 'fr-US'], // French (fr) 法语
-
-      'de': ['de', 'de-DE', 'de-de', 'de-US'], // German (de) 德语
-
-      'zh-Hans': ['zh', 'zh-CN', 'zh-cn', 'zh-Hans', 'zh-Hans-US'], // Chinese (Simplified) (zh-Hans) 中文简体
-
-      'zh-Hant': ['zh-TW', 'zh-tw', 'zh-Hant', 'zh-Hant-US'], // Chinese (Traditional) (zh-Hant) 中文繁体
-
-      'ja': ['ja', 'ja-JP', 'ja-jp', 'ja-US'], // Japanese (ja) 日语
-
-      'es': ['es', 'es-ES', 'es-es', 'es-US'], // Spanish (es) 西班牙语
-
-      'es-MX': ['es-MX', 'es-XL', 'es-xl'], // Spanish (Mexico) (es-MX) 西班牙语（墨西哥）
-
-      'it': ['it', 'it-IT', 'it-it', 'it-US'], // Italian (it) 意大利语
-
-      'nl': ['nl', 'nl-NL', 'nl-nl', 'nl-US'], // Dutch (nl) 荷兰语
-
-      'ko': ['ko', 'ko-KR', 'ko-kr', 'ko-US'], // Korean (ko) 韩语
-
-      'pt': ['pt', 'pt-BR', 'pt-br', 'pt-US'], // Portuguese (pt) 葡萄牙语
-
-      'pt-PT': ['pt-PT', 'pt-pt', 'pt-US'], // Portuguese (Portugal) (pt) 葡萄牙语（葡萄牙）
-
-      'da': ['da', 'da-DK', 'da-da', 'da-US'], // Danish (da) 丹麦语
-
-      'fi': ['fi', 'fi-FI', 'fi-fi', 'fi-US'], // Finnish (fi) 芬兰语
-
-      'nb': ['nb', 'nb-NO', 'nb-no', 'nb-US'], // Norwegian Bokmal (nb) 挪威语
-
-      'sv': ['sv', 'sv-SE', 'sv-se', 'sv-US'], // Swedish (sv) 瑞典语
-
-      'ru': ['ru', 'ru-RU', 'ru-ru', 'ru-US'], // Russian (ru) 俄语
-
-      'pl': ['pl', 'pl-PL', 'pl-pl', 'pl-US'], // Polish (pl) 波兰语
-
-      'tr': ['tr', 'tr-TR', 'tr-tr', 'tr-US'], // Turkish (tr) 土耳其语
-
-      'ar': ['ar', 'AR', 'ar-US'], // Arabic (ar) 阿拉伯语
-
-      'th': ['th', 'th-TH', 'th-th', 'th-US'], // Thai (th) 泰语
-
-      'cs': ['cs', 'cs-CZ', 'cs-cz', 'cs-US'], // Czech (cs) 捷克语
-
-      'hu': ['hu', 'hu-HU', 'hu-hu', 'hu-US'], // Hungarian (hu) 匈牙利语
-
-      'ca': ['ca', 'ca-ES', 'ca-es', 'ca-US'], // Catalan (ca) 加泰罗尼亚语
-
-      'hr': ['hr', 'hr-HR', 'hr-hr', 'hr-US'], // Croatian (hr) 克罗地亚语
-
-      'el': ['el', 'el-GR', 'el-gr', 'el-US'], // Greek (el) 希腊语
-
-      'he': ['he', 'he-IL', 'he-il', 'he-US'], // Hebrew (he) 希伯来语
-
-      'ro': ['ro', 'ro-RO', 'ro-ro', 'ro-US'], // Romanian (ro) 罗马尼亚语
-
-      'sk': ['sk', 'sk-SK', 'sk-sk', 'sk-US'], // Slovak (sk) 斯洛伐克语
-
-      'uk': ['uk', 'uk-UA', 'uk-ua', 'uk-US'], // Ukrainian (uk) 乌克兰语
-
-      'id': ['id', 'ID', 'id-ID', 'id-id', 'id-US'], // Indonesian (id) 印尼语
-
-      'ms': ['ms', 'MS', 'ms-MS', 'ms-ms', 'ms-US'], // Malay (ms) 马来西亚语
-
-      'vi': ['vi', 'vi-VN', 'vi-vn', 'vi-US'] // Vietnamese (vi) 越南语
-    };
+    var NativeApple2WebKitLanguageMap = this.nativeApple2WebKitLanguageMap;
 
     if (getType === 'Native2Webkit') { // 先获取Native的语言，然后查找Map
       var appleLanguage = 'en-US';
@@ -4205,6 +4208,14 @@ $bc_$4.App = {
 
       if (NativeApple2WebKitLanguageMap.hasOwnProperty(appleLanguage)) {
         return NativeApple2WebKitLanguageMap[appleLanguage]
+      }
+
+      var n2wKeys = Object.getOwnPropertyNames(NativeApple2WebKitLanguageMap);
+      for (var i = 0; i < n2wKeys.length; ++i) {
+        var valueList = NativeApple2WebKitLanguageMap[n2wKeys[i]];
+        if (valueList.indexOf(appleLanguage) > -1) {
+          return valueList
+        }
       }
 
       return NativeApple2WebKitLanguageMap[defaultLanguage]
@@ -4430,6 +4441,107 @@ $bc_$4.App = {
         }
 
         return $bc_$4.pN.window.printToPDF(JSON.stringify(params))
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  },
+
+  // /////////////////////////////////////////////////////////////////////////
+  // 查询是否需要授权证书
+  getIsNeedCertificate: function () {
+    var need = false;
+    if ($bc_$4.pN) {
+      need = $bc_$4.pN.window.getIsNeedCertificate();
+    }
+    return need
+  },
+
+  // 获取所有安装的授权证书
+  getAllInstalledCertificates: function (cb) {
+    var certificatesList = null;
+    if ($bc_$4.pN) {
+      try {
+        var params = {};
+        if (cb) {
+          params['callback'] = $bc_$4._get_callback(function (data) {
+            cb && cb(data);
+          }, true);
+        }
+        certificatesList = $bc_$4.pN.window.getAllInstalledCertificates(JSON.stringify(params));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return certificatesList
+  },
+
+  // 获取所有安装且有效的授权证书
+  getAllValidCertificates: function (cb) {
+    var certificatesList = null;
+    if ($bc_$4.pN) {
+      try {
+        var params = {};
+        if (cb) {
+          params['callback'] = $bc_$4._get_callback(function (data) {
+            cb && cb(data);
+          }, true);
+        }
+        certificatesList = $bc_$4.pN.window.getAllValidCertificates(JSON.stringify(params));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return certificatesList
+  },
+
+  // 获取授权安装且无效的授权证书
+  getAllUnValidCertificates: function (cb) {
+    var certificatesList = null;
+    if ($bc_$4.pN) {
+      try {
+        var params = {};
+        if (cb) {
+          params['callback'] = $bc_$4._get_callback(function (data) {
+            cb && cb(data);
+          }, true);
+        }
+        certificatesList = $bc_$4.pN.window.getAllUnValidCertificates(JSON.stringify(params));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return certificatesList
+  },
+
+  // 安装授权证书
+  installCertificates: function (jsonObj, cb) {
+    if ($bc_$4.pN) {
+      try {
+        var params = jsonObj || {};
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
+          cb && cb(obj);
+        }, true);
+        params['certificates'] = params['certificates'] || '';
+
+        $bc_$4.pN.window.installCertificates(JSON.stringify(params));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  },
+
+  // 卸载授权证书
+  uninstallCertificates: function (jsonObj, cb) {
+    if ($bc_$4.pN) {
+      try {
+        var params = jsonObj || {};
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
+          cb && cb(obj);
+        }, true);
+        params['certificates'] = params['certificates'] || '';
+
+        $bc_$4.pN.window.uninstallCertificates(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -8072,7 +8184,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.6',
+  version: '1.1.7',
   b$: $bc_
 };
 
@@ -11286,7 +11398,7 @@ util = _$19.extend(util, loaderWrapper);
 util = _$19.extend(util, update);
 
 var util$1 = {
-  version: '1.1.6',
+  version: '1.1.7',
   util: util
 };
 
@@ -11313,7 +11425,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.6'
+  version: '1.1.7'
 };
 
 return index;
