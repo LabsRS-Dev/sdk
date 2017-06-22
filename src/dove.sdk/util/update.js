@@ -88,32 +88,6 @@ uu$.checkPatches = function (info) {
   }, function () {})
 }
 
-// 内核加入自启动部分代码
-try {
-  var $ = common.getJQuery$()
-  var b$ = common.getBSb$()
-  if ($) {
-    $(document).ready(function () {
-      console.log(
-        '-------------Delayed loading method, do not reflect here-------')
-
-      // / 默认添加提示新版本
-      setTimeout(function () {
-        uu$.checkStartInfo()
-
-        if (b$.App.getSandboxEnable() && b$.App.getAppRunOnOS() === 'MacOSX') {
-          console.log('------------- common app starting .... -------')
-        } else {
-          uu$.checkUpdate()
-          // uu$.checkPatches()
-        }
-      }, 35 * 1000) // 35sec
-    })
-  }
-} catch (e) {
-  console.error(e)
-}
-
 // -----------------------------------------------
 const update = uu$
 export {

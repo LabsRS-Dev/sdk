@@ -9,6 +9,7 @@ import underscore from '../underscore'
 import { update } from './update'
 import { webHelper } from './webHelper'
 import { certificateManager } from './certificateManager'
+import { autoStart } from './autoStart'
 
 var _ = underscore._
 
@@ -58,6 +59,7 @@ util = _.extend(util, loadLanguage)
 util = _.extend(util, loaderWrapper)
 util = _.extend(util, update)
 util = _.extend(util, certificateManager)
+util = _.extend(util, autoStart)
 
 export default {
   version: '__VERSION__',
