@@ -1,21 +1,23 @@
 import { common } from './common'
 import { communication } from './communication'
 import { loaderWrapper } from './loaderWrapper'
+import underscore from '../underscore'
+var _ = underscore._
 
 // 自动更新设置
 /**
  * appId, 指定AppID
  * promptText, 指定提示说明
  * getDataCB. 获得数据后的处理方式
- * cb, 内置处理完成后，回调处理
+ * foundNewVersionCallback, 内置处理完成后，回调处理
  */
 var uu$ = {}
 uu$.hasUpdateChecked = false
-uu$.checkUpdate = function (appId, promptText, getDataCB, cb) {
+uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallback) {
   try {
     var t$ = this
     var b$ = common.getBSb$()
-    var $ = common.getJQuery$()
+    // var $ = common.getJQuery$()
 
     var _checkUpdate = function (data) {
       try {
@@ -41,9 +43,13 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, cb) {
           if (common.compareVersion(lastVersion, curAppVersion) === 1) {
             var foundNewVersion = promptText || data.checkUpdate.prompt ||
               'The new version has been released.'
-            alert(foundNewVersion)
-            updateURL !== '' && b$.App.open(updateURL)
-            cb && cb(data)
+
+            if (_.isFunction(foundNewVersionCallback)) {
+              foundNewVersionCallback(data)
+            } else {
+              alert(foundNewVersion)
+              updateURL !== '' && b$.App.open(updateURL)
+            }
           }
         }
       } catch (e) {
@@ -52,16 +58,23 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, cb) {
     }
 
     // 尝试读取服务器配置
-    var jsonFile = appId || b$.App.getAppId() + '.json'
-    var serverUrl = 'https://romanysoft.github.io/assert-config/configs/' + jsonFile
-    $.getJSON(serverUrl, function (data) {
-      if (t$.hasUpdateChecked) return
+    if (t$.hasUpdateChecked) return
+
+    const info = {
+      machine: b$.App.getSerialNumber(),
+      os: b$.App.getAppRunOnOS(),
+      sandbox: b$.App.getSandboxEnable(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion()
+    }
+
+    // 从远程服务中获取更新信息
+    communication.commitMessage('/services/get_update_info', info, (_data) => {
       t$.hasUpdateChecked = true
 
-      data = typeof data === 'object' ? data : {}
-      data = data instanceof Array ? {
-        'data': data
-      } : data
+      var data = _.isObject(_data) ? _data : {}
+      data = _.isArray(data) ? { 'data': data } : data
       getDataCB && getDataCB(data)
       _checkUpdate(data)
     })

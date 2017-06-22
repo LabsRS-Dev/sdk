@@ -2,20 +2,38 @@ import { common } from './common'
 import { update } from './update'
 import { certificateManager } from './certificateManager'
 
+var $ = common.getJQuery$()
+var b$ = common.getBSb$()
+
+//
+function certificateManagerInit () {
+  var cerMgr = certificateManager.CertificateManagerOnline
+
+  if (b$.App.getSandboxEnable()) return
+
+  // 自动启动授权管理注册机器
+  cerMgr.registerMachine()
+
+  // 自动检测当前是否已经注册，已经注册的话,
+  if (b$.App.getIsRegistered()) {
+    const regInfo = b$.App.getRegInfoExJSONString()
+    if (regInfo.certificate) {
+      cerMgr.bindCertificate(regInfo.certificate)
+    }
+  }
+}
+
 // 内核加入自启动部分代码
 try {
-  var $ = common.getJQuery$()
-  var b$ = common.getBSb$()
-  var cerMgr = certificateManager.CertificateManagerOnline
   if ($) {
     $(document).ready(function () {
       console.log(
         '-------------Delayed loading method, do not reflect here-------')
 
-      // 启动授权管理注册机器
-      cerMgr.registerMachine()
+      // 授权证书管理初始化
+      certificateManagerInit()
 
-      // / 默认添加提示新版本
+      // 默认添加提示新版本
       setTimeout(function () {
         update.checkStartInfo()
 

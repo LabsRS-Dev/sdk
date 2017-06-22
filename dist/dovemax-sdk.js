@@ -2943,6 +2943,16 @@ $bc_$4.App = {
   },
 
   // 获得App内部当前注册信息(证书信息)更多信息
+  /**
+    "{\"certificate\":
+    \"eyJsaWNlbnNlIjoiMTQ5ODAzNTA4NC0xNTE2NDY0MDAwXG4wODhlYjk3YTMxYWZjMDRhYzM2MWM3NDkxYjg1YzUzZFxuYjBmZGNiYmU0N2JjMmFhMDc5Nzc5MmE4MGIxMWM1MDIiLCJuYW1lIjoiVXNlck5hbWVfX251bS45RzEwRSJ9\",
+    \"data\":
+    {\"registeredOrIsValid\":true,\"noRegType\":0,
+    \"endDate\":\"1516464000\",\"regDate\":\"1498035084\",\"noRegInfo\":\"\",
+    \"endDateStr\":\"2018-01-21 00:00:00\",
+    \"license\":\"1498035084-1516464000\\n088eb97a31afc04ac361c7491b85c53d\\nb0fdcbbe47bc2aa0797792a80b11c502\",
+    \"regDateStr\":\"2017-06-21 16:51:24\",\"name\":\"UserName__num.9G10E\",\"serviceEnd\":false}}"
+  **/
   getRegInfoExJSONString: function () {
     if ($bc_$4.pN) {
       var str = $bc_$4.pN.app.getRegInfoExJSONString();
@@ -11223,20 +11233,22 @@ function autoForJquery$5 (ref) {
 var loaderWrapper = uu$$5;
 autoForJquery$5(uu$$5);
 
+var _$22 = underscore._;
+
 // 自动更新设置
 /**
  * appId, 指定AppID
  * promptText, 指定提示说明
  * getDataCB. 获得数据后的处理方式
- * cb, 内置处理完成后，回调处理
+ * foundNewVersionCallback, 内置处理完成后，回调处理
  */
 var uu$$7 = {};
 uu$$7.hasUpdateChecked = false;
-uu$$7.checkUpdate = function (appId, promptText, getDataCB, cb) {
+uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallback) {
   try {
     var t$ = this;
     var b$ = common$1.getBSb$();
-    var $ = common$1.getJQuery$();
+    // var $ = common.getJQuery$()
 
     var _checkUpdate = function (data) {
       try {
@@ -11262,9 +11274,13 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, cb) {
           if (common$1.compareVersion(lastVersion, curAppVersion) === 1) {
             var foundNewVersion = promptText || data.checkUpdate.prompt ||
               'The new version has been released.';
-            alert(foundNewVersion);
-            updateURL !== '' && b$.App.open(updateURL);
-            cb && cb(data);
+
+            if (_$22.isFunction(foundNewVersionCallback)) {
+              foundNewVersionCallback(data);
+            } else {
+              alert(foundNewVersion);
+              updateURL !== '' && b$.App.open(updateURL);
+            }
           }
         }
       } catch (e) {
@@ -11273,16 +11289,23 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, cb) {
     };
 
     // 尝试读取服务器配置
-    var jsonFile = appId || b$.App.getAppId() + '.json';
-    var serverUrl = 'https://romanysoft.github.io/assert-config/configs/' + jsonFile;
-    $.getJSON(serverUrl, function (data) {
-      if (t$.hasUpdateChecked) { return }
+    if (t$.hasUpdateChecked) { return }
+
+    var info = {
+      machine: b$.App.getSerialNumber(),
+      os: b$.App.getAppRunOnOS(),
+      sandbox: b$.App.getSandboxEnable(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion()
+    };
+
+    // 从远程服务中获取更新信息
+    communication.commitMessage('/services/get_update_info', info, function (_data) {
       t$.hasUpdateChecked = true;
 
-      data = typeof data === 'object' ? data : {};
-      data = data instanceof Array ? {
-        'data': data
-      } : data;
+      var data = _$22.isObject(_data) ? _data : {};
+      data = _$22.isArray(data) ? { 'data': data } : data;
       getDataCB && getDataCB(data);
       _checkUpdate(data);
     });
@@ -11392,20 +11415,38 @@ uu$$8.CertificateManagerOnline = {
 // -----------------------------------------------
 var certificateManager = uu$$8;
 
+var $ = common$1.getJQuery$();
+var b$$1 = common$1.getBSb$();
+
+//
+function certificateManagerInit () {
+  var cerMgr = certificateManager.CertificateManagerOnline;
+
+  if (b$$1.App.getSandboxEnable()) { return }
+
+  // 自动启动授权管理注册机器
+  cerMgr.registerMachine();
+
+  // 自动检测当前是否已经注册，已经注册的话,
+  if (b$$1.App.getIsRegistered()) {
+    var regInfo = b$$1.App.getRegInfoExJSONString();
+    if (regInfo.certificate) {
+      cerMgr.bindCertificate(regInfo.certificate);
+    }
+  }
+}
+
 // 内核加入自启动部分代码
 try {
-  var $ = common$1.getJQuery$();
-  var b$$1 = common$1.getBSb$();
-  var cerMgr = certificateManager.CertificateManagerOnline;
   if ($) {
     $(document).ready(function () {
       console.log(
         '-------------Delayed loading method, do not reflect here-------');
 
-      // 启动授权管理注册机器
-      cerMgr.registerMachine();
+      // 授权证书管理初始化
+      certificateManagerInit();
 
-      // / 默认添加提示新版本
+      // 默认添加提示新版本
       setTimeout(function () {
         update.checkStartInfo();
 
