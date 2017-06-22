@@ -103,6 +103,16 @@ $bc_.App = {
   },
 
   // 获得App内部当前注册信息(证书信息)更多信息
+  /**
+    "{\"certificate\":
+    \"eyJsaWNlbnNlIjoiMTQ5ODAzNTA4NC0xNTE2NDY0MDAwXG4wODhlYjk3YTMxYWZjMDRhYzM2MWM3NDkxYjg1YzUzZFxuYjBmZGNiYmU0N2JjMmFhMDc5Nzc5MmE4MGIxMWM1MDIiLCJuYW1lIjoiVXNlck5hbWVfX251bS45RzEwRSJ9\",
+    \"data\":
+    {\"registeredOrIsValid\":true,\"noRegType\":0,
+    \"endDate\":\"1516464000\",\"regDate\":\"1498035084\",\"noRegInfo\":\"\",
+    \"endDateStr\":\"2018-01-21 00:00:00\",
+    \"license\":\"1498035084-1516464000\\n088eb97a31afc04ac361c7491b85c53d\\nb0fdcbbe47bc2aa0797792a80b11c502\",
+    \"regDateStr\":\"2017-06-21 16:51:24\",\"name\":\"UserName__num.9G10E\",\"serviceEnd\":false}}"
+  **/
   getRegInfoExJSONString: function () {
     if ($bc_.pN) {
       var str = $bc_.pN.app.getRegInfoExJSONString()
