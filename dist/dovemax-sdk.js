@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.7
+ * DoveMaxSDK v1.1.8
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -2923,7 +2923,7 @@ $bc_$4.App = {
     return false
   },
 
-  // 获取App是否已经注册
+  // 获取App是否已经注册(证书信息已经安装)
   getIsRegistered: function () {
     var t$ = this;
     if ($bc_$4.pN) {
@@ -2933,7 +2933,7 @@ $bc_$4.App = {
     return false
   },
 
-  // 获取App内部注册信息
+  // 获取App内部注册信息(证书信息)
   getRegInfoJSONString: function () {
     if ($bc_$4.pN) {
       var str = $bc_$4.pN.app.getRegInfoJSONString();
@@ -2941,6 +2941,86 @@ $bc_$4.App = {
     }
     return ''
   },
+
+  // 获得App内部当前注册信息(证书信息)更多信息
+  getRegInfoExJSONString: function () {
+    if ($bc_$4.pN) {
+      var str = $bc_$4.pN.app.getRegInfoExJSONString();
+      return str
+    }
+    return ''
+  },
+
+  // /////////////////////////////////////////////////////////////////////////
+  // 查询是否为授权证书订阅版本
+  getIsSubscriptionProduct: function () {
+    var isSubscriptionProduct = false;
+    if ($bc_$4.pN) {
+      isSubscriptionProduct = $bc_$4.pN.app.getIsSubscriptionProduct();
+    }
+    return isSubscriptionProduct
+  },
+
+  // 查询是否需要授权证书{必须满足为订阅产品及没有有效注册}
+  getIsNeedCertificate: function () {
+    var need = false;
+    if ($bc_$4.pN) {
+      need = $bc_$4.pN.app.getIsNeedCertificate();
+    }
+    return need
+  },
+
+  // 本地验证证书的是否有效
+  validCertificate: function (jsonObj, cb) {
+    if ($bc_$4.pN) {
+      try {
+        var params = jsonObj || {};
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
+          cb && cb(obj);
+        }, true);
+        params['certificate'] = params['certificate'] || '';
+
+        $bc_$4.pN.window.validCertificate(JSON.stringify(params));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  },
+
+  // 本地安装授权证书
+  installCertificate: function (jsonObj, cb) {
+    if ($bc_$4.pN) {
+      try {
+        var params = jsonObj || {};
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
+          cb && cb(obj);
+        }, true);
+        params['certificate'] = params['certificate'] || '';
+
+        $bc_$4.pN.window.installCertificate(JSON.stringify(params));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  },
+
+  // 本地卸载所有授权证书（即：当前正在安装或者使用的证书）
+  uninstallAllCertificates: function (jsonObj, cb) {
+    if ($bc_$4.pN) {
+      try {
+        var params = jsonObj || {};
+        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
+          cb && cb(obj);
+        }, true);
+
+        $bc_$4.pN.window.uninstallAllCertificates(JSON.stringify(params));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  },
+
+  // /////////////////////////////////////////////////////////////////////////////
 
   // 获取App认证的内部序列号信息
   getSerialNumber: function () {
@@ -4441,107 +4521,6 @@ $bc_$4.App = {
         }
 
         return $bc_$4.pN.window.printToPDF(JSON.stringify(params))
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  },
-
-  // /////////////////////////////////////////////////////////////////////////
-  // 查询是否需要授权证书
-  getIsNeedCertificate: function () {
-    var need = false;
-    if ($bc_$4.pN) {
-      need = $bc_$4.pN.window.getIsNeedCertificate();
-    }
-    return need
-  },
-
-  // 获取所有安装的授权证书
-  getAllInstalledCertificates: function (cb) {
-    var certificatesList = null;
-    if ($bc_$4.pN) {
-      try {
-        var params = {};
-        if (cb) {
-          params['callback'] = $bc_$4._get_callback(function (data) {
-            cb && cb(data);
-          }, true);
-        }
-        certificatesList = $bc_$4.pN.window.getAllInstalledCertificates(JSON.stringify(params));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return certificatesList
-  },
-
-  // 获取所有安装且有效的授权证书
-  getAllValidCertificates: function (cb) {
-    var certificatesList = null;
-    if ($bc_$4.pN) {
-      try {
-        var params = {};
-        if (cb) {
-          params['callback'] = $bc_$4._get_callback(function (data) {
-            cb && cb(data);
-          }, true);
-        }
-        certificatesList = $bc_$4.pN.window.getAllValidCertificates(JSON.stringify(params));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return certificatesList
-  },
-
-  // 获取授权安装且无效的授权证书
-  getAllUnValidCertificates: function (cb) {
-    var certificatesList = null;
-    if ($bc_$4.pN) {
-      try {
-        var params = {};
-        if (cb) {
-          params['callback'] = $bc_$4._get_callback(function (data) {
-            cb && cb(data);
-          }, true);
-        }
-        certificatesList = $bc_$4.pN.window.getAllUnValidCertificates(JSON.stringify(params));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return certificatesList
-  },
-
-  // 安装授权证书
-  installCertificates: function (jsonObj, cb) {
-    if ($bc_$4.pN) {
-      try {
-        var params = jsonObj || {};
-        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
-          cb && cb(obj);
-        }, true);
-        params['certificates'] = params['certificates'] || '';
-
-        $bc_$4.pN.window.installCertificates(JSON.stringify(params));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  },
-
-  // 卸载授权证书
-  uninstallCertificates: function (jsonObj, cb) {
-    if ($bc_$4.pN) {
-      try {
-        var params = jsonObj || {};
-        params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
-          cb && cb(obj);
-        }, true);
-        params['certificates'] = params['certificates'] || '';
-
-        $bc_$4.pN.window.uninstallCertificates(JSON.stringify(params));
       } catch (e) {
         console.error(e);
       }
@@ -8184,7 +8163,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.7',
+  version: '1.1.8',
   b$: $bc_
 };
 
@@ -8476,7 +8455,7 @@ uu$$1.getp = function (url, data, noCache, cb, noCancel) {
 
     try {
       if (b$.App) {
-        data = window.$.extend(data, {
+        data = _$21.extend(data, {
           'app_name': b$.App.getAppName() || 'app_name',
           'app_bundle_id': b$.App.getAppId() || 'app_id',
           'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
@@ -8499,6 +8478,18 @@ uu$$1.getp = function (url, data, noCache, cb, noCancel) {
 };
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * 通用的提交信息接口
+ */
+uu$$1.commitMessage = function (apiUrl, messageObj, cb) {
+  if ( apiUrl === void 0 ) apiUrl = '/';
+  if ( messageObj === void 0 ) messageObj = {};
+  if ( cb === void 0 ) cb = function () {};
+
+  console.log('--- $.commitMessage ---');
+  var t$ = this;
+  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb);
+};
 
 /**
  * 向服务器提交信息,用途，与服务器上的交互，可以收集错误信息
@@ -8507,9 +8498,7 @@ uu$$1.reportInfo = function (info) {
   console.log('--- $.reportInfo ---');
   var t$ = this;
 
-  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', {
-
-  }, true, function (o) {
+  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', info || {}, true, function (o) {
     console.log('get_report_feedback:' + common$1.obj2string(o));
     if (_$21.isObject(o)) {
       try {
@@ -11320,23 +11309,110 @@ uu$$7.checkPatches = function (info) {
   }, function () {});
 };
 
+// -----------------------------------------------
+var update = uu$$7;
+
+var b$ = common$1.getBSb$();
+// 产品授权使用证书管理
+var uu$$8 = {};
+uu$$8.CertificateManagerOnline = {
+
+  // 注册机器
+  registerMachine: function (cb) {
+    if ( cb === void 0 ) cb = function () {};
+
+    if (!b$.App.getSerialNumber()) { return }
+
+    var info = {
+      machine: b$.App.getSerialNumber(),
+      os: b$.App.getAppRunOnOS()
+    };
+    communication.commitMessage('/services/machine_register', info, cb);
+  },
+
+  // 验证授权证书是否有效
+  validateCertificate: function (certificate, cb) {
+    if ( cb === void 0 ) cb = function () {};
+
+    if (!b$.App.getSerialNumber()) { return }
+
+    var info = {
+      machine: b$.App.getSerialNumber(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion(),
+      certificate: certificate
+    };
+    communication.commitMessage('/services/certificate_validate', info, cb);
+  },
+
+  // 绑定授权证书
+  bindCertificate: function (certificate, cb) {
+    if ( cb === void 0 ) cb = function () {};
+
+    if (!b$.App.getSerialNumber()) { return }
+
+    var info = {
+      machine: b$.App.getSerialNumber(),
+      certificate: certificate
+    };
+    communication.commitMessage('/services/machine_certificate_bind', info, cb);
+  },
+
+  // 取消绑定授权证书
+  unBindCertificate: function (certificate, cb) {
+    if ( cb === void 0 ) cb = function () {};
+
+    if (!b$.App.getSerialNumber()) { return }
+
+    var info = {
+      machine: b$.App.getSerialNumber(),
+      certificate: certificate
+    };
+    communication.commitMessage('/services/machine_certificate_unbind', info, cb);
+  },
+
+  // 获取绑定的所有证书
+  fetchCertificates: function (cb) {
+    if ( cb === void 0 ) cb = function () {};
+
+    if (!b$.App.getSerialNumber()) { return }
+
+    var info = {
+      machine: b$.App.getSerialNumber(),
+      os: b$.App.getAppRunOnOS(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion()
+    };
+    communication.commitMessage('/services/machine_certificate_fetch', info, cb);
+  }
+};
+
+// -----------------------------------------------
+var certificateManager = uu$$8;
+
 // 内核加入自启动部分代码
 try {
   var $ = common$1.getJQuery$();
-  var b$ = common$1.getBSb$();
+  var b$$1 = common$1.getBSb$();
+  var cerMgr = certificateManager.CertificateManagerOnline;
   if ($) {
     $(document).ready(function () {
       console.log(
         '-------------Delayed loading method, do not reflect here-------');
 
+      // 启动授权管理注册机器
+      cerMgr.registerMachine();
+
       // / 默认添加提示新版本
       setTimeout(function () {
-        uu$$7.checkStartInfo();
+        update.checkStartInfo();
 
-        if (b$.App.getSandboxEnable() && b$.App.getAppRunOnOS() === 'MacOSX') {
+        if (b$$1.App.getSandboxEnable() && b$$1.App.getAppRunOnOS() === 'MacOSX') {
           console.log('------------- common app starting .... -------');
         } else {
-          uu$$7.checkUpdate();
+          update.checkUpdate();
           // uu$.checkPatches()
         }
       }, 35 * 1000); // 35sec
@@ -11346,8 +11422,9 @@ try {
   console.error(e);
 }
 
+var uu$$9 = {};
 // -----------------------------------------------
-var update = uu$$7;
+var autoStart = uu$$9;
 
 var _$19 = underscore._;
 
@@ -11396,9 +11473,11 @@ util = _$19.extend(util, googleLangIDMaps);
 util = _$19.extend(util, loadLanguage);
 util = _$19.extend(util, loaderWrapper);
 util = _$19.extend(util, update);
+util = _$19.extend(util, certificateManager);
+util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.7',
+  version: '1.1.8',
   util: util
 };
 
@@ -11425,7 +11504,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.7'
+  version: '1.1.8'
 };
 
 return index;
