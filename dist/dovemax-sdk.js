@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.8
+ * DoveMaxSDK v1.1.9
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -8173,7 +8173,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.8',
+  version: '1.1.9',
   b$: $bc_
 };
 
@@ -11436,6 +11436,19 @@ function certificateManagerInit () {
   }
 }
 
+function updateCheckInit () {
+  setTimeout(function () {
+    update.checkStartInfo();
+
+    if (b$$1.App.getSandboxEnable() && b$$1.App.getAppRunOnOS() === 'MacOSX') {
+      console.log('------------- common app starting .... -------');
+    } else {
+      update.checkUpdate();
+          // uu$.checkPatches()
+    }
+  }, 35 * 1000); // 35sec
+}
+
 // 内核加入自启动部分代码
 try {
   if ($) {
@@ -11447,16 +11460,7 @@ try {
       certificateManagerInit();
 
       // 默认添加提示新版本
-      setTimeout(function () {
-        update.checkStartInfo();
-
-        if (b$$1.App.getSandboxEnable() && b$$1.App.getAppRunOnOS() === 'MacOSX') {
-          console.log('------------- common app starting .... -------');
-        } else {
-          update.checkUpdate();
-          // uu$.checkPatches()
-        }
-      }, 35 * 1000); // 35sec
+      updateCheckInit();
     });
   }
 } catch (e) {
@@ -11518,7 +11522,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.8',
+  version: '1.1.9',
   util: util
 };
 
@@ -11545,7 +11549,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.8'
+  version: '1.1.9'
 };
 
 return index;
