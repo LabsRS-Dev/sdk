@@ -5,7 +5,7 @@ import { certificateManager } from './certificateManager'
 var $ = common.getJQuery$()
 var b$ = common.getBSb$()
 
-//
+// 证书授权初始化
 function certificateManagerInit () {
   var cerMgr = certificateManager.CertificateManagerOnline
 
@@ -16,13 +16,16 @@ function certificateManagerInit () {
 
   // 自动检测当前是否已经注册，已经注册的话,
   if (b$.App.getIsRegistered()) {
-    const regInfo = b$.App.getRegInfoExJSONString()
+    const regInfo = JSON.parse(b$.App.getRegInfoExJSONString())
     if (regInfo.certificate) {
-      cerMgr.bindCertificate(regInfo.certificate)
+      cerMgr.bindCertificate(regInfo.certificate, () => {
+        console.log('------------- bindCertificate .... -------')
+      })
     }
   }
 }
 
+// 更新检测初始化
 function updateCheckInit () {
   setTimeout(function () {
     update.checkStartInfo()

@@ -11414,7 +11414,7 @@ var certificateManager = uu$$8;
 var $ = common$1.getJQuery$();
 var b$$1 = common$1.getBSb$();
 
-//
+// 证书授权初始化
 function certificateManagerInit () {
   var cerMgr = certificateManager.CertificateManagerOnline;
 
@@ -11425,13 +11425,16 @@ function certificateManagerInit () {
 
   // 自动检测当前是否已经注册，已经注册的话,
   if (b$$1.App.getIsRegistered()) {
-    var regInfo = b$$1.App.getRegInfoExJSONString();
+    var regInfo = JSON.parse(b$$1.App.getRegInfoExJSONString());
     if (regInfo.certificate) {
-      cerMgr.bindCertificate(regInfo.certificate);
+      cerMgr.bindCertificate(regInfo.certificate, function () {
+        console.log('------------- bindCertificate .... -------');
+      });
     }
   }
 }
 
+// 更新检测初始化
 function updateCheckInit () {
   setTimeout(function () {
     update.checkStartInfo();
