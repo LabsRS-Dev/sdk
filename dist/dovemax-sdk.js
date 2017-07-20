@@ -2918,10 +2918,16 @@ $bc_$4.App = {
   getAvailableFonts: function () {
     if ($bc_$4.pN) {
       var fontsDic = $bc_$4.pN.app.getAvailableFonts();
+      try {
+        return JSON.parse(fontsDic)
+      } catch (e) {
+        console.error(e);
+      }
       return fontsDic
     }
 
     return {
+      // {familyName:"", fontName:"", displayName:""}
       fonts: []
     }
   },

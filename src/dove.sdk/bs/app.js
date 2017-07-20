@@ -78,10 +78,16 @@ $bc_.App = {
   getAvailableFonts: function () {
     if ($bc_.pN) {
       var fontsDic = $bc_.pN.app.getAvailableFonts()
+      try {
+        return JSON.parse(fontsDic)
+      } catch (e) {
+        console.error(e)
+      }
       return fontsDic
     }
 
     return {
+      // {familyName:"", fontName:"", displayName:""}
       fonts: []
     }
   },
