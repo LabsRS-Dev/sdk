@@ -74,6 +74,18 @@ $bc_.App = {
     return 'MacOSX' // 原生返回MacOSX，其他的参照Electron
   },
 
+  // 获得系统中可用的字体数据
+  getAvailableFonts: function () {
+    if ($bc_.pN) {
+      var fontsDic = $bc_.pN.app.getAvailableFonts()
+      return fontsDic
+    }
+
+    return {
+      fonts: []
+    }
+  },
+
   // 获得App是否在沙盒内
   getSandboxEnable: function () {
     if ($bc_.pN) {

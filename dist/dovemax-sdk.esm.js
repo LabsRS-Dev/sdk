@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.11
+ * DoveMaxSDK v1.1.12
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -2906,6 +2906,18 @@ $bc_$4.App = {
       return t.sysOS
     }
     return 'MacOSX' // 原生返回MacOSX，其他的参照Electron
+  },
+
+  // 获得系统中可用的字体数据
+  getAvailableFonts: function () {
+    if ($bc_$4.pN) {
+      var fontsDic = $bc_$4.pN.app.getAvailableFonts();
+      return fontsDic
+    }
+
+    return {
+      fonts: []
+    }
   },
 
   // 获得App是否在沙盒内
@@ -8167,7 +8179,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.11',
+  version: '1.1.12',
   b$: $bc_
 };
 
@@ -11522,7 +11534,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.11',
+  version: '1.1.12',
   util: util
 };
 
@@ -11549,7 +11561,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.11'
+  version: '1.1.12'
 };
 
 export default index_esm;
