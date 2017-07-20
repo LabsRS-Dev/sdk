@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.9
+ * DoveMaxSDK v1.1.11
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -8173,7 +8173,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.9',
+  version: '1.1.11',
   b$: $bc_
 };
 
@@ -11251,6 +11251,9 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
     // var $ = common.getJQuery$()
 
     var _checkUpdate = function (data) {
+      // 先检测是否有checkUpdate属性
+      if (!data.checkUpdate) { return }
+
       try {
         var lastVersion = data.checkUpdate.lastVersion || '';
         var updateURL = data.checkUpdate.updateURL || '';
@@ -11525,7 +11528,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.9',
+  version: '1.1.11',
   util: util
 };
 
@@ -11552,7 +11555,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.9'
+  version: '1.1.11'
 };
 
 return index;

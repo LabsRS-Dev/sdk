@@ -20,6 +20,9 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
     // var $ = common.getJQuery$()
 
     var _checkUpdate = function (data) {
+      // 先检测是否有checkUpdate属性
+      if (!data.checkUpdate) return
+
       try {
         var lastVersion = data.checkUpdate.lastVersion || ''
         var updateURL = data.checkUpdate.updateURL || ''
