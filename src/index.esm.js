@@ -3,12 +3,14 @@ import { Observable, SelfClass } from './dove.sdk/observable'
 import b$ from './dove.sdk/bs/index'
 import underscore from './dove.sdk/underscore'
 import util from './dove.sdk/util/index'
+import lodash from 'lodash'
 
 try {
   if (window) {
     window.BS = b$
     window.Romanysoft = {
       _: underscore._,
+      lodash: lodash,
       Util: util,
       Observable: Observable,
       SelfClass: SelfClass,
@@ -24,6 +26,7 @@ try {
 export default {
   _: underscore._,
   Util: util,
+  lodash: lodash,
   BS: b$,
   Observable: Observable,
   SelfClass: SelfClass,

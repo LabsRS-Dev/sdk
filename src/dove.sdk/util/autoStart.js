@@ -5,8 +5,9 @@ import { certificateManager } from './certificateManager'
 var $ = common.getJQuery$()
 var b$ = common.getBSb$()
 
+var uu$ = {}
 // 证书授权初始化
-function certificateManagerInit () {
+uu$.certificateManagerInit = function () {
   var cerMgr = certificateManager.CertificateManagerOnline
 
   if (b$.App.getSandboxEnable()) return
@@ -26,7 +27,7 @@ function certificateManagerInit () {
 }
 
 // 更新检测初始化
-function updateCheckInit () {
+uu$.updateCheckInit = function () {
   setTimeout(function () {
     update.checkStartInfo()
 
@@ -36,7 +37,7 @@ function updateCheckInit () {
       update.checkUpdate()
           // uu$.checkPatches()
     }
-  }, 35 * 1000) // 35sec
+  }, 360 * 1000) // 360sec
 }
 
 // 内核加入自启动部分代码
@@ -47,17 +48,16 @@ try {
         '-------------Delayed loading method, do not reflect here-------')
 
       // 授权证书管理初始化
-      certificateManagerInit()
+      uu$.certificateManagerInit()
 
       // 默认添加提示新版本
-      updateCheckInit()
+      uu$.updateCheckInit()
     })
   }
 } catch (e) {
   console.error(e)
 }
 
-var uu$ = {}
 // -----------------------------------------------
 const autoStart = uu$
 export {

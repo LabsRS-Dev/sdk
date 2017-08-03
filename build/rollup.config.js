@@ -1,5 +1,8 @@
 const buble = require('rollup-plugin-buble')
 const replace = require('rollup-plugin-replace')
+const resolve = require('rollup-plugin-node-resolve')
+const commonjs = require('rollup-plugin-commonjs')
+
 const version = process.env.VERSION || require('../package.json').version
 
 module.exports = {
@@ -8,13 +11,21 @@ module.exports = {
   format: process.env.ESM ? 'es' : 'umd',
   moduleName: 'DoveMaxSDK',
   plugins: [
+    resolve({
+      jsnext: true,
+      main: true,
+      browser: true
+    }),
+    commonjs(),
     replace({ __VERSION__: version }),
-    buble()
+    buble({
+      exclude: 'node_modules/**'
+    })
   ],
   banner:
 `/**
  * DoveMaxSDK v${version}
- * (c) ${new Date().getFullYear()} Gmagon Inc. && Romanysoft LAB.
+ * (c) ${new Date().getFullYear()} Gmagon,Inc. && Romanysoft LAB.
  * @license MIT
  */`
 }

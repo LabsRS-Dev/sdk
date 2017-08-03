@@ -1,6 +1,8 @@
 const path = require('path')
 const buble = require('rollup-plugin-buble')
 const replace = require('rollup-plugin-replace')
+const node_resolve = require('rollup-plugin-node-resolve')
+const commonjs = require('rollup-plugin-commonjs')
 const version = process.env.VERSION || require('../package.json').version
 const banner =
 `/**
@@ -44,10 +46,18 @@ function genConfig (opts) {
     banner,
     moduleName: 'DoveMaxSDK',
     plugins: [
+      node_resolve({
+        jsnext: true,
+        main: true,
+        browser: true
+      }),
+      commonjs(),
       replace({
         __VERSION__: version
       }),
-      buble()
+      buble({
+        exclude: 'node_modules/**'
+      })
     ]
   }
 
