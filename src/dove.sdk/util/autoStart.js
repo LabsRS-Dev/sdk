@@ -13,6 +13,7 @@ uu$.certificateManagerInit = function () {
   if (b$.App.getSandboxEnable()) return
 
   // 自动启动授权管理注册机器
+  console.log('------------- registerMachine -------------')
   cerMgr.registerMachine()
 
   // 自动检测当前是否已经注册，已经注册的话,
