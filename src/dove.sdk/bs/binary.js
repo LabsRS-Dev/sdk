@@ -193,6 +193,36 @@ $bc_.Binary = {
     }
   },
 
+  getImageFileInfo: function (paramOptions, cb) {
+    try {
+      var params = {}
+      // 限制内部属性：
+      params['callback'] = paramOptions['callback'] || $bc_._get_callback(function (obj) {
+        cb && cb(obj)
+      }, true)
+      params['path'] = paramOptions['path'] || '' // image 文件路径
+
+      // / 统一向后兼容处理
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key]
+        }
+      }
+
+      if ($bc_.pN) {
+        $bc_.pN.binaryFileWriter.getImageFileInfo(JSON.stringify(params))
+      } else {
+        console.warn('call native engine get image file info ...')
+        cb && cb({
+          success: true,
+          data: { width: 512, height: 512 }
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  },
+
   Sound: {
     playResourceSoundFile: function (fileUrl) {
       if ($bc_.pN) $bc_.pN.sound.play(fileUrl)

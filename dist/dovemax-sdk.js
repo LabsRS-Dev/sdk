@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.13
+ * DoveMaxSDK v1.1.14
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -5480,6 +5480,36 @@ $bc_$10.Binary = {
     }
   },
 
+  getImageFileInfo: function (paramOptions, cb) {
+    try {
+      var params = {};
+      // 限制内部属性：
+      params['callback'] = paramOptions['callback'] || $bc_$10._get_callback(function (obj) {
+        cb && cb(obj);
+      }, true);
+      params['path'] = paramOptions['path'] || ''; // image 文件路径
+
+      // / 统一向后兼容处理
+      for (var key in paramOptions) {
+        if (paramOptions.hasOwnProperty(key)) {
+          params[key] = paramOptions[key];
+        }
+      }
+
+      if ($bc_$10.pN) {
+        $bc_$10.pN.binaryFileWriter.getImageFileInfo(JSON.stringify(params));
+      } else {
+        console.warn('call native engine get image file info ...');
+        cb && cb({
+          success: true,
+          data: { width: 512, height: 512 }
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
   Sound: {
     playResourceSoundFile: function (fileUrl) {
       if ($bc_$10.pN) { $bc_$10.pN.sound.play(fileUrl); }
@@ -8191,7 +8221,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.13',
+  version: '1.1.14',
   b$: $bc_
 };
 
@@ -11447,6 +11477,7 @@ uu$$9.certificateManagerInit = function () {
   if (b$$1.App.getSandboxEnable()) { return }
 
   // 自动启动授权管理注册机器
+  console.log('------------- registerMachine -------------');
   cerMgr.registerMachine();
 
   // 自动检测当前是否已经注册，已经注册的话,
@@ -11546,7 +11577,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.13',
+  version: '1.1.14',
   util: util
 };
 
@@ -28672,7 +28703,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.13'
+  version: '1.1.14'
 };
 
 return index;
