@@ -144,6 +144,7 @@ var __$p$ = {
       } else if (obj.type === TNMT.CallTaskFailed) {
         console.log('call task failed .... ')
         that.noticeCreateError(msgPackage)
+        that.onReceiveMessage(msgPackage)
       } else if (obj.type === TNMT.CallTaskSuccess) {
         console.log('call task success .... ')
         that.onReceiveMessage(msgPackage)
