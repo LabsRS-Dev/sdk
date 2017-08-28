@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.14
+ * DoveMaxSDK v1.1.15
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -7292,6 +7292,7 @@ var __$p$$4 = {
       } else if (obj.type === TNMT.CallTaskFailed) {
         console.log('call task failed .... ');
         that.noticeCreateError(msgPackage);
+        that.onReceiveMessage(msgPackage);
       } else if (obj.type === TNMT.CallTaskSuccess) {
         console.log('call task success .... ');
         that.onReceiveMessage(msgPackage);
@@ -8215,7 +8216,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.14',
+  version: '1.1.15',
   b$: $bc_
 };
 
@@ -11571,7 +11572,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.14',
+  version: '1.1.15',
   util: util
 };
 
@@ -28697,7 +28698,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.14'
+  version: '1.1.15'
 };
 
 export default index_esm;
