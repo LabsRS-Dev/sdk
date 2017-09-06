@@ -11351,13 +11351,13 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
     communication.commitMessage('/services/get_update_info', info, function (_data) {
       t$.hasUpdateChecked = true;
 
-      var data = _$22.isObject(_data) ? _data : {};
-      data = _$22.isArray(data) ? { 'data': data } : data;
-      getDataCB && getDataCB(data);
+      var serverData = _$22.isObject(_data) ? _data : {};
+      serverData = _$22.isArray(serverData) ? { 'data': serverData } : serverData;
+      getDataCB && getDataCB(serverData);
 
       console.log('#[get update info data] .......');
-      console.dir(data);
-      _checkUpdate(data);
+      console.dir(serverData);
+      _checkUpdate(serverData.data);
     });
   } catch (e) {
     console.error(e);

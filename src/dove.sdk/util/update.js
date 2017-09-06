@@ -77,13 +77,13 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
     communication.commitMessage('/services/get_update_info', info, (_data) => {
       t$.hasUpdateChecked = true
 
-      var data = _.isObject(_data) ? _data : {}
-      data = _.isArray(data) ? { 'data': data } : data
-      getDataCB && getDataCB(data)
+      var serverData = _.isObject(_data) ? _data : {}
+      serverData = _.isArray(serverData) ? { 'data': serverData } : serverData
+      getDataCB && getDataCB(serverData)
 
       console.log('#[get update info data] .......')
-      console.dir(data)
-      _checkUpdate(data)
+      console.dir(serverData)
+      _checkUpdate(serverData['data'])
     })
   } catch (e) {
     console.error(e)
