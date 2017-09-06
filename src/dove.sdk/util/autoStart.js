@@ -10,11 +10,11 @@ var uu$ = {}
 uu$.certificateManagerInit = function () {
   var cerMgr = certificateManager.CertificateManagerOnline
 
-  if (b$.App.getSandboxEnable()) return
-
   // 自动启动授权管理注册机器
   console.log('------------- registerMachine -------------')
   cerMgr.registerMachine()
+
+  if (b$.App.getSandboxEnable()) return
 
   // 自动检测当前是否已经注册，已经注册的话,
   if (b$.App.getIsRegistered()) {
@@ -38,7 +38,7 @@ uu$.updateCheckInit = function () {
       update.checkUpdate()
           // uu$.checkPatches()
     }
-  }, 360 * 1000) // 360sec
+  }, 36 * 1000) // 36sec
 }
 
 // 内核加入自启动部分代码

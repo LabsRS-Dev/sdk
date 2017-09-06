@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.15
+ * DoveMaxSDK v1.1.16
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -8218,7 +8218,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.15',
+  version: '1.1.16',
   b$: $bc_
 };
 
@@ -11349,12 +11349,16 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
     };
 
     // 从远程服务中获取更新信息
+    console.log('#[get update info] .......');
     communication.commitMessage('/services/get_update_info', info, function (_data) {
       t$.hasUpdateChecked = true;
 
       var data = _$22.isObject(_data) ? _data : {};
       data = _$22.isArray(data) ? { 'data': data } : data;
       getDataCB && getDataCB(data);
+
+      console.log('#[get update info data] .......');
+      console.dir(data);
       _checkUpdate(data);
     });
   } catch (e) {
@@ -11471,11 +11475,11 @@ var uu$$9 = {};
 uu$$9.certificateManagerInit = function () {
   var cerMgr = certificateManager.CertificateManagerOnline;
 
-  if (b$$1.App.getSandboxEnable()) { return }
-
   // 自动启动授权管理注册机器
   console.log('------------- registerMachine -------------');
   cerMgr.registerMachine();
+
+  if (b$$1.App.getSandboxEnable()) { return }
 
   // 自动检测当前是否已经注册，已经注册的话,
   if (b$$1.App.getIsRegistered()) {
@@ -11499,7 +11503,7 @@ uu$$9.updateCheckInit = function () {
       update.checkUpdate();
           // uu$.checkPatches()
     }
-  }, 360 * 1000); // 360sec
+  }, 36 * 1000); // 36sec
 };
 
 // 内核加入自启动部分代码
@@ -11574,7 +11578,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.15',
+  version: '1.1.16',
   util: util
 };
 
@@ -28700,7 +28704,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.15'
+  version: '1.1.16'
 };
 
 module.exports = index;

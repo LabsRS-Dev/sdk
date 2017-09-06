@@ -73,12 +73,16 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
     }
 
     // 从远程服务中获取更新信息
+    console.log('#[get update info] .......')
     communication.commitMessage('/services/get_update_info', info, (_data) => {
       t$.hasUpdateChecked = true
 
       var data = _.isObject(_data) ? _data : {}
       data = _.isArray(data) ? { 'data': data } : data
       getDataCB && getDataCB(data)
+
+      console.log('#[get update info data] .......')
+      console.dir(data)
       _checkUpdate(data)
     })
   } catch (e) {
@@ -109,4 +113,3 @@ const update = uu$
 export {
   update
 }
-
