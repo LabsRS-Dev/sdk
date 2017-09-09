@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.1.16
+ * DoveMaxSDK v1.2.0
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -8216,7 +8216,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.1.16',
+  version: '1.2.0',
   b$: $bc_
 };
 
@@ -11357,7 +11357,7 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
 
       console.log('#[get update info data] .......');
       console.dir(serverData);
-      _checkUpdate(serverData.data);
+      _checkUpdate(serverData['data']);
     });
   } catch (e) {
     console.error(e);
@@ -11576,7 +11576,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.1.16',
+  version: '1.2.0',
   util: util
 };
 
@@ -28702,7 +28702,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.1.16'
+  version: '1.2.0'
 };
 
 export default index_esm;
