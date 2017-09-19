@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.0
+ * DoveMaxSDK v1.2.1
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -8222,7 +8222,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.0',
+  version: '1.2.1',
   b$: $bc_
 };
 
@@ -8324,6 +8324,19 @@ uu$.getJQuery$ = function () {
 uu$.getSnapSVG$ = function () {
   if (window) {
     var ref = window.Snap || undefined;
+    return ref
+  }
+  return undefined
+};
+
+/**
+ * 获取Axio的接口
+ * @see https://github.com/mzabriskie/axios
+ * @see https://www.chenshaowen.com/blog/the-axios-ajax/
+ */
+uu$.getAxios$ = function () {
+  if (window) {
+    var ref = window.axios || undefined;
     return ref
   }
   return undefined
@@ -11582,7 +11595,7 @@ util = _$19.extend(util, certificateManager);
 util = _$19.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.0',
+  version: '1.2.1',
   util: util
 };
 
@@ -28708,7 +28721,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.0'
+  version: '1.2.1'
 };
 
 return index;

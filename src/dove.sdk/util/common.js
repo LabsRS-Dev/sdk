@@ -103,6 +103,19 @@ uu$.getSnapSVG$ = function () {
   return undefined
 }
 
+/**
+ * 获取Axio的接口
+ * @see https://github.com/mzabriskie/axios
+ * @see https://www.chenshaowen.com/blog/the-axios-ajax/
+ */
+uu$.getAxios$ = function () {
+  if (window) {
+    var ref = window.axios || undefined
+    return ref
+  }
+  return undefined
+}
+
 uu$.RSTestUnit = {}
 
 /**
