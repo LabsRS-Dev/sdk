@@ -1,3 +1,4 @@
+import { ProxyClientWebsocketForGo } from './proxy.client.websocket.go'
 import { ProxyClientWebsocketForNode } from './proxy.client.websocket.node'
 import { ProxyClientWebsocketForPython } from './proxy.client.websocket.python'
 import { ProxyClientNativeFork } from './proxy.client.native.fork'
@@ -29,6 +30,7 @@ let ChancelTypeIndex = 0
 const ChancelType = {
   websocketForPython: ++ChancelTypeIndex,
   websocketForNode: ++ChancelTypeIndex,
+  websocketForGo: ++ChancelTypeIndex,
   httpX: ++ChancelTypeIndex,
   nativeFork: ++ChancelTypeIndex
 }
@@ -51,6 +53,8 @@ class Chancel {
       this.proxyObj = new ProxyClientWebsocketForPython()
     } else if (config.type === ChancelType.websocketForNode) {
       this.proxyObj = new ProxyClientWebsocketForNode()
+    } else if (config.type === ChancelType.websocketForGo) {
+      this.proxyObj = new ProxyClientWebsocketForGo()
     } else if (config.type === ChancelType.nativeFork) {
       this.proxyObj = new ProxyClientNativeFork()
     }

@@ -5,9 +5,9 @@ import underscore from '../underscore'
 
 const _ = underscore._
 
-const logCord = '[SDK.Proxy.Client.Websocket.Node]'
+const logCord = '[SDK.Proxy.Client.Websocket.Go]'
 
-const __key = 'proxy-client-websocket-node'
+const __key = 'proxy-client-websocket-go'
 const __msgPrefix = __key + '-' + _.now() + _.random(1, Number.MAX_SAFE_INTEGER) + '-'
 const TypeMsg = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
@@ -23,8 +23,8 @@ You must use init(config) function first, the use listen to start!!!!
 `
 
 const ClientIOType = {
-  SocketIO: 'Socket.io.client',   // 适用于Node服务器使用的Socket.IO
-  EngineIO: 'Engine.io.client'    // 适用于Node服务器使用的Engine.IO
+  SocketIO: 'Socket.io.client',   // 适用于Go服务器使用的Socket.IO
+  EngineIO: 'Engine.io.client'    // 适用于Go服务器使用的Engine.IO
 }
 
 // ------------------------------------------------------------------------
@@ -175,8 +175,10 @@ var __$p$ = {
   __sendWSRegisterInfo: function () {
     const __agent = this
     __agent.sendMessage(JSON.stringify({
-      'user_id': __agent.wsID,
-      'msg_type': 'c_notice_id_Info'
+      'msg': {
+        'wsid': __agent.wsID
+      },
+      'type': 'c_notice_id_Info'
     }))
   },
   // --------------------------------------------------------
@@ -205,10 +207,7 @@ var __$p$ = {
         __agent.noticeWSOpen({ data: ws })
 
         // 向服务器发送注册信息，测试返回
-        __agent.sendMessage(JSON.stringify({
-          'user_id': __agent.wsID,
-          'msg_type': 'c_notice_id_Info'
-        }))
+        __agent.__sendWSRegisterInfo()
       })
       ws.on('message', (event, data) => {
         __agent.log(logCord, event, data)
@@ -326,10 +325,7 @@ var __$p$ = {
         })
 
         // 向服务器发送注册信息，测试返回
-        __agent.sendMessage(JSON.stringify({
-          'user_id': __agent.wsID,
-          'msg_type': 'c_notice_id_Info'
-        }))
+        __agent.__sendWSRegisterInfo()
       })
     } catch (error) {
       __agent.log(logCord, error)
@@ -356,12 +352,12 @@ _.each(TypeMsg, function (eventType, key, list) {
   }
 })
 
-var ProxyClientWebsocketForNode = SelfClass.extend(__$p$)
+var ProxyClientWebsocketForGo = SelfClass.extend(__$p$)
 
 // -----------------------------------------------------------------------
 // 统一的Client Websocket 处理, 用来与后台服务器的交互处理
 //
 // -----------------------------------------------
 export {
-  ProxyClientWebsocketForNode
+  ProxyClientWebsocketForGo
 }
