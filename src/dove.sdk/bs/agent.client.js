@@ -153,7 +153,8 @@ var __$p$ = {
 
     // 建立信息关联
     if (chancel.type === ChancelType.websocketForNode ||
-    chancel.type === ChancelType.websocketForPython
+    chancel.type === ChancelType.websocketForPython ||
+    chancel.type === ChancelType.websocketForGo
     ) {
       console.dir(chancel.server)
       _cs.registerOnWSGetServerMessage(_c2hhFn(_msgType.OnWSGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
@@ -184,7 +185,8 @@ var __$p$ = {
     var _msgType = _cs.getInternalMessageType()
 
     if (chancel.type === ChancelType.websocketForNode ||
-    chancel.type === ChancelType.websocketForPython
+    chancel.type === ChancelType.websocketForPython ||
+    chancel.type === ChancelType.websocketForGo
     ) {
       _.each(_c2hhFn(_msgType.OnWSGetServerMessage, _cs), function (fnc) {
         _cs.unregisterOnWSGetServerMessage(fnc)

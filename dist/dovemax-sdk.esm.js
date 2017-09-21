@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.2
+ * DoveMaxSDK v1.2.3
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -7850,7 +7850,8 @@ var __$p$ = {
 
     // 建立信息关联
     if (chancel.type === ChancelType.websocketForNode ||
-    chancel.type === ChancelType.websocketForPython
+    chancel.type === ChancelType.websocketForPython ||
+    chancel.type === ChancelType.websocketForGo
     ) {
       console.dir(chancel.server);
       _cs.registerOnWSGetServerMessage(_c2hhFn(_msgType.OnWSGetServerMessage, _cs, function (message) { that.onReceiveFromServer(message); }));
@@ -7881,7 +7882,8 @@ var __$p$ = {
     var _msgType = _cs.getInternalMessageType();
 
     if (chancel.type === ChancelType.websocketForNode ||
-    chancel.type === ChancelType.websocketForPython
+    chancel.type === ChancelType.websocketForPython ||
+    chancel.type === ChancelType.websocketForGo
     ) {
       _$9.each(_c2hhFn(_msgType.OnWSGetServerMessage, _cs), function (fnc) {
         _cs.unregisterOnWSGetServerMessage(fnc);
@@ -8579,7 +8581,7 @@ $bc_ = _$2.extend($bc_, { AgentClient: AgentClient });
 $bc_ = _$2.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.2',
+  version: '1.2.3',
   b$: $bc_
 };
 
@@ -11952,7 +11954,7 @@ util = _$20.extend(util, certificateManager);
 util = _$20.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.2',
+  version: '1.2.3',
   util: util
 };
 
@@ -29078,7 +29080,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.2'
+  version: '1.2.3'
 };
 
 export default index_esm;
