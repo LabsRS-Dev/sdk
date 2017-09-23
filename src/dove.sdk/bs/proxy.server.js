@@ -4,9 +4,8 @@ import { ProxyMessageCenter } from './proxy'
 import { ProxyServerPluginWebServerNode } from './proxy.server.plugin.webserver.node'
 import { ProxyServerPluginWebServerPython } from './proxy.server.plugin.webserver.python'
 import { SelfClass } from '../observable'
-import underscore from '../underscore'
+import _ from 'lodash'
 
-var _ = underscore._
 var $bc_ = task
 
 const debugBand = `

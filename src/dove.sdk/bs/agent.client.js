@@ -4,9 +4,7 @@ import { ProxyClientWebsocketForPython } from './proxy.client.websocket.python'
 import { ProxyClientNativeFork } from './proxy.client.native.fork'
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
-import underscore from '../underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 // -----------------------------------------------------------------------
 const logCord = '[SDK.agent.client]'

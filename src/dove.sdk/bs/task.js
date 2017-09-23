@@ -1,7 +1,6 @@
 import { common } from './common'
-import underscore from '../underscore'
+import _ from 'lodash'
 
-var _ = underscore._
 var $bc_ = common
 
 const TypeTriggerMsg = {

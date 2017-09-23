@@ -1,9 +1,7 @@
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
 import { Tool } from '../include'
-import underscore from '../underscore'
-
-const _ = underscore._
+import _ from 'lodash'
 
 const logCord = '[SDK.Proxy.Client.Websocket.Node]'
 

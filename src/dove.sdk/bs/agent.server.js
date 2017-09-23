@@ -1,9 +1,7 @@
 import { ProxyMessageCenter } from './proxy'
 import { ProxyServer } from './proxy.server'
 import { SelfClass } from '../observable'
-import underscore from '../underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 // -----------------------------------------------------------------------
 const logCord = '[SDK.agent.server]'

@@ -1,7 +1,5 @@
 import { common } from './common'
-import underscore from '../underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 var $bc_ = common
 

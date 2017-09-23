@@ -1,4 +1,4 @@
-import underscore from '../underscore'
+import _ from 'lodash'
 
 import { common } from './common'
 import { iap } from './iap'
@@ -16,8 +16,6 @@ import { task } from './task'
 import { filedialog } from './filedialog'
 import { AgentClient } from './agent.client'
 import { AgentServer } from './agent.server'
-
-var _ = underscore._
 
 // ---------------------------
 // Interface outside

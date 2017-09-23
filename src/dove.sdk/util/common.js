@@ -5,9 +5,8 @@
 
 import BS from '../bs/index'
 import { Tool } from '../include'
-import underscore from '../underscore'
+import _ from 'lodash'
 
-var _ = underscore._
 // Object functions
 // -------------------------------------------------------------------------
 const logCord = '[SDK.Util.common]'

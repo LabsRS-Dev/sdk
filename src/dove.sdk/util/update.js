@@ -1,8 +1,7 @@
 import { common } from './common'
 import { communication } from './communication'
 import { loaderWrapper } from './loaderWrapper'
-import underscore from '../underscore'
-var _ = underscore._
+import _ from 'lodash'
 
 // 自动更新设置
 /**

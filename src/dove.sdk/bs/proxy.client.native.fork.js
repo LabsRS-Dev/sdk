@@ -2,9 +2,8 @@ import { TypeNativeMessageType, TaskMethodWay, task } from './task'
 
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
-import underscore from '../underscore'
+import _ from 'lodash'
 
-const _ = underscore._
 var $bc_ = task
 
 const logCord = '[SDK.Proxy.Client.NativeFork]'

@@ -5,13 +5,11 @@ import { config } from './config'
 import { googleLangIDMaps } from './googleLangIDMaps'
 import { loadLanguage } from './loadLanguage'
 import { loaderWrapper } from './loaderWrapper'
-import underscore from '../underscore'
+import _ from 'lodash'
 import { update } from './update'
 import { webHelper } from './webHelper'
 import { certificateManager } from './certificateManager'
 import { autoStart } from './autoStart'
-
-var _ = underscore._
 
 /**
  * 注册内置的事件处理

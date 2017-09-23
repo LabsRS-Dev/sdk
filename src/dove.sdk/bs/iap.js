@@ -1,8 +1,6 @@
 import { Observable } from '../observable'
 import { common } from './common'
-import underscore from '../underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 var $bc_ = common
 // IAP 非本地模拟

@@ -1,6 +1,4 @@
-import underscore from './underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 // -----------------------------------------------------------------
 // extend from kendo.core.js

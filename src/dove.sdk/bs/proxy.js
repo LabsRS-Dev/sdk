@@ -1,8 +1,6 @@
 import { Observable, SelfClass } from '../observable'
 
-import underscore from '../underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 var __$p$ = {
   init: function () {

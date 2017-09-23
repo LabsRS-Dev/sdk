@@ -2,9 +2,7 @@ import { TaskMethodWay, TypeNativeMessageType, TypeTriggerMsg, task } from './ta
 
 import { ProxyMessageCenter } from './proxy'
 import { SelfClass } from '../observable'
-import underscore from '../underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 var $bc_ = task
 

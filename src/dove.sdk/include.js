@@ -1,6 +1,4 @@
-import underscore from './underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 /**
  * 纯算法，不依赖bs模块及util模块

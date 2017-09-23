@@ -4,9 +4,7 @@
 
 import { common } from './common'
 import { config } from './config'
-import underscore from '../underscore'
-
-var _ = underscore._
+import _ from 'lodash'
 
 var uu$ = {}
 var cache = {}
