@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.4
+ * DoveMaxSDK v1.2.5
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -23001,7 +23001,7 @@ var __$p$$5 = {
     var that = this;
     var dataObj = lodash.extend({
       task_id: '',
-      commands: '',
+      commands: [],
       taskMethodWay: TaskMethodWay.Task
     }, message);
 
@@ -23051,7 +23051,9 @@ var __$p$$5 = {
     if (TaskMethodWay.Task === dataObj.taskMethodWay) {
       $bc_$15.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands]);
     } else if (TaskMethodWay.SendEvent === dataObj.taskMethodWay) {
-      $bc_$15.runTaskSample(TaskMethodWay.SendEvent, cbName, commands.push(taskID));
+      console.assert(lodash.isArray(commands), 'message.commands must be array.');
+      commands.push(taskID);
+      $bc_$15.runTaskSample(TaskMethodWay.SendEvent, cbName, commands);
     }
   }
 };
@@ -23945,7 +23947,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.4',
+  version: '1.2.5',
   b$: $bc_
 };
 
@@ -27311,7 +27313,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.4',
+  version: '1.2.5',
   util: util
 };
 
@@ -27340,7 +27342,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.4'
+  version: '1.2.5'
 };
 
 module.exports = index;

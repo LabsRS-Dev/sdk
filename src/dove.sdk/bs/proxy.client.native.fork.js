@@ -117,7 +117,7 @@ var __$p$ = {
     var that = this
     const dataObj = _.extend({
       task_id: '',
-      commands: '',
+      commands: [],
       taskMethodWay: TaskMethodWay.Task
     }, message)
 
@@ -167,7 +167,9 @@ var __$p$ = {
     if (TaskMethodWay.Task === dataObj.taskMethodWay) {
       $bc_.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands])
     } else if (TaskMethodWay.SendEvent === dataObj.taskMethodWay) {
-      $bc_.runTaskSample(TaskMethodWay.SendEvent, cbName, commands.push(taskID))
+      console.assert(_.isArray(commands), 'message.commands must be array.')
+      commands.push(taskID)
+      $bc_.runTaskSample(TaskMethodWay.SendEvent, cbName, commands)
     }
   }
 }
