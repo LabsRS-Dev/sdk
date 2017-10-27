@@ -158,6 +158,7 @@ var __$p$ = {
         that.onReceiveMessage(msgPackage)
       } else {
         console.warn('Warning: obj.type == UNKNOWN')
+        that.onReceiveMessage(msgPackage)
       }
     }, true)
 

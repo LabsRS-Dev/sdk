@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.5
+ * DoveMaxSDK v1.2.6
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -21090,7 +21090,7 @@ var TypeNativeMessageType = {
   CallTaskLog: 'type_calltask_log',
   CallTaskExit: 'type_calltask_exit',
   CallTaskSuccess: 'type_calltask_success',
-  CancelCallTask: 'type_type_calltask_cancel'
+  CancelCallTask: 'type_calltask_cancel'
 
 };
 
@@ -23040,6 +23040,7 @@ var __$p$$5 = {
         that.onReceiveMessage(msgPackage);
       } else {
         console.warn('Warning: obj.type == UNKNOWN');
+        that.onReceiveMessage(msgPackage);
       }
     }, true);
 
@@ -23945,7 +23946,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.5',
+  version: '1.2.6',
   b$: $bc_
 };
 
@@ -27311,7 +27312,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.5',
+  version: '1.2.6',
   util: util
 };
 
@@ -27340,7 +27341,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.5'
+  version: '1.2.6'
 };
 
 export default index_esm;

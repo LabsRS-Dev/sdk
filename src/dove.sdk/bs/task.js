@@ -58,7 +58,7 @@ const TypeNativeMessageType = {
   CallTaskLog: 'type_calltask_log',
   CallTaskExit: 'type_calltask_exit',
   CallTaskSuccess: 'type_calltask_success',
-  CancelCallTask: 'type_type_calltask_cancel'
+  CancelCallTask: 'type_calltask_cancel'
 
 }
 
