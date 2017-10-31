@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.6
+ * DoveMaxSDK v1.2.7
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -23051,8 +23051,10 @@ var __$p$$5 = {
       $bc_$15.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands]);
     } else if (TaskMethodWay.SendEvent === dataObj.taskMethodWay) {
       console.assert(lodash.isArray(commands), 'message.commands must be array.');
-      commands.push(taskID);
-      $bc_$15.runTaskSample(TaskMethodWay.SendEvent, cbName, commands);
+      var poolCommnads = lodash.concat([], commands);
+      console.assert(lodash.isArray(poolCommnads), 'message.poolCommnads must be array.');
+      poolCommnads.push(taskID);
+      $bc_$15.runTaskSample(TaskMethodWay.SendEvent, cbName, poolCommnads);
     }
   }
 };
@@ -23946,7 +23948,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.6',
+  version: '1.2.7',
   b$: $bc_
 };
 
@@ -27312,7 +27314,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.6',
+  version: '1.2.7',
   util: util
 };
 
@@ -27341,7 +27343,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.6'
+  version: '1.2.7'
 };
 
 export default index_esm;
