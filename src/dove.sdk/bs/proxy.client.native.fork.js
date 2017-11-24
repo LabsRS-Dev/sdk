@@ -169,10 +169,10 @@ var __$p$ = {
       $bc_.runTaskSample(TaskMethodWay.Task, cbName, [taskID, commands])
     } else if (TaskMethodWay.SendEvent === dataObj.taskMethodWay) {
       console.assert(_.isArray(commands), 'message.commands must be array.')
-      var poolCommnads = _.concat([], commands)
-      console.assert(_.isArray(poolCommnads), 'message.poolCommnads must be array.')
-      poolCommnads.push(taskID)
-      $bc_.runTaskSample(TaskMethodWay.SendEvent, cbName, poolCommnads)
+      var poolCommands = _.concat([], commands)
+      console.assert(_.isArray(poolCommands), 'message.poolCommands must be array.')
+      poolCommands.push(taskID)
+      $bc_.runTaskSample(TaskMethodWay.SendEvent, cbName, poolCommands)
     }
   }
 }

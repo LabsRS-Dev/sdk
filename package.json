@@ -1,6 +1,6 @@
 {
   "name": "dove.max.sdk",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "common api for native macOS and electron",
   "main": "dist/dovemax-sdk.js",
   "module": "dist/dovemax-sdk.esm.js",
@@ -31,7 +31,7 @@
     "type": "git",
     "url": "git+https://github.com/LabsRS-Dev/sdk.git"
   },
-  "author": "Gmagon Inc. && Romanysoft LAB.",
+  "author": "GMagon Inc. && Romanysoft LAB.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/LabsRS-Dev/sdk/issues"
@@ -58,8 +58,10 @@
     "eslint-plugin-vue": "^2.1.0",
     "eslint-plugin-vue-libs": "^1.2.0",
     "express": "^4.14.1",
-    "jasmine": "2.5.3",
-    "jasmine-core": "2.5.2",
+    "jasmine": "^2.5.3",
+    "jasmine-core": "^2.5.2",
+    "jquery": "^3.2.1",
+    "jquery-migrate": "^3.0.1",
     "nightwatch": "^0.9.16",
     "nightwatch-helpers": "^1.2.0",
     "rollup": "^0.41.4",
