@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.8
+ * DoveMaxSDK v1.2.9
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -23950,7 +23950,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.8',
+  version: '1.2.9',
   b$: $bc_
 };
 
@@ -27316,13 +27316,14 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.8',
+  version: '1.2.9',
   util: util
 };
 
 try {
   if (window) {
     window.BS = BS;
+    window._ = lodash;
     window.Romanysoft = {
       _: lodash,
       lodash: lodash,
@@ -27345,7 +27346,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.8'
+  version: '1.2.9'
 };
 
 module.exports = index;

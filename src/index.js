@@ -7,6 +7,7 @@ import lodash from 'lodash'
 try {
   if (window) {
     window.BS = b$
+    window._ = lodash
     window.Romanysoft = {
       _: lodash,
       lodash: lodash,
