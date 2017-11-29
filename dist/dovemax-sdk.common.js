@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.9
+ * DoveMaxSDK v1.2.10
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -21621,6 +21621,58 @@ var Tool = {
   isBlob: function (o) {
     return Object.prototype.toString.call(o) === '[object Blob]'
   },
+  isBrowser: function () {
+    var isBrowser = this.isWindow(window);
+    return isBrowser
+  },
+  isNodeJs: function () {
+    return !(this.isBrowser())
+  },
+  isWindow: function (arg) {
+    // Safari returns DOMWindow
+    // Chrome returns global
+    // Firefox, Opera & IE9 return Window
+    var objStr = Object.prototype.toString.call(arg || this);
+    switch (objStr) {
+      case '[object DOMWindow]':
+      case '[object Window]':
+      case '[object global]':
+        return true
+    }
+    try {
+      if (arg instanceof Window) {
+        return true
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // /window objects always have a `self` property;
+    // /however, `arg.self == arg` could be fooled by:
+    // /var o = {};
+    // /o.self = o;
+    if ('self' in arg) {
+      // `'self' in arg` is true if
+      // the property exists on the object _or_ the prototype
+      // `arg.hasOwnProperty('self')` is true only if
+      // the property exists on the object
+      var hasSelf = arg.hasOwnProperty('self');
+      var self;
+      try {
+        if (hasSelf) {
+          self = arg.self;
+        }
+        delete arg.self;
+        if (hasSelf) {
+          arg.self = self;
+        }
+      } catch (e) {
+          // IE 7&8 throw an error when window.self is deleted
+        return true
+      }
+    }
+    return false
+  },
   /**
    * Blob data convert to String
    * @param o Blob obj
@@ -23950,7 +24002,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.9',
+  version: '1.2.10',
   b$: $bc_
 };
 
@@ -24040,9 +24092,13 @@ uu$.getBSb$ = function () {
  * 获取Jquery的接口
  */
 uu$.getJQuery$ = function () {
-  var $ = window.jQuery || window.$;
-  console.assert(lodash.isObject(window), 'Can not find the window object ... \n');
-  console.assert(lodash.isObject($), 'Must be loaded jQuery library first \n');
+  var $;
+  if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
+    $ = window.jQuery || window.$;
+    console.assert(lodash.isObject($), 'Must be loaded jQuery library first \n');
+  }
   return $
 };
 
@@ -24053,6 +24109,8 @@ uu$.getJQuery$ = function () {
  */
 uu$.getSnapSVG$ = function () {
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     var ref = window.Snap || undefined;
     return ref
   }
@@ -24066,6 +24124,8 @@ uu$.getSnapSVG$ = function () {
  */
 uu$.getAxios$ = function () {
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     var ref = window.axios || undefined;
     return ref
   }
@@ -24078,11 +24138,13 @@ uu$.RSTestUnit = {};
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery (ref, window) {
+function autoForJquery (ref) {
   var t$ = ref;
 
   try {
     if (window) {
+      console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+      console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
       if (window.jQuery && window.$) {
         window.$['objClone'] = t$.objClone;
         window.$['getMyDateStr'] = t$.getMyDateStr;
@@ -24103,12 +24165,11 @@ function autoForJquery (ref, window) {
 }
 
 var common$1 = uu$;
-autoForJquery(uu$, window);
+autoForJquery(uu$);
 
 /**
  * Config
  */
-
 var uu$$2 = {};
 
 uu$$2.enableAppConfigDebug = uu$$2['enable_AppConfig_debug'] = false; // 是否开启调试AppConfig
@@ -24150,9 +24211,12 @@ uu$$2['RTY_Config'] = {
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$2 (ref, window) {
+function autoForJquery$2 (ref) {
   var t$ = ref;
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
+
     if (window.jQuery && window.$) {
       window.$['RTY_Config'] = t$['RTY_Config'];
 
@@ -24162,7 +24226,7 @@ function autoForJquery$2 (ref, window) {
 }
 
 var config = uu$$2;
-autoForJquery$2(uu$$2, window);
+autoForJquery$2(uu$$2);
 
 /**
  * 依赖Jquery的信息交互
@@ -24379,23 +24443,28 @@ uu$$1.feedbackInfoEx = function (subject, want2Email, info, cb) {
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$1 (ref, window) {
+function autoForJquery$1 (ref) {
   var t$ = ref;
 
   try {
-    if (window.jQuery && window.$) {
-      window.$['tmpl'] = t$.tmpl;
-      window.$['flush_cache'] = t$['flush_cache'];
-      window.$['setp'] = t$.setp;
-      window.$['getp'] = t$.getp;
+    if (window) {
+      console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+      console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
 
-      window.$['commitMessage'] = t$.commitMessage;
-      window.$['reportInfo'] = t$.reportInfo;
-      window.$['reportErrorInfo'] = t$.reportErrorInfo;
-      window.$['feedbackInfo'] = t$.feedbackInfo;
-      window.$['feedbackInfoEx'] = t$.feedbackInfoEx;
+      if (window.jQuery && window.$) {
+        window.$['tmpl'] = t$.tmpl;
+        window.$['flush_cache'] = t$['flush_cache'];
+        window.$['setp'] = t$.setp;
+        window.$['getp'] = t$.getp;
 
-      window.$ = window.$.extend(window.$, t$);
+        window.$['commitMessage'] = t$.commitMessage;
+        window.$['reportInfo'] = t$.reportInfo;
+        window.$['reportErrorInfo'] = t$.reportErrorInfo;
+        window.$['feedbackInfo'] = t$.feedbackInfo;
+        window.$['feedbackInfoEx'] = t$.feedbackInfoEx;
+
+        window.$ = window.$.extend(window.$, t$);
+      }
     }
   } catch (error) {
     // console.warn(error)
@@ -24403,7 +24472,7 @@ function autoForJquery$1 (ref, window) {
 }
 
 var communication = uu$$1;
-autoForJquery$1(uu$$1, window);
+autoForJquery$1(uu$$1);
 
 /*eslint-disable*/
 
@@ -26114,10 +26183,12 @@ var uu$$3 = {
 /**
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
-function autoForJquery$3 (ref, window) {
+function autoForJquery$3 (ref) {
   var t$ = ref;
   try {
     if (window) {
+      console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+      console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
       if (window.jQuery && window.$) {
         window.$.RTYUtils = window.$.extend(window.$.RTYUtils, t$);
         window.$ = window.$.extend(window.$, t$);
@@ -26129,12 +26200,11 @@ function autoForJquery$3 (ref, window) {
 }
 
 var googleLangIDMaps = uu$$3;
-autoForJquery$3(uu$$3, window);
+autoForJquery$3(uu$$3);
 
 /**
  * Google Lang maps
  */
-
 var uu$$4 = {};
 
 uu$$4.loadedLanguage = {
@@ -26328,9 +26398,11 @@ uu$$4.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, 
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$4 (ref, window) {
+function autoForJquery$4 (ref) {
   var t$ = ref;
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     if (window.jQuery && window.$) {
       window.$ = window.$.extend(window.$, t$);
     }
@@ -26338,7 +26410,11 @@ function autoForJquery$4 (ref, window) {
 }
 
 var loadLanguage = uu$$4;
-autoForJquery$4(uu$$4, window);
+autoForJquery$4(uu$$4);
+
+/**
+ * WebHelper
+ */
 
 var uu$$6 = {};
 
@@ -26432,9 +26508,11 @@ uu$$6.RTYWebHelper = {
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$6 (ref, window) {
+function autoForJquery$6 (ref) {
   var t$ = ref;
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     if (window.jQuery && window.$) {
       window.$['RTYWebHelper'] = t$.RTYWebHelper;
 
@@ -26444,7 +26522,7 @@ function autoForJquery$6 (ref, window) {
 }
 
 var webHelper = uu$$6;
-autoForJquery$6(uu$$6, window);
+autoForJquery$6(uu$$6);
 
 /*globals Sys, Ajax*/
 
@@ -27007,9 +27085,12 @@ uu$$5['RTY_3rd_Ensure'] = $du;
 /**
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
-function autoForJquery$5 (ref, window) {
+function autoForJquery$5 (ref) {
   var t$ = ref;
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
+
     if (window.jQuery && window.$) {
       window.$.templateLoader = t$.templateLoader;
       window.$.templateLoaderAgent = t$.templateLoaderAgent;
@@ -27023,7 +27104,7 @@ function autoForJquery$5 (ref, window) {
 }
 
 var loaderWrapper = uu$$5;
-autoForJquery$5(uu$$5, window);
+autoForJquery$5(uu$$5);
 
 // 自动更新设置
 /**
@@ -27254,6 +27335,9 @@ uu$$9.updateCheckInit = function () {
 // 内核加入自启动部分代码
 try {
   if ($) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
+
     $(document).ready(function () {
       console.log(
         '-------------Delayed loading method, do not reflect here-------');
@@ -27321,7 +27405,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.9',
+  version: '1.2.10',
   util: util
 };
 
@@ -27351,7 +27435,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.9'
+  version: '1.2.10'
 };
 
 module.exports = index;
