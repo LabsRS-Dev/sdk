@@ -25,7 +25,7 @@ var Tool = {
    * @return {*}
    */
   deepCopy: function (obj, cache = []) {
-    var t$ = this
+    var t$ = Tool
     // just return if obj is immutable value
     if (obj === null || typeof obj !== 'object') {
       return obj
@@ -64,7 +64,8 @@ var Tool = {
     return _.isUndefined(o) || _.isNull(o)
   },
   isUndefinedOrNullOrFalse: function (o) {
-    return this.isUndefinedOrNull(o) || o === false
+    var t$ = Tool
+    return t$.isUndefinedOrNull(o) || o === false
   },
   isObject: _.isObject,
   isError: _.isError,
@@ -91,11 +92,13 @@ var Tool = {
     return Object.prototype.toString.call(o) === '[object Blob]'
   },
   isBrowser: function () {
-    var isBrowser = this.isWindow(window)
+    var t$ = Tool
+    var isBrowser = t$.isWindow(window)
     return isBrowser
   },
   isNodeJs: function () {
-    return !(this.isBrowser())
+    var t$ = Tool
+    return !(t$.isBrowser())
   },
   isWindow: function (arg) {
     // Safari returns DOMWindow
@@ -177,9 +180,10 @@ var Tool = {
   /**
    * param wrapper to Array
    */
-  param2Array: function (param, allowTypes = []) {
-    var t$ = this
-    if (this.isUndefinedOrNull(param)) return []
+  param2Array: function (param, allowTypes) {
+    var t$ = Tool
+    allowTypes = allowTypes || []
+    if (t$.isUndefinedOrNull(param)) return []
     if (allowTypes.findIndex(function (value, index, err) {
       return value === t$.getType(param)
     }) > -1) {
@@ -201,12 +205,13 @@ var Tool = {
    */
   getErrorMessage: function (err) {
     let msg = ''
+    var t$ = Tool
     try {
-      if (this.isString(err)) {
+      if (t$.isString(err)) {
         msg = err
-      } else if (this.isError(err)) {
+      } else if (t$.isError(err)) {
         msg = err.message
-      } else if (this.isObject(err)) {
+      } else if (t$.isObject(err)) {
         var errMsg = []
         for (var p in err) {
           if (err.hasOwnProperty(p)) {
@@ -219,7 +224,7 @@ var Tool = {
           msg = errMsg.join('\n')
         }
       } else {
-        msg += '[RTY_CANT_TYPE] = ' + this.getType(err)
+        msg += '[RTY_CANT_TYPE] = ' + t$.getType(err)
         msg += JSON.stringify(err)
       }
     } catch (error) {
@@ -271,7 +276,7 @@ var Tool = {
   },
   obj2string: function (o) {
     var r = []
-    var t$ = this
+    var t$ = Tool
     if (typeof o === 'string') {
       return '\'' + o.replace(/([\'\'\\])/g, '\\$1').replace(/(\n)/g, '\\n')
         .replace(/(\r)/g, '\\r').replace(/(\t)/g, '\\t') + '\''
@@ -312,18 +317,19 @@ var Tool = {
   },
   objClone: function (Obj) {
     var buf
+    var t$ = Tool
     if (Obj instanceof Array) {
       buf = []
       var i = Obj.length
       while (i--) {
-        buf[i] = this.objClone(Obj[i])
+        buf[i] = t$.objClone(Obj[i])
       }
       return buf
     } else if (Obj instanceof Object) {
       buf = {}
       for (var k in Obj) {
         if (Obj.hasOwnProperty(k)) {
-          buf[k] = this.objClone(Obj[k])
+          buf[k] = t$.objClone(Obj[k])
         }
       }
       return buf
@@ -426,7 +432,8 @@ var Tool = {
   },
   // 测试对象类型
   testObjectType: function (obj, type) {
-    var actualType = this.getType(obj)
+    var t$ = Tool
+    var actualType = t$.getType(obj)
     if (actualType !== type) {
       var errMsg = 'TestType:[' + type + '], actual:[' + actualType + '].'
       console.assert(false, errMsg)

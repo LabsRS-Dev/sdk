@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v1.2.10
+ * DoveMaxSDK v1.2.11
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -21560,7 +21560,7 @@ var Tool = {
   deepCopy: function (obj, cache) {
     if ( cache === void 0 ) cache = [];
 
-    var t$ = this;
+    var t$ = Tool;
     // just return if obj is immutable value
     if (obj === null || typeof obj !== 'object') {
       return obj
@@ -21599,7 +21599,8 @@ var Tool = {
     return lodash.isUndefined(o) || lodash.isNull(o)
   },
   isUndefinedOrNullOrFalse: function (o) {
-    return this.isUndefinedOrNull(o) || o === false
+    var t$ = Tool;
+    return t$.isUndefinedOrNull(o) || o === false
   },
   isObject: lodash.isObject,
   isError: lodash.isError,
@@ -21626,11 +21627,13 @@ var Tool = {
     return Object.prototype.toString.call(o) === '[object Blob]'
   },
   isBrowser: function () {
-    var isBrowser = this.isWindow(window);
+    var t$ = Tool;
+    var isBrowser = t$.isWindow(window);
     return isBrowser
   },
   isNodeJs: function () {
-    return !(this.isBrowser())
+    var t$ = Tool;
+    return !(t$.isBrowser())
   },
   isWindow: function (arg) {
     // Safari returns DOMWindow
@@ -21713,10 +21716,9 @@ var Tool = {
    * param wrapper to Array
    */
   param2Array: function (param, allowTypes) {
-    if ( allowTypes === void 0 ) allowTypes = [];
-
-    var t$ = this;
-    if (this.isUndefinedOrNull(param)) { return [] }
+    var t$ = Tool;
+    allowTypes = allowTypes || [];
+    if (t$.isUndefinedOrNull(param)) { return [] }
     if (allowTypes.findIndex(function (value, index, err) {
       return value === t$.getType(param)
     }) > -1) {
@@ -21738,12 +21740,13 @@ var Tool = {
    */
   getErrorMessage: function (err) {
     var msg = '';
+    var t$ = Tool;
     try {
-      if (this.isString(err)) {
+      if (t$.isString(err)) {
         msg = err;
-      } else if (this.isError(err)) {
+      } else if (t$.isError(err)) {
         msg = err.message;
-      } else if (this.isObject(err)) {
+      } else if (t$.isObject(err)) {
         var errMsg = [];
         for (var p in err) {
           if (err.hasOwnProperty(p)) {
@@ -21756,7 +21759,7 @@ var Tool = {
           msg = errMsg.join('\n');
         }
       } else {
-        msg += '[RTY_CANT_TYPE] = ' + this.getType(err);
+        msg += '[RTY_CANT_TYPE] = ' + t$.getType(err);
         msg += JSON.stringify(err);
       }
     } catch (error) {
@@ -21808,7 +21811,7 @@ var Tool = {
   },
   obj2string: function (o) {
     var r = [];
-    var t$ = this;
+    var t$ = Tool;
     if (typeof o === 'string') {
       return '\'' + o.replace(/([\'\'\\])/g, '\\$1').replace(/(\n)/g, '\\n')
         .replace(/(\r)/g, '\\r').replace(/(\t)/g, '\\t') + '\''
@@ -21850,21 +21853,20 @@ var Tool = {
     return str
   },
   objClone: function (Obj) {
-    var this$1 = this;
-
     var buf;
+    var t$ = Tool;
     if (Obj instanceof Array) {
       buf = [];
       var i = Obj.length;
       while (i--) {
-        buf[i] = this$1.objClone(Obj[i]);
+        buf[i] = t$.objClone(Obj[i]);
       }
       return buf
     } else if (Obj instanceof Object) {
       buf = {};
       for (var k in Obj) {
         if (Obj.hasOwnProperty(k)) {
-          buf[k] = this$1.objClone(Obj[k]);
+          buf[k] = t$.objClone(Obj[k]);
         }
       }
       return buf
@@ -21967,7 +21969,8 @@ var Tool = {
   },
   // 测试对象类型
   testObjectType: function (obj, type) {
-    var actualType = this.getType(obj);
+    var t$ = Tool;
+    var actualType = t$.getType(obj);
     if (actualType !== type) {
       var errMsg = 'TestType:[' + type + '], actual:[' + actualType + '].';
       console.assert(false, errMsg);
@@ -24006,7 +24009,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '1.2.10',
+  version: '1.2.11',
   b$: $bc_
 };
 
@@ -24076,7 +24079,7 @@ uu$.getMyDateStr = function (format) {
   if ( format === void 0 ) format = 'yyyy/MM/dd hh:mm:ss';
 
   var that = this.RTYUtils;
-  that.assert(that.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library');
+  that.assert(that.isObject(window.kendo), 'getMyDateStr function require kendoUI library');
   if (window.kendo) {
     return window.kendo.toString((new Date()), format)
   }
@@ -24101,7 +24104,7 @@ uu$.getJQuery$ = function () {
     console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
     console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     $ = window.jQuery || window.$;
-    console.assert(lodash.isObject($), 'Must be loaded jQuery library first \n');
+    console.assert(Tool.isObject($), 'Must be loaded jQuery library first \n');
   }
   return $
 };
@@ -27409,7 +27412,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '1.2.10',
+  version: '1.2.11',
   util: util
 };
 
@@ -27439,7 +27442,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '1.2.10'
+  version: '1.2.11'
 };
 
 return index;

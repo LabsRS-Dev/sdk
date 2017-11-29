@@ -5,7 +5,6 @@
 
 import BS from '../bs/index'
 import { Tool } from '../include'
-import _ from 'lodash'
 
 // Object functions
 // -------------------------------------------------------------------------
@@ -66,7 +65,7 @@ uu$.getErrorMessage = Tool.getErrorMessage
  */
 uu$.getMyDateStr = function (format = 'yyyy/MM/dd hh:mm:ss') {
   var that = this.RTYUtils
-  that.assert(that.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library')
+  that.assert(that.isObject(window.kendo), 'getMyDateStr function require kendoUI library')
   if (window.kendo) {
     return window.kendo.toString((new Date()), format)
   }
@@ -91,7 +90,7 @@ uu$.getJQuery$ = function () {
     console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
     console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
     $ = window.jQuery || window.$
-    console.assert(_.isObject($), 'Must be loaded jQuery library first \n')
+    console.assert(Tool.isObject($), 'Must be loaded jQuery library first \n')
   }
   return $
 }
