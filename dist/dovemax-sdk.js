@@ -20549,7 +20549,7 @@ $bc_$6.Window = {
 };
 
 // -----------------------------------------------
-var window$1 = $bc_$6;
+var nwindow = $bc_$6;
 
 var $bc_$7 = common;
 
@@ -23941,7 +23941,7 @@ $bc_ = lodash.extend($bc_, iap);
 $bc_ = lodash.extend($bc_, notice);
 $bc_ = lodash.extend($bc_, app);
 $bc_ = lodash.extend($bc_, xpc);
-$bc_ = lodash.extend($bc_, window$1);
+$bc_ = lodash.extend($bc_, nwindow);
 $bc_ = lodash.extend($bc_, menu);
 $bc_ = lodash.extend($bc_, clipboard);
 $bc_ = lodash.extend($bc_, dock);
@@ -24015,6 +24015,7 @@ uu$.obj2string = Tool.obj2string;
 uu$.stringFormat = Tool.stringFormat;
 uu$.compareVersion = Tool.compareVersion;
 uu$.testObjectType = Tool.testObjectType;
+uu$.getErrorMessage = Tool.getErrorMessage;
 
 /**
  * 获取KendoUI 规定的时间
@@ -24022,7 +24023,8 @@ uu$.testObjectType = Tool.testObjectType;
 uu$.getMyDateStr = function (format) {
   if ( format === void 0 ) format = 'yyyy/MM/dd hh:mm:ss';
 
-  this.assert(this.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library');
+  var that = this.RTYUtils;
+  that.assert(that.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library');
   if (window.kendo) {
     return window.kendo.toString((new Date()), format)
   }
@@ -24042,7 +24044,8 @@ uu$.getBSb$ = function () {
  * 获取Jquery的接口
  */
 uu$.getJQuery$ = function () {
-  var $ = window.jQuery || window.$ || undefined;
+  var $ = window.jQuery || window.$;
+  console.assert(lodash.isObject(window), 'Can not find the window object ... \n');
   console.assert(lodash.isObject($), 'Must be loaded jQuery library first \n');
   return $
 };
@@ -24079,7 +24082,7 @@ uu$.RSTestUnit = {};
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery (ref) {
+function autoForJquery (ref, window) {
   var t$ = ref;
 
   try {
@@ -24092,6 +24095,7 @@ function autoForJquery (ref) {
         window.$['stringFormat'] = t$.stringFormat;
         window.$['compareVersion'] = t$.compareVersion;
         window.$['testObjectType'] = t$.testObjectType;
+        window.$['getErrorMessage'] = t$.getErrorMessage;
         window.$['RSTestUnit'] = t$.RSTestUnit;
 
         window.$ = window.$.extend(window.$, t$);
@@ -24103,7 +24107,7 @@ function autoForJquery (ref) {
 }
 
 var common$1 = uu$;
-autoForJquery(uu$);
+autoForJquery(uu$, window);
 
 /**
  * Config
@@ -24150,7 +24154,7 @@ uu$$2['RTY_Config'] = {
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$2 (ref) {
+function autoForJquery$2 (ref, window) {
   var t$ = ref;
   if (window) {
     if (window.jQuery && window.$) {
@@ -24162,7 +24166,7 @@ function autoForJquery$2 (ref) {
 }
 
 var config = uu$$2;
-autoForJquery$2(uu$$2);
+autoForJquery$2(uu$$2, window);
 
 /**
  * 依赖Jquery的信息交互
@@ -24379,7 +24383,7 @@ uu$$1.feedbackInfoEx = function (subject, want2Email, info, cb) {
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$1 (ref) {
+function autoForJquery$1 (ref, window) {
   var t$ = ref;
 
   try {
@@ -24389,6 +24393,7 @@ function autoForJquery$1 (ref) {
       window.$['setp'] = t$.setp;
       window.$['getp'] = t$.getp;
 
+      window.$['commitMessage'] = t$.commitMessage;
       window.$['reportInfo'] = t$.reportInfo;
       window.$['reportErrorInfo'] = t$.reportErrorInfo;
       window.$['feedbackInfo'] = t$.feedbackInfo;
@@ -24402,7 +24407,7 @@ function autoForJquery$1 (ref) {
 }
 
 var communication = uu$$1;
-autoForJquery$1(uu$$1);
+autoForJquery$1(uu$$1, window);
 
 /*eslint-disable*/
 
@@ -26113,12 +26118,12 @@ var uu$$3 = {
 /**
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
-function autoForJquery$3 (ref) {
+function autoForJquery$3 (ref, window) {
   var t$ = ref;
   try {
     if (window) {
       if (window.jQuery && window.$) {
-        window.$.RTYUtils = window.$.extend(window.$.RTYUtils, uu$$3);
+        window.$.RTYUtils = window.$.extend(window.$.RTYUtils, t$);
         window.$ = window.$.extend(window.$, t$);
       }
     }
@@ -26128,7 +26133,7 @@ function autoForJquery$3 (ref) {
 }
 
 var googleLangIDMaps = uu$$3;
-autoForJquery$3(uu$$3);
+autoForJquery$3(uu$$3, window);
 
 /**
  * Google Lang maps
@@ -26327,7 +26332,7 @@ uu$$4.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, 
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$4 (ref) {
+function autoForJquery$4 (ref, window) {
   var t$ = ref;
   if (window) {
     if (window.jQuery && window.$) {
@@ -26337,7 +26342,7 @@ function autoForJquery$4 (ref) {
 }
 
 var loadLanguage = uu$$4;
-autoForJquery$4(uu$$4);
+autoForJquery$4(uu$$4, window);
 
 var uu$$6 = {};
 
@@ -26431,7 +26436,7 @@ uu$$6.RTYWebHelper = {
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
 
-function autoForJquery$6 (ref) {
+function autoForJquery$6 (ref, window) {
   var t$ = ref;
   if (window) {
     if (window.jQuery && window.$) {
@@ -26443,7 +26448,7 @@ function autoForJquery$6 (ref) {
 }
 
 var webHelper = uu$$6;
-autoForJquery$6(uu$$6);
+autoForJquery$6(uu$$6, window);
 
 /*globals Sys, Ajax*/
 
@@ -27006,7 +27011,7 @@ uu$$5['RTY_3rd_Ensure'] = $du;
 /**
  * 检测全局变量JQuery是否存在, 兼容以前代码
  */
-function autoForJquery$5 (ref) {
+function autoForJquery$5 (ref, window) {
   var t$ = ref;
   if (window) {
     if (window.jQuery && window.$) {
@@ -27022,7 +27027,7 @@ function autoForJquery$5 (ref) {
 }
 
 var loaderWrapper = uu$$5;
-autoForJquery$5(uu$$5);
+autoForJquery$5(uu$$5, window);
 
 // 自动更新设置
 /**

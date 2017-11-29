@@ -90,6 +90,58 @@ var Tool = {
   isBlob: function (o) {
     return Object.prototype.toString.call(o) === '[object Blob]'
   },
+  isBrowser: function () {
+    var isBrowser = this.isWindow(window)
+    return isBrowser
+  },
+  isNodeJs: function () {
+    return !(this.isBrowser())
+  },
+  isWindow: function (arg) {
+    // Safari returns DOMWindow
+    // Chrome returns global
+    // Firefox, Opera & IE9 return Window
+    var objStr = Object.prototype.toString.call(arg || this)
+    switch (objStr) {
+      case '[object DOMWindow]':
+      case '[object Window]':
+      case '[object global]':
+        return true
+    }
+    try {
+      if (arg instanceof Window) {
+        return true
+      }
+    } catch (e) {
+      console.error(e)
+    }
+
+    // /window objects always have a `self` property;
+    // /however, `arg.self == arg` could be fooled by:
+    // /var o = {};
+    // /o.self = o;
+    if ('self' in arg) {
+      // `'self' in arg` is true if
+      // the property exists on the object _or_ the prototype
+      // `arg.hasOwnProperty('self')` is true only if
+      // the property exists on the object
+      var hasSelf = arg.hasOwnProperty('self')
+      var self
+      try {
+        if (hasSelf) {
+          self = arg.self
+        }
+        delete arg.self
+        if (hasSelf) {
+          arg.self = self
+        }
+      } catch (e) {
+          // IE 7&8 throw an error when window.self is deleted
+        return true
+      }
+    }
+    return false
+  },
   /**
    * Blob data convert to String
    * @param o Blob obj

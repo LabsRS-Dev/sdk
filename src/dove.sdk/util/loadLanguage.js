@@ -1,7 +1,7 @@
 /**
  * Google Lang maps
  */
-
+import { Tool } from '../include'
 import { common } from './common'
 import { googleLangIDMaps } from './googleLangIDMaps'
 
@@ -199,6 +199,8 @@ uu$.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, tr
 function autoForJquery (ref) {
   var t$ = ref
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
     if (window.jQuery && window.$) {
       window.$ = window.$.extend(window.$, t$)
     }

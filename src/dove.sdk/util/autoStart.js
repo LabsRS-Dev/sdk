@@ -1,3 +1,4 @@
+import { Tool } from '../include'
 import { common } from './common'
 import { update } from './update'
 import { certificateManager } from './certificateManager'
@@ -44,6 +45,9 @@ uu$.updateCheckInit = function () {
 // 内核加入自启动部分代码
 try {
   if ($) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
+
     $(document).ready(function () {
       console.log(
         '-------------Delayed loading method, do not reflect here-------')

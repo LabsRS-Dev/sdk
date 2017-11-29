@@ -5,7 +5,7 @@ import { iap } from './iap'
 import { notice } from './notice'
 import { app } from './app'
 import { xpc } from './xpc'
-import { window } from './window'
+import { nwindow } from './nwindow'
 import { menu } from './menu'
 import { clipboard } from './clipboard'
 import { dock } from './dock'
@@ -25,7 +25,7 @@ $bc_ = _.extend($bc_, iap)
 $bc_ = _.extend($bc_, notice)
 $bc_ = _.extend($bc_, app)
 $bc_ = _.extend($bc_, xpc)
-$bc_ = _.extend($bc_, window)
+$bc_ = _.extend($bc_, nwindow)
 $bc_ = _.extend($bc_, menu)
 $bc_ = _.extend($bc_, clipboard)
 $bc_ = _.extend($bc_, dock)

@@ -59,12 +59,14 @@ uu$.obj2string = Tool.obj2string
 uu$.stringFormat = Tool.stringFormat
 uu$.compareVersion = Tool.compareVersion
 uu$.testObjectType = Tool.testObjectType
+uu$.getErrorMessage = Tool.getErrorMessage
 
 /**
  * 获取KendoUI 规定的时间
  */
 uu$.getMyDateStr = function (format = 'yyyy/MM/dd hh:mm:ss') {
-  this.assert(this.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library')
+  var that = this.RTYUtils
+  that.assert(that.isUndefinedOrNullOrFalse(window.kendo), 'getMyDateStr function require kendoUI library')
   if (window.kendo) {
     return window.kendo.toString((new Date()), format)
   }
@@ -84,8 +86,13 @@ uu$.getBSb$ = function () {
  * 获取Jquery的接口
  */
 uu$.getJQuery$ = function () {
-  var $ = window.jQuery || window.$ || undefined
-  console.assert(_.isObject($), 'Must be loaded jQuery library first \n')
+  var $
+  if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
+    $ = window.jQuery || window.$
+    console.assert(_.isObject($), 'Must be loaded jQuery library first \n')
+  }
   return $
 }
 
@@ -96,6 +103,8 @@ uu$.getJQuery$ = function () {
  */
 uu$.getSnapSVG$ = function () {
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
     var ref = window.Snap || undefined
     return ref
   }
@@ -109,6 +118,8 @@ uu$.getSnapSVG$ = function () {
  */
 uu$.getAxios$ = function () {
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
     var ref = window.axios || undefined
     return ref
   }
@@ -126,6 +137,8 @@ function autoForJquery (ref) {
 
   try {
     if (window) {
+      console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+      console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
       if (window.jQuery && window.$) {
         window.$['objClone'] = t$.objClone
         window.$['getMyDateStr'] = t$.getMyDateStr
@@ -134,6 +147,7 @@ function autoForJquery (ref) {
         window.$['stringFormat'] = t$.stringFormat
         window.$['compareVersion'] = t$.compareVersion
         window.$['testObjectType'] = t$.testObjectType
+        window.$['getErrorMessage'] = t$.getErrorMessage
         window.$['RSTestUnit'] = t$.RSTestUnit
 
         window.$ = window.$.extend(window.$, t$)

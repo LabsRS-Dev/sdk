@@ -4,6 +4,7 @@
 
 import { common } from './common'
 import { config } from './config'
+import { Tool } from '../include'
 import _ from 'lodash'
 
 var uu$ = {}
@@ -213,18 +214,24 @@ function autoForJquery (ref) {
   var t$ = ref
 
   try {
-    if (window.jQuery && window.$) {
-      window.$['tmpl'] = t$.tmpl
-      window.$['flush_cache'] = t$['flush_cache']
-      window.$['setp'] = t$.setp
-      window.$['getp'] = t$.getp
+    if (window) {
+      console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+      console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
 
-      window.$['reportInfo'] = t$.reportInfo
-      window.$['reportErrorInfo'] = t$.reportErrorInfo
-      window.$['feedbackInfo'] = t$.feedbackInfo
-      window.$['feedbackInfoEx'] = t$.feedbackInfoEx
+      if (window.jQuery && window.$) {
+        window.$['tmpl'] = t$.tmpl
+        window.$['flush_cache'] = t$['flush_cache']
+        window.$['setp'] = t$.setp
+        window.$['getp'] = t$.getp
 
-      window.$ = window.$.extend(window.$, t$)
+        window.$['commitMessage'] = t$.commitMessage
+        window.$['reportInfo'] = t$.reportInfo
+        window.$['reportErrorInfo'] = t$.reportErrorInfo
+        window.$['feedbackInfo'] = t$.feedbackInfo
+        window.$['feedbackInfoEx'] = t$.feedbackInfoEx
+
+        window.$ = window.$.extend(window.$, t$)
+      }
     }
   } catch (error) {
     // console.warn(error)

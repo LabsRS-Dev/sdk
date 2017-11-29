@@ -1,6 +1,7 @@
 /**
  * Config
  */
+import { Tool } from '../include'
 
 var uu$ = {}
 
@@ -42,6 +43,9 @@ uu$['RTY_Config'] = {
 function autoForJquery (ref) {
   var t$ = ref
   if (window) {
+    console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!')
+    console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
+
     if (window.jQuery && window.$) {
       window.$['RTY_Config'] = t$['RTY_Config']
 

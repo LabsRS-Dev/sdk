@@ -209,7 +209,7 @@ $bc_.Window = {
 }
 
 // -----------------------------------------------
-const window = $bc_
+const nwindow = $bc_
 export {
-  window
+  nwindow
 }
