@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v2017.1201.900
+ * DoveMaxSDK v20171201.0.0
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -24003,7 +24003,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '2017.1201.900',
+  version: '20171201.0.0',
   b$: $bc_
 };
 
@@ -27406,7 +27406,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '2017.1201.900',
+  version: '20171201.0.0',
   util: util
 };
 
@@ -27436,7 +27436,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '2017.1201.900'
+  version: '20171201.0.0'
 };
 
 export default index_esm;
