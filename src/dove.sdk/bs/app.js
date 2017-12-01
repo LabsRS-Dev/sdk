@@ -1121,6 +1121,46 @@ $bc_.App = {
   },
 
   // {扩展}
+  /**
+   * 获得软件供应商的名称
+   */
+  getVendorName: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getVendorName()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件供应商的网站
+   */
+  getVendorWebSiteURL: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getVendorWebSiteURL()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件最新新闻数据的json格式数据url
+   */
+  getNewsJsonURL: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getNewsJsonURL()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件的其他附加配置JSON数据的URL
+   */
+  getAdditionalConfigURL: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getAdditionalConfigURL()
+    }
+    return ''
+  },
+
   getBuyURL: function () {
     if ($bc_.pN) {
       return $bc_.pN.app.getBuyURL()
@@ -1184,6 +1224,27 @@ $bc_.App = {
     return ''
   },
 
+  /**
+   * 获得软件支持网站的URL地址
+   */
+  getSupportPageURL: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getSupportPageURL()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件支持邮箱的地址
+   */
+  getSupportEmail: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getSupportEmail()
+    }
+    return ''
+  },
+
+  // {Languages}
   // 获得当前苹果操作系统本地的语言
   getAppleLanguage: function () {
     if ($bc_.pN) {

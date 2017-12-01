@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171201.9.40
+ * DoveMaxSDK v20171201.15.52
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -19351,6 +19351,46 @@ $bc_$4.App = {
   },
 
   // {扩展}
+  /**
+   * 获得软件供应商的名称
+   */
+  getVendorName: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getVendorName()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件供应商的网站
+   */
+  getVendorWebSiteURL: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getVendorWebSiteURL()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件最新新闻数据的json格式数据url
+   */
+  getNewsJsonURL: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getNewsJsonURL()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件的其他附加配置JSON数据的URL
+   */
+  getAdditionalConfigURL: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getAdditionalConfigURL()
+    }
+    return ''
+  },
+
   getBuyURL: function () {
     if ($bc_$4.pN) {
       return $bc_$4.pN.app.getBuyURL()
@@ -19414,6 +19454,27 @@ $bc_$4.App = {
     return ''
   },
 
+  /**
+   * 获得软件支持网站的URL地址
+   */
+  getSupportPageURL: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getSupportPageURL()
+    }
+    return ''
+  },
+
+  /**
+   * 获得软件支持邮箱的地址
+   */
+  getSupportEmail: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getSupportEmail()
+    }
+    return ''
+  },
+
+  // {Languages}
   // 获得当前苹果操作系统本地的语言
   getAppleLanguage: function () {
     if ($bc_$4.pN) {
@@ -24005,7 +24066,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171201.9.40',
+  version: '20171201.15.52',
   b$: $bc_
 };
 
@@ -27408,7 +27469,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171201.9.40',
+  version: '20171201.15.52',
   util: util
 };
 
@@ -27438,7 +27499,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171201.9.40'
+  version: '20171201.15.52'
 };
 
 module.exports = index;
