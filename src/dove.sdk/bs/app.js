@@ -418,12 +418,12 @@ $bc_.App = {
 
   // {获取开通的服务器端口}
   getServerPort: function () {
-    var default_port = 8888
+    var defaultPort = 8888
     if ($bc_.pN) {
-      return $bc_.pN.app.getHttpServerPort() || default_port
+      return $bc_.pN.app.getHttpServerPort() || defaultPort
     }
 
-    return default_port
+    return defaultPort
   },
 
   // 获得App的插件目录
@@ -675,11 +675,11 @@ $bc_.App = {
   },
 
   // 文件是否为0Byte
-  checkFileIsZero: $bc_.checkFileIsZeroSize = function (file_path) {
-    if (file_path.trim() === '') return false
+  checkFileIsZero: $bc_.checkFileIsZeroSize = function (filePath) {
+    if (filePath.trim() === '') return false
 
     if ($bc_.pN) {
-      var _path = file_path || $bc_.pN.path.tempDir()
+      var _path = filePath || $bc_.pN.path.tempDir()
       return $bc_.pN.path.fileIsZeroSize(_path)
     }
 
@@ -699,9 +699,9 @@ $bc_.App = {
   },
 
   // 创建空文件
-  createEmptyFile: $bc_.createEmptyFile = function (file_path, cb) {
+  createEmptyFile: $bc_.createEmptyFile = function (filePath, cb) {
     if ($bc_.pN) {
-      var _path = file_path || ($bc_.pN.path.tempDir() + 'tmp.txt')
+      var _path = filePath || ($bc_.pN.path.tempDir() + 'tmp.txt')
       return $bc_.pN.window.createEmptyFile(JSON.stringify({
         path: _path,
         callback: $bc_._get_callback(function (obj) {
@@ -712,7 +712,7 @@ $bc_.App = {
   },
 
   // 创建目录
-  createDir: $bc_.createDir = function (dir_path, atts, cb) {
+  createDir: $bc_.createDir = function (dirPath, atts, cb) {
     if ($bc_.pN) {
       try {
         var params = {}
@@ -720,7 +720,7 @@ $bc_.App = {
         params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        params['path'] = dir_path || ($bc_.pN.path.tempDir() + 'tmp_dir001')
+        params['path'] = dirPath || ($bc_.pN.path.tempDir() + 'tmp_dir001')
         if (atts) params['atts'] = atts || {}
 
         $bc_.pN.window.createDir(JSON.stringify(params))
@@ -731,9 +731,9 @@ $bc_.App = {
   },
 
   // 删除文件
-  removeFile: $bc_.removeFile = function (file_path, cb) {
+  removeFile: $bc_.removeFile = function (filePath, cb) {
     if ($bc_.pN) {
-      var _path = file_path || ($bc_.pN.path.tempDir() + 'tmp.txt')
+      var _path = filePath || ($bc_.pN.path.tempDir() + 'tmp.txt')
       return $bc_.pN.window.removeFile(JSON.stringify({
         path: _path,
         callback: $bc_._get_callback(function (obj) {
@@ -744,7 +744,7 @@ $bc_.App = {
   },
 
   // 删除目录
-  removeDir: $bc_.removeDir = function (dir_path, cb) {
+  removeDir: $bc_.removeDir = function (dirPath, cb) {
     if ($bc_.pN) {
       try {
         var params = {}
@@ -752,7 +752,7 @@ $bc_.App = {
         params['callback'] = params['callback'] || $bc_._get_callback(function (obj) {
           cb && cb(obj)
         }, true)
-        params['path'] = dir_path || ($bc_.pN.path.tempDir() + '/tmp_dir001')
+        params['path'] = dirPath || ($bc_.pN.path.tempDir() + '/tmp_dir001')
 
         $bc_.pN.window.removeDir(JSON.stringify(params))
       } catch (e) {

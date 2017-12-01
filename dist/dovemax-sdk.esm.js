@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171201.15.52
+ * DoveMaxSDK v20171201.20.12
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -18643,12 +18643,12 @@ $bc_$4.App = {
 
   // {获取开通的服务器端口}
   getServerPort: function () {
-    var default_port = 8888;
+    var defaultPort = 8888;
     if ($bc_$4.pN) {
-      return $bc_$4.pN.app.getHttpServerPort() || default_port
+      return $bc_$4.pN.app.getHttpServerPort() || defaultPort
     }
 
-    return default_port
+    return defaultPort
   },
 
   // 获得App的插件目录
@@ -18900,11 +18900,11 @@ $bc_$4.App = {
   },
 
   // 文件是否为0Byte
-  checkFileIsZero: $bc_$4.checkFileIsZeroSize = function (file_path) {
-    if (file_path.trim() === '') { return false }
+  checkFileIsZero: $bc_$4.checkFileIsZeroSize = function (filePath) {
+    if (filePath.trim() === '') { return false }
 
     if ($bc_$4.pN) {
-      var _path = file_path || $bc_$4.pN.path.tempDir();
+      var _path = filePath || $bc_$4.pN.path.tempDir();
       return $bc_$4.pN.path.fileIsZeroSize(_path)
     }
 
@@ -18924,9 +18924,9 @@ $bc_$4.App = {
   },
 
   // 创建空文件
-  createEmptyFile: $bc_$4.createEmptyFile = function (file_path, cb) {
+  createEmptyFile: $bc_$4.createEmptyFile = function (filePath, cb) {
     if ($bc_$4.pN) {
-      var _path = file_path || ($bc_$4.pN.path.tempDir() + 'tmp.txt');
+      var _path = filePath || ($bc_$4.pN.path.tempDir() + 'tmp.txt');
       return $bc_$4.pN.window.createEmptyFile(JSON.stringify({
         path: _path,
         callback: $bc_$4._get_callback(function (obj) {
@@ -18937,7 +18937,7 @@ $bc_$4.App = {
   },
 
   // 创建目录
-  createDir: $bc_$4.createDir = function (dir_path, atts, cb) {
+  createDir: $bc_$4.createDir = function (dirPath, atts, cb) {
     if ($bc_$4.pN) {
       try {
         var params = {};
@@ -18945,7 +18945,7 @@ $bc_$4.App = {
         params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        params['path'] = dir_path || ($bc_$4.pN.path.tempDir() + 'tmp_dir001');
+        params['path'] = dirPath || ($bc_$4.pN.path.tempDir() + 'tmp_dir001');
         if (atts) { params['atts'] = atts || {}; }
 
         $bc_$4.pN.window.createDir(JSON.stringify(params));
@@ -18956,9 +18956,9 @@ $bc_$4.App = {
   },
 
   // 删除文件
-  removeFile: $bc_$4.removeFile = function (file_path, cb) {
+  removeFile: $bc_$4.removeFile = function (filePath, cb) {
     if ($bc_$4.pN) {
-      var _path = file_path || ($bc_$4.pN.path.tempDir() + 'tmp.txt');
+      var _path = filePath || ($bc_$4.pN.path.tempDir() + 'tmp.txt');
       return $bc_$4.pN.window.removeFile(JSON.stringify({
         path: _path,
         callback: $bc_$4._get_callback(function (obj) {
@@ -18969,7 +18969,7 @@ $bc_$4.App = {
   },
 
   // 删除目录
-  removeDir: $bc_$4.removeDir = function (dir_path, cb) {
+  removeDir: $bc_$4.removeDir = function (dirPath, cb) {
     if ($bc_$4.pN) {
       try {
         var params = {};
@@ -18977,7 +18977,7 @@ $bc_$4.App = {
         params['callback'] = params['callback'] || $bc_$4._get_callback(function (obj) {
           cb && cb(obj);
         }, true);
-        params['path'] = dir_path || ($bc_$4.pN.path.tempDir() + '/tmp_dir001');
+        params['path'] = dirPath || ($bc_$4.pN.path.tempDir() + '/tmp_dir001');
 
         $bc_$4.pN.window.removeDir(JSON.stringify(params));
       } catch (e) {
@@ -24064,7 +24064,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171201.15.52',
+  version: '20171201.20.12',
   b$: $bc_
 };
 
@@ -27467,7 +27467,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171201.15.52',
+  version: '20171201.20.12',
   util: util
 };
 
@@ -27497,7 +27497,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171201.15.52'
+  version: '20171201.20.12'
 };
 
 export default index_esm;
