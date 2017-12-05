@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171205.16.49
+ * DoveMaxSDK v20171205.18.04
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -24064,7 +24064,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171205.16.49',
+  version: '20171205.18.04',
   b$: $bc_
 };
 
@@ -24160,12 +24160,12 @@ uu$.getJQuery$ = function () {
     console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     $ = window.jQuery || window.$;
     console.assert(Tool.isObject($), 'Must be loaded jQuery library first \n');
-    console.log('You can use $.ajaxSetup to control ajax method timeout issue. \n');
 
     var setupKey = '_$CONFIG_JQUERY_AJAX_SETUP_IS_SETTING';
     if ($ && !window[setupKey]) {
+      console.log('You can use $.ajaxSetup to control ajax method timeout issue. \n');
       try {
-        var defaultTimeout = 300; // apache2的默认超时时间是300秒
+        var defaultTimeout = 30; // apache2的默认超时时间是300秒
         $.ajaxSetup({
           timeout: defaultTimeout
         });
@@ -27495,7 +27495,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171205.16.49',
+  version: '20171205.18.04',
   util: util
 };
 
@@ -27525,7 +27525,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171205.16.49'
+  version: '20171205.18.04'
 };
 
 export default index_esm;

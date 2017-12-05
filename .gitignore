@@ -13,3 +13,4 @@ test
 types
 test/e2e/reports
 test/e2e/screenshots
+yarn.lock
