@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171205.15.58
+ * DoveMaxSDK v20171205.16.38
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -24064,7 +24064,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171205.15.58',
+  version: '20171205.16.38',
   b$: $bc_
 };
 
@@ -24160,6 +24160,21 @@ uu$.getJQuery$ = function () {
     console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     $ = window.jQuery || window.$;
     console.assert(Tool.isObject($), 'Must be loaded jQuery library first \n');
+    console.log('You can use $.ajaxSetup to control ajax method timeout issue. \n');
+
+    var setupKey = '_$CONFIG_JQUERY_AJAX_SETUP_IS_SETTING';
+    if ($ && !window[setupKey]) {
+      try {
+        var defaultTimeout = 10;
+        $.ajaxSetup({
+          timeout: defaultTimeout
+        });
+        window[setupKey] = true;
+        console.log('$.ajaxSetup default timeout = ' + defaultTimeout);
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }
   return $
 };
@@ -27480,7 +27495,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171205.15.58',
+  version: '20171205.16.38',
   util: util
 };
 
@@ -27510,7 +27525,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171205.15.58'
+  version: '20171205.16.38'
 };
 
 export default index_esm;

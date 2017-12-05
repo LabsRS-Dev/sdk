@@ -91,6 +91,21 @@ uu$.getJQuery$ = function () {
     console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!')
     $ = window.jQuery || window.$
     console.assert(Tool.isObject($), 'Must be loaded jQuery library first \n')
+    console.log('You can use $.ajaxSetup to control ajax method timeout issue. \n')
+
+    var setupKey = '_$CONFIG_JQUERY_AJAX_SETUP_IS_SETTING'
+    if ($ && !window[setupKey]) {
+      try {
+        var defaultTimeout = 10
+        $.ajaxSetup({
+          timeout: defaultTimeout
+        })
+        window[setupKey] = true
+        console.log('$.ajaxSetup default timeout = ' + defaultTimeout)
+      } catch (e) {
+        console.error(e)
+      }
+    }
   }
   return $
 }
