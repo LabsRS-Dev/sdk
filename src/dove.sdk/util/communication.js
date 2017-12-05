@@ -133,11 +133,12 @@ uu$.commitMessage = function (apiUrl = '/', messageObj = {}, cb = () => {}) {
 /**
  * 向服务器提交信息,用途，与服务器上的交互，可以收集错误信息
  */
-uu$.reportInfo = function (info) {
+uu$.reportInfo = function (info, callback) {
   console.log('--- $.reportInfo ---')
   var t$ = this
 
   t$.getp(config.ConfigServer.getDomain() + '/services/report_info', { data: info || '' }, true, function (o) {
+    callback && callback(o)
     console.log('get_report_feedback:' + common.obj2string(o))
     if (_.isObject(o)) {
       try {
@@ -159,7 +160,7 @@ uu$.reportInfo = function (info) {
 /**
  * 封装简单报告问题的接口
  */
-uu$.reportErrorInfo = function (e, addonInfo) {
+uu$.reportErrorInfo = function (e, addonInfo, callback) {
   var t$ = this
   console.log('--- $.reportErrorInfo ---')
   var message = ''
@@ -171,7 +172,7 @@ uu$.reportErrorInfo = function (e, addonInfo) {
   t$.reportInfo({
     'errorMessage': message || '',
     'addonInfo': addonInfo || {}
-  })
+  }, callback)
 }
 
 /**
