@@ -91,15 +91,16 @@ uu$.getp = function (url, data, noCache, cb, noCancel) {
       navigatorInfo: navigator.userAgent
     })
 
+    var dataInfo = {}
     try {
       if (b$.App) {
-        data = _.extend(data, {
+        dataInfo = _.extend(data, {
           'app_name': b$.App.getAppName() || 'app_name',
           'app_bundle_id': b$.App.getAppId() || 'app_id',
           'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
           isRegistered: b$.App.getIsRegistered() || 0,
           os: b$.App.getAppRunOnOS() || '',
-          userName: b$.App.getUserName() || 'UNKNWON_ROMANYSOFT',
+          userName: b$.App.getUserName() || '0',
           serialNumber: b$.App.getSerialNumber() || '',
           version: b$.App.getAppVersion() || '2.0'
         })
@@ -108,8 +109,12 @@ uu$.getp = function (url, data, noCache, cb, noCancel) {
       console.error(e)
     }
 
-    $.getScript(url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(data))
-    $.event.trigger('ajaxSend')
+    var script = url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(dataInfo)
+    console.log('[script] = ', script)
+
+    $.getScript(script, function () {
+      $.event.trigger('ajaxSend')
+    })
   } catch (e) {
     console.error(e)
   }
@@ -132,7 +137,7 @@ uu$.reportInfo = function (info) {
   console.log('--- $.reportInfo ---')
   var t$ = this
 
-  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', info || {}, true, function (o) {
+  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', { data: info || '' }, true, function (o) {
     console.log('get_report_feedback:' + common.obj2string(o))
     if (_.isObject(o)) {
       try {

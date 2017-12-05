@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171201.15.52
+ * DoveMaxSDK v20171205.15.00
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -24064,7 +24064,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171201.15.52',
+  version: '20171205.15.00',
   b$: $bc_
 };
 
@@ -24380,15 +24380,16 @@ uu$$1.getp = function (url, data, noCache, cb, noCancel) {
       navigatorInfo: navigator.userAgent
     });
 
+    var dataInfo = {};
     try {
       if (b$.App) {
-        data = lodash.extend(data, {
+        dataInfo = lodash.extend(data, {
           'app_name': b$.App.getAppName() || 'app_name',
           'app_bundle_id': b$.App.getAppId() || 'app_id',
           'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
           isRegistered: b$.App.getIsRegistered() || 0,
           os: b$.App.getAppRunOnOS() || '',
-          userName: b$.App.getUserName() || 'UNKNWON_ROMANYSOFT',
+          userName: b$.App.getUserName() || '0',
           serialNumber: b$.App.getSerialNumber() || '',
           version: b$.App.getAppVersion() || '2.0'
         });
@@ -24397,8 +24398,12 @@ uu$$1.getp = function (url, data, noCache, cb, noCancel) {
       console.error(e);
     }
 
-    $.getScript(url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(data));
-    $.event.trigger('ajaxSend');
+    var script = url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(dataInfo);
+    console.log('[script] = ', script);
+
+    $.getScript(script, function () {
+      $.event.trigger('ajaxSend');
+    });
   } catch (e) {
     console.error(e);
   }
@@ -24425,7 +24430,7 @@ uu$$1.reportInfo = function (info) {
   console.log('--- $.reportInfo ---');
   var t$ = this;
 
-  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', info || {}, true, function (o) {
+  t$.getp(config.ConfigServer.getDomain() + '/services/report_info', { data: info || '' }, true, function (o) {
     console.log('get_report_feedback:' + common$1.obj2string(o));
     if (lodash.isObject(o)) {
       try {
@@ -27467,7 +27472,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171201.15.52',
+  version: '20171205.15.00',
   util: util
 };
 
@@ -27497,7 +27502,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171201.15.52'
+  version: '20171205.15.00'
 };
 
 export default index_esm;
