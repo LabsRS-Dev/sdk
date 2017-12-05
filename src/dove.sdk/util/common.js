@@ -96,7 +96,7 @@ uu$.getJQuery$ = function () {
     var setupKey = '_$CONFIG_JQUERY_AJAX_SETUP_IS_SETTING'
     if ($ && !window[setupKey]) {
       try {
-        var defaultTimeout = 10
+        var defaultTimeout = 300 // apache2的默认超时时间是300秒
         $.ajaxSetup({
           timeout: defaultTimeout
         })
