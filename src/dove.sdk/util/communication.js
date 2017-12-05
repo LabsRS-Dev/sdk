@@ -53,7 +53,7 @@ uu$.setp = function (key) {
   }
 }
 
-uu$.getp = function (url, data, noCache, cb, noCancel) {
+uu$.getp = function (url, data, noCache, cb, failCallback, noCancel) {
   try {
     var t$ = this
     var b$ = common.getBSb$()
@@ -112,9 +112,13 @@ uu$.getp = function (url, data, noCache, cb, noCancel) {
     var script = url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(dataInfo)
     console.log('[script] = ', script)
 
-    $.getScript(script, function () {
+    $.getScript(script).done(function () {
       $.event.trigger('ajaxSend')
+    }).fail(function () {
+      failCallback && failCallback()
     })
+
+    $.get
   } catch (e) {
     console.error(e)
   }
@@ -124,16 +128,16 @@ uu$.getp = function (url, data, noCache, cb, noCancel) {
 /**
  * 通用的提交信息接口
  */
-uu$.commitMessage = function (apiUrl = '/', messageObj = {}, cb = () => {}) {
+uu$.commitMessage = function (apiUrl = '/', messageObj = {}, cb = () => {}, failCallback = () => {}) {
   console.log('--- $.commitMessage ---')
   var t$ = this
-  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb)
+  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb, failCallback)
 }
 
 /**
  * 向服务器提交信息,用途，与服务器上的交互，可以收集错误信息
  */
-uu$.reportInfo = function (info, callback) {
+uu$.reportInfo = function (info, callback, failCallback) {
   console.log('--- $.reportInfo ---')
   var t$ = this
 
@@ -154,13 +158,15 @@ uu$.reportInfo = function (info, callback) {
         console.error(error)
       }
     }
+  }, false, function () {
+    failCallback && failCallback()
   })
 }
 
 /**
  * 封装简单报告问题的接口
  */
-uu$.reportErrorInfo = function (e, addonInfo, callback) {
+uu$.reportErrorInfo = function (e, addonInfo, callback, failCallback) {
   var t$ = this
   console.log('--- $.reportErrorInfo ---')
   var message = ''
@@ -172,7 +178,7 @@ uu$.reportErrorInfo = function (e, addonInfo, callback) {
   t$.reportInfo({
     'errorMessage': message || '',
     'addonInfo': addonInfo || {}
-  }, callback)
+  }, callback, failCallback)
 }
 
 /**

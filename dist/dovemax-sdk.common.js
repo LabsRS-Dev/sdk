@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171205.15.00
+ * DoveMaxSDK v20171205.15.58
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -24066,7 +24066,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171205.15.00',
+  version: '20171205.15.58',
   b$: $bc_
 };
 
@@ -24344,7 +24344,7 @@ uu$$1.setp = function (key) {
   }
 };
 
-uu$$1.getp = function (url, data, noCache, cb, noCancel) {
+uu$$1.getp = function (url, data, noCache, cb, failCallback, noCancel) {
   try {
     var t$ = this;
     var b$ = common$1.getBSb$();
@@ -24403,9 +24403,13 @@ uu$$1.getp = function (url, data, noCache, cb, noCancel) {
     var script = url + (url.indexOf('?') === -1 ? '?' : '&') + $.param(dataInfo);
     console.log('[script] = ', script);
 
-    $.getScript(script, function () {
+    $.getScript(script).done(function () {
       $.event.trigger('ajaxSend');
+    }).fail(function () {
+      failCallback && failCallback();
     });
+
+    $.get;
   } catch (e) {
     console.error(e);
   }
@@ -24415,24 +24419,26 @@ uu$$1.getp = function (url, data, noCache, cb, noCancel) {
 /**
  * 通用的提交信息接口
  */
-uu$$1.commitMessage = function (apiUrl, messageObj, cb) {
+uu$$1.commitMessage = function (apiUrl, messageObj, cb, failCallback) {
   if ( apiUrl === void 0 ) apiUrl = '/';
   if ( messageObj === void 0 ) messageObj = {};
   if ( cb === void 0 ) cb = function () {};
+  if ( failCallback === void 0 ) failCallback = function () {};
 
   console.log('--- $.commitMessage ---');
   var t$ = this;
-  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb);
+  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb, failCallback);
 };
 
 /**
  * 向服务器提交信息,用途，与服务器上的交互，可以收集错误信息
  */
-uu$$1.reportInfo = function (info) {
+uu$$1.reportInfo = function (info, callback, failCallback) {
   console.log('--- $.reportInfo ---');
   var t$ = this;
 
   t$.getp(config.ConfigServer.getDomain() + '/services/report_info', { data: info || '' }, true, function (o) {
+    callback && callback(o);
     console.log('get_report_feedback:' + common$1.obj2string(o));
     if (lodash.isObject(o)) {
       try {
@@ -24448,13 +24454,15 @@ uu$$1.reportInfo = function (info) {
         console.error(error);
       }
     }
+  }, false, function () {
+    failCallback && failCallback();
   });
 };
 
 /**
  * 封装简单报告问题的接口
  */
-uu$$1.reportErrorInfo = function (e, addonInfo) {
+uu$$1.reportErrorInfo = function (e, addonInfo, callback, failCallback) {
   var t$ = this;
   console.log('--- $.reportErrorInfo ---');
   var message = '';
@@ -24466,7 +24474,7 @@ uu$$1.reportErrorInfo = function (e, addonInfo) {
   t$.reportInfo({
     'errorMessage': message || '',
     'addonInfo': addonInfo || {}
-  });
+  }, callback, failCallback);
 };
 
 /**
@@ -27474,7 +27482,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171205.15.00',
+  version: '20171205.15.58',
   util: util
 };
 
@@ -27504,7 +27512,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171205.15.00'
+  version: '20171205.15.58'
 };
 
 module.exports = index;
