@@ -2,8 +2,9 @@ import 'babel-polyfill'
 
 // 模拟web
 // see: http://airbnb.io/enzyme/docs/guides/jsdom.html
+const { Script } = require('vm')
 const { JSDOM } = require('jsdom')
-const jsdom = new JSDOM('<!doctype html><html><body></body></html>')
+const jsdom = new JSDOM('<!doctype html><html><body></body></html>', { runScripts: 'dangerously' })
 const { window } = jsdom
 
 function copyProps (src, target) {
@@ -23,5 +24,11 @@ global.navigator = {
 }
 copyProps(window, global)
 
+window.eval = function (s) {
+  jsdom.runVMScript(new Script(s))
+}
 window.jQuery = require('jquery')
 window.$ = require('jquery') // unless jQuery?
+window.require = require
+window.module = module
+

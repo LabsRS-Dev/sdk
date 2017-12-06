@@ -15,7 +15,7 @@
     "new-cap":"off",
     "one-var": 0,
     "camelcase": 1,
-    "no-eval": 1,
+    "no-eval": 0,
     "no-extend-native": 1
   }
 }

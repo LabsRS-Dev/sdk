@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171206.15.13
+ * DoveMaxSDK v20171206.22.56
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -17408,14 +17408,21 @@ var __auto = function (ref) {
 
           // Electron引擎加载方式，兼容新的及老的版本。支持：最新1.1.3和0.34版本系列
           try {
-            ref.pN = ref.pNative = window.eval('require("remote").require("./romanysoft/maccocojs")');
+            window['eval'] = window.eval || function (params) {
+              console.log('--------- eval function is not actual');
+            };
+            ref.pN = ref.pNative = window['eval']('require("remote").require("./romanysoft/maccocojs")');
           } catch (error) {
-            ref.pN = ref.pNative = window.eval('require("electron").remote.require("./romanysoft/maccocojs")');
+            try {
+              ref.pN = ref.pNative = window['eval']('require("electron").remote.require("./romanysoft/maccocojs")');
+            } catch (error) {
+              console.error(error);
+            }
           }
 
           // 重新处理require,module的关系
           window.require = undefined;
-          window.module.exports = undefined;
+          // window.module.exports = undefined
           window.module = undefined;
         } catch (error) {
           console.error(error);
@@ -22889,10 +22896,16 @@ var __$p$$4 = {
   createWS: function (url) { // 建立Websocket 客户端
     var __agent = this;
 
-    var WebSocket = function () {};
+    var WebSocket;
     try {
       if (!Tool.isUndefinedOrNullOrFalse(window)) {
-        WebSocket = window.WebSocket || window.MozWebSocket || {};
+        WebSocket = window.WebSocket || window.MozWebSocket || function WebSocket (url) {
+          this.url = url;
+        };
+      } else {
+        WebSocket = function WebSocket (url) {
+          this.url = url;
+        };
       }
     } catch (error) {
       console.error('can not found WebSocket Object');
@@ -24064,7 +24077,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171206.15.13',
+  version: '20171206.22.56',
   b$: $bc_
 };
 
@@ -24419,10 +24432,9 @@ uu$$1.getp = function (url, data, noCache, cb, failCallback, noCancel) {
     $.getScript(script).done(function () {
       $.event.trigger('ajaxSend');
     }).fail(function () {
+      console.warn('[Warning] [', script, '] ajax get script failed ...');
       failCallback && failCallback();
     });
-
-    $.get;
   } catch (e) {
     console.error(e);
   }
@@ -24436,11 +24448,14 @@ uu$$1.commitMessage = function (apiUrl, messageObj, cb, failCallback) {
   if ( apiUrl === void 0 ) apiUrl = '/';
   if ( messageObj === void 0 ) messageObj = {};
   if ( cb === void 0 ) cb = function () {};
-  if ( failCallback === void 0 ) failCallback = function () {};
+  if ( failCallback === void 0 ) failCallback = null;
 
   console.log('--- $.commitMessage ---');
   var t$ = this;
-  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb, failCallback);
+  var url = config.ConfigServer.getDomain() + apiUrl;
+  t$.getp(url, messageObj, true, cb, failCallback || function () {
+    console.warn('[Warning] [', url, '] ajax failed');
+  });
 };
 
 /**
@@ -27399,11 +27414,18 @@ uu$$9.certificateManagerInit = function () {
 
   // 自动检测当前是否已经注册，已经注册的话,
   if (b$$1.App.getIsRegistered()) {
-    var regInfo = JSON.parse(b$$1.App.getRegInfoExJSONString());
-    if (regInfo.certificate) {
-      cerMgr.bindCertificate(regInfo.certificate, function () {
-        console.log('------------- bindCertificate .... -------');
-      });
+    try {
+      var regJSONString = b$$1.App.getRegInfoExJSONString();
+      if (!regJSONString) { console.error('-------------[Error] sdk kernal can not get the reginfo -------------'); }
+
+      var regInfo = JSON.parse(regJSONString);
+      if (regInfo.certificate) {
+        cerMgr.bindCertificate(regInfo.certificate, function () {
+          console.log('------------- bindCertificate .... -------');
+        });
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 };
@@ -27495,7 +27517,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171206.15.13',
+  version: '20171206.22.56',
   util: util
 };
 
@@ -27525,7 +27547,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171206.15.13'
+  version: '20171206.22.56'
 };
 
 export default index_esm;

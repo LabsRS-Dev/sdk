@@ -69,10 +69,13 @@ var __auto = function (ref) {
 
           // Electron引擎加载方式，兼容新的及老的版本。支持：最新1.1.3和0.34版本系列
           try {
-            ref.pN = ref.pNative = eval('require("remote").require("./romanysoft/maccocojs")')
+            window['eval'] = window.eval || function (params) {
+              console.log('--------- eval function is not actual')
+            }
+            ref.pN = ref.pNative = window['eval']('require("remote").require("./romanysoft/maccocojs")')
           } catch (error) {
             try {
-              ref.pN = ref.pNative = eval('require("electron").remote.require("./romanysoft/maccocojs")')
+              ref.pN = ref.pNative = window['eval']('require("electron").remote.require("./romanysoft/maccocojs")')
             } catch (error) {
               console.error(error)
             }
