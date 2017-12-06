@@ -152,10 +152,16 @@ var __$p$ = {
   createWS: function (url) { // 建立Websocket 客户端
     var __agent = this
 
-    var WebSocket = function () {}
+    var WebSocket
     try {
       if (!Tool.isUndefinedOrNullOrFalse(window)) {
-        WebSocket = window.WebSocket || window.MozWebSocket || {}
+        WebSocket = window.WebSocket || window.MozWebSocket || function WebSocket (url) {
+          this.url = url
+        }
+      } else {
+        WebSocket = function WebSocket (url) {
+          this.url = url
+        }
       }
     } catch (error) {
       console.error('can not found WebSocket Object')

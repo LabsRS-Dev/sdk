@@ -7,9 +7,4 @@ describe('SDK.BS.common', () => {
 
     expect(cbName1).not.toEqual(cbName2)
   })
-
-  it('getJQuery$', () => {
-    var $ = common.getJQuery$()
-    expect($).toBeUndefined()
-  })
 })

@@ -19,11 +19,18 @@ uu$.certificateManagerInit = function () {
 
   // 自动检测当前是否已经注册，已经注册的话,
   if (b$.App.getIsRegistered()) {
-    const regInfo = JSON.parse(b$.App.getRegInfoExJSONString())
-    if (regInfo.certificate) {
-      cerMgr.bindCertificate(regInfo.certificate, () => {
-        console.log('------------- bindCertificate .... -------')
-      })
+    try {
+      const regJSONString = b$.App.getRegInfoExJSONString()
+      if (!regJSONString) console.error('-------------[Error] sdk kernal can not get the reginfo -------------')
+
+      const regInfo = JSON.parse(regJSONString)
+      if (regInfo.certificate) {
+        cerMgr.bindCertificate(regInfo.certificate, () => {
+          console.log('------------- bindCertificate .... -------')
+        })
+      }
+    } catch (e) {
+      console.error(e)
     }
   }
 }

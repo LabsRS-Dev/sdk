@@ -1,6 +1,6 @@
 {
   "name": "dove.max.sdk",
-  "version": "20171206.15.13",
+  "version": "20171206.22.14",
   "description": "common api for native macOS and electron",
   "main": "dist/dovemax-sdk.js",
   "module": "dist/dovemax-sdk.esm.js",
@@ -25,7 +25,8 @@
     "test:sdk": "jasmine JASMINE_CONFIG_PATH=test/sdk/jasmine.json",
     "release": "bash build/release.sh",
     "docs": "cd docs && gitbook serve",
-    "docs:deploy": "cd docs && ./deploy.sh"
+    "docs:deploy": "cd docs && ./deploy.sh",
+    "remove:yarn.lock":"git rm --cached -r -- yarn.lock"
   },
   "repository": {
     "type": "git",
@@ -60,6 +61,7 @@
     "jasmine-core": "^2.5.2",
     "jquery": "^3.2.1",
     "jquery-migrate": "^3.0.1",
+    "jsdom": "^11.5.1",
     "nightwatch": "^0.9.16",
     "nightwatch-helpers": "^1.2.0",
     "rollup": "^0.41.4",

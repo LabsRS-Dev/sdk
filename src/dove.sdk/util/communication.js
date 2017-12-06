@@ -115,10 +115,9 @@ uu$.getp = function (url, data, noCache, cb, failCallback, noCancel) {
     $.getScript(script).done(function () {
       $.event.trigger('ajaxSend')
     }).fail(function () {
+      console.warn('[Warning] [', script, '] ajax get script failed ...')
       failCallback && failCallback()
     })
-
-    $.get
   } catch (e) {
     console.error(e)
   }
@@ -128,10 +127,13 @@ uu$.getp = function (url, data, noCache, cb, failCallback, noCancel) {
 /**
  * 通用的提交信息接口
  */
-uu$.commitMessage = function (apiUrl = '/', messageObj = {}, cb = () => {}, failCallback = () => {}) {
+uu$.commitMessage = function (apiUrl = '/', messageObj = {}, cb = () => {}, failCallback = null) {
   console.log('--- $.commitMessage ---')
   var t$ = this
-  t$.getp(config.ConfigServer.getDomain() + apiUrl, messageObj, true, cb, failCallback)
+  const url = config.ConfigServer.getDomain() + apiUrl
+  t$.getp(url, messageObj, true, cb, failCallback || function () {
+    console.warn('[Warning] [', url, '] ajax failed')
+  })
 }
 
 /**
