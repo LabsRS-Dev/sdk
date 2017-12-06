@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171205.18.04
+ * DoveMaxSDK v20171206.15.11
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -24064,7 +24064,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171205.18.04',
+  version: '20171206.15.11',
   b$: $bc_
 };
 
@@ -24165,7 +24165,7 @@ uu$.getJQuery$ = function () {
     if ($ && !window[setupKey]) {
       console.log('You can use $.ajaxSetup to control ajax method timeout issue. \n');
       try {
-        var defaultTimeout = 30; // apache2的默认超时时间是300秒
+        var defaultTimeout = 30 * 1000; // apache2的默认超时时间是30秒
         $.ajaxSetup({
           timeout: defaultTimeout
         });
@@ -27495,7 +27495,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171205.18.04',
+  version: '20171206.15.11',
   util: util
 };
 
@@ -27525,7 +27525,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171205.18.04'
+  version: '20171206.15.11'
 };
 
 export default index_esm;

@@ -96,7 +96,7 @@ uu$.getJQuery$ = function () {
     if ($ && !window[setupKey]) {
       console.log('You can use $.ajaxSetup to control ajax method timeout issue. \n')
       try {
-        var defaultTimeout = 30 // apache2的默认超时时间是300秒
+        var defaultTimeout = 30 * 1000 // apache2的默认超时时间是30秒
         $.ajaxSetup({
           timeout: defaultTimeout
         })
