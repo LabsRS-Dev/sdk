@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK v20171206.22.56
+ * DoveMaxSDK v20171207.9.17
  * (c) 2017 Gmagon Inc. && Romanysoft LAB.
  * @license MIT
  */
@@ -17417,12 +17417,14 @@ var __auto = function (ref) {
             window['eval'] = window.eval || function (params) {
               console.log('--------- eval function is not actual');
             };
-            ref.pN = ref.pNative = window['eval']('require("remote").require("./romanysoft/maccocojs")');
+            var js = "window.require(\"remote\").require(\"./romanysoft/maccocojs\")";
+            ref.pN = ref.pNative = window['eval'](js);
           } catch (error) {
             try {
-              ref.pN = ref.pNative = window['eval']('require("electron").remote.require("./romanysoft/maccocojs")');
-            } catch (error) {
-              console.error(error);
+              var js$1 = "window.require(\"electron\").remote.require(\"./romanysoft/maccocojs\")";
+              ref.pN = ref.pNative = window['eval'](js$1);
+            } catch (e) {
+              console.error(e);
             }
           }
 
@@ -24083,7 +24085,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171206.22.56',
+  version: '20171207.9.17',
   b$: $bc_
 };
 
@@ -27523,7 +27525,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171206.22.56',
+  version: '20171207.9.17',
   util: util
 };
 
@@ -27553,7 +27555,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171206.22.56'
+  version: '20171207.9.17'
 };
 
 return index;
