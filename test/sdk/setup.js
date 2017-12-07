@@ -17,6 +17,8 @@ function copyProps (src, target) {
   Object.defineProperties(target, props)
 }
 
+global.require = require
+global.module = module
 global.window = window
 global.document = window.document
 global.navigator = {
@@ -31,4 +33,3 @@ window.jQuery = require('jquery')
 window.$ = require('jquery') // unless jQuery?
 window.require = require
 window.module = module
-
