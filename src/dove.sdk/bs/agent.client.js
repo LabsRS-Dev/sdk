@@ -102,7 +102,6 @@ class Chancel2HandlerHelper {
     })
     return _fnList
   }
-
 }
 
 // ------------------------------------------------------------------------
@@ -136,7 +135,7 @@ var __$p$ = {
   // --------------- 信息交互 通道建立 ------------------------
   ChancelType: ChancelType,
   Chancel: Chancel,
-  __chancelList: [],   // 通讯通道对象
+  __chancelList: [], // 通讯通道对象
   getChancelCount: function () {
     var that = this
     return that.__chancelList.length

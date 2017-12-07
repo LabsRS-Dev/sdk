@@ -236,6 +236,6 @@ var Observable = SelfClass.extend({
 })
 
 export {
-   SelfClass,
-   Observable
+  SelfClass,
+  Observable
 }

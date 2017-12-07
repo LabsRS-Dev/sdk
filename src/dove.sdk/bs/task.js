@@ -138,8 +138,8 @@ $bc_.createTask = function (callMethod, taskId, args, cbFuncName) {
  * @param args 需要填写的参数
  */
 $bc_.runTaskSample = function (method = TaskMethodWay.Task, callbackName, args = [
-  _.now(),   // TaskID
-  [{         // TaskCommand
+  _.now(), // TaskID
+  [{ // TaskCommand
     appPath: '',
     command: [],
     mainThread: false

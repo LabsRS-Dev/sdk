@@ -8,7 +8,7 @@ $bc_.IAP_SE_KEY = 'RSSDK_SE_SANBOX_IAP'
 $bc_.IAP_SE_OBJ = {}
 $bc_.IAP_SE_Wrapper = {
   _caller: 0,
-  productIdentifiers: [],   // 商品的ID 数组
+  productIdentifiers: [], // 商品的ID 数组
   caller: function () { // 消息回调处理
     if (this._caller === 0) {
       var $ = common.getJQuery$()
@@ -234,7 +234,7 @@ $bc_.IAP = {
           }))
         }
 
- // / 以下是Demo 处理
+        // / 以下是Demo 处理
 
         // /注册模拟IAP回调
         $bc_.IAP_SE_Wrapper.caller().add(function (obj) {

@@ -9,10 +9,10 @@ const __key = 'proxy-client-websocket-node'
 const __msgPrefix = __key + '-' + _.now() + _.random(1, Number.MAX_SAFE_INTEGER) + '-'
 const TypeMsg = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
-  OnWSOpen: __msgPrefix + 'OnWSOpen',          // WebSocket 创建并连接上
-  OnWSClose: __msgPrefix + 'OnWSClose',        // WebSocket 意外关闭
+  OnWSOpen: __msgPrefix + 'OnWSOpen', // WebSocket 创建并连接上
+  OnWSClose: __msgPrefix + 'OnWSClose', // WebSocket 意外关闭
 
-  OnWSGetServerMessage: __msgPrefix + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
+  OnWSGetServerMessage: __msgPrefix + 'OnWSGetServerMessage', // WebSocket 从服务器获取到信息
   OnSendMessageToServer: __msgPrefix + 'OnSendMessageToServer' // 向服务器发送信息
 }
 
@@ -21,8 +21,8 @@ You must use init(config) function first, the use listen to start!!!!
 `
 
 const ClientIOType = {
-  SocketIO: 'Socket.io.client',   // 适用于Node服务器使用的Socket.IO
-  EngineIO: 'Engine.io.client'    // 适用于Node服务器使用的Engine.IO
+  SocketIO: 'Socket.io.client', // 适用于Node服务器使用的Socket.IO
+  EngineIO: 'Engine.io.client' // 适用于Node服务器使用的Engine.IO
 }
 
 // ------------------------------------------------------------------------
@@ -53,14 +53,14 @@ var __$p$ = {
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
-  config: {       // 包含的基本配置
+  config: { // 包含的基本配置
     ip: '127.0.0.1',
     port: '8888',
     protocol: 'ws://',
     reqUrl: '',
-    clientIOType: ClientIOType.SocketIO,              // 默认使用这种的Socket链接方式
+    clientIOType: ClientIOType.SocketIO, // 默认使用这种的Socket链接方式
     autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
-    customSendEventDefine: 'sendMsgEvent',            // 定义核心交互的事件类型
+    customSendEventDefine: 'sendMsgEvent', // 定义核心交互的事件类型
     debug: true
   },
   getUrl: function () {
@@ -87,11 +87,11 @@ var __$p$ = {
   },
   // ------------------------------------------------
   // 消息交互的核心部分
-  wsHandler: null,              // websocket 对象句柄
+  wsHandler: null, // websocket 对象句柄
 
   // --------------- 核心消息 ------------------------
-  cacheSendMessage: [],         // 缓存发送信息部分
-  sendMessage: function (message, first = false) {   // 客户端向服务器发送消息
+  cacheSendMessage: [], // 缓存发送信息部分
+  sendMessage: function (message, first = false) { // 客户端向服务器发送消息
     var that = this
     if (!that.isRunning || !that.wsHandler) {
       that.cacheSendMessage.push(message)
@@ -139,7 +139,7 @@ var __$p$ = {
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
-  autoCWSTimesIndex: 0,  // 自动启动计数器
+  autoCWSTimesIndex: 0, // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: _.uniqueId(__key), // 客户端唯一ID
   showInitializedTip: function () {

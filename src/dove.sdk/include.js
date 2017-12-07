@@ -139,7 +139,7 @@ var Tool = {
           arg.self = self
         }
       } catch (e) {
-          // IE 7&8 throw an error when window.self is deleted
+        // IE 7&8 throw an error when window.self is deleted
         return true
       }
     }
@@ -445,6 +445,6 @@ var Tool = {
 // -------------------------------------------------------
 
 export {
-   Tool
+  Tool
 }
 

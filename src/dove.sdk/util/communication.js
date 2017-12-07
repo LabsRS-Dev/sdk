@@ -17,12 +17,12 @@ uu$.tmpl = function (str, data = {}) {
     var fn = cache[str] ||
       new Function('o', 'var p=[];with(o){p.push(\'' +
         str.replace(/[\r\t\n]/g, ' ')
-        .replace(/'(?=[^%]*%})/g, '\t')
-        .split('\'').join('\\\'')
-        .split('\t').join('\'')
-        .replace(/{%=(.+?)%}/g, '\', $1, \'')
-        .split('{%').join('\');')
-        .split('%}').join('p.push(\'') + '\');} return p.join(\'\');')
+          .replace(/'(?=[^%]*%})/g, '\t')
+          .split('\'').join('\\\'')
+          .split('\t').join('\'')
+          .replace(/{%=(.+?)%}/g, '\', $1, \'')
+          .split('{%').join('\');')
+          .split('%}').join('p.push(\'') + '\');} return p.join(\'\');')
     return fn.apply(data, [data])
   } catch (e) {
     console.error(e)

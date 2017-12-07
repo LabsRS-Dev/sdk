@@ -42,22 +42,22 @@ var __$p$ = {
   // --------------------------------------------------------------
   _isStarted: false,
   baseConfig: {
-    nativePlugins: [],     // 跟随系统启动的插件
+    nativePlugins: [], // 跟随系统启动的插件
     fnOnPluginInit: () => {},
     fnOnExecTaskUpdateInfo: () => {},
-    fnIAP: () => {},       // 内置购买配置接口
+    fnIAP: () => {}, // 内置购买配置接口
     fnMenuPreferences: '', // 用户参数化选择菜单配置接口
-    dropDragConfig: {      // 拖拽处理配置接口
-      enable: false,       // 默认是不开启的
-      enableDir: false,    // 是否允许拖拽文件夹
-      enableFile: true,    // 是否拖拽文件
-      allowTypes: ['*'],   // 允许拖拽的文件类型
+    dropDragConfig: { // 拖拽处理配置接口
+      enable: false, // 默认是不开启的
+      enableDir: false, // 是否允许拖拽文件夹
+      enableFile: true, // 是否拖拽文件
+      allowTypes: ['*'], // 允许拖拽的文件类型
       handler: (data) => {
         console.log(JSON.stringify(data))
       }
     },
-    httpPort: '8080',  // Webserver port
-    enableServer: {    // 哪些本地服务器插件可以同时启动
+    httpPort: '8080', // Webserver port
+    enableServer: { // 哪些本地服务器插件可以同时启动
       python: false,
       node: false,
       csharp: false,

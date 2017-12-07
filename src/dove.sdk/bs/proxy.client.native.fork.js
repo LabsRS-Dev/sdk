@@ -13,9 +13,9 @@ const __msgPrefix = __key + '-' + _.now() + _.random(1, Number.MAX_SAFE_INTEGER)
 const TNMT = TypeNativeMessageType
 const TypeMsg = {
   OnCreateError: __msgPrefix + 'OnCreateError', // 创建失败
-  OnRunning: __msgPrefix + 'OnRunning',         // 创建并连接上
+  OnRunning: __msgPrefix + 'OnRunning', // 创建并连接上
 
-  OnGetServerMessage: __msgPrefix + 'OnGetServerMessage',  // 从服务器获取到信息
+  OnGetServerMessage: __msgPrefix + 'OnGetServerMessage', // 从服务器获取到信息
   OnSendMessageToServer: __msgPrefix + 'OnSendMessageToServer' // 向服务器发送信息
 }
 
@@ -68,8 +68,8 @@ var __$p$ = {
   },
 
   // --------------- 核心消息 ------------------------
-  cacheSendMessage: [],         // 缓存发送信息部分
-  sendMessage: function (message, first = false) {   // 客户端向服务器发送消息
+  cacheSendMessage: [], // 缓存发送信息部分
+  sendMessage: function (message, first = false) { // 客户端向服务器发送消息
     var that = this
     if (!that.isRunning) {
       that.cacheSendMessage.push(message)
@@ -135,7 +135,7 @@ var __$p$ = {
 
       if (obj.type === TNMT.AddCallTaskQueueSuccess) {
         return $bc_.runTaskSample(TaskMethodWay.SendEvent,
-              cbName, ['start', 'calltask', obj.queueInfo.id])
+          cbName, ['start', 'calltask', obj.queueInfo.id])
       } else if (obj.type === TNMT.CallTaskStart) {
         console.log('call task start .... ')
         that.noticeOnRunning(msgPackage)

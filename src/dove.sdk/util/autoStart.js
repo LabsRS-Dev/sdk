@@ -44,7 +44,7 @@ uu$.updateCheckInit = function () {
       console.log('------------- common app starting .... -------')
     } else {
       update.checkUpdate()
-          // uu$.checkPatches()
+      // uu$.checkPatches()
     }
   }, 36 * 1000) // 36sec
 }
