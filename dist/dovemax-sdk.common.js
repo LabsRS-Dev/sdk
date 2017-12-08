@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20171207.21.27
+ * DoveMaxSDK ABI v20171208.9.3
  * (c) 2017 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24081,7 +24081,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171207.21.27',
+  version: '20171208.9.3',
   b$: $bc_
 };
 
@@ -27516,7 +27516,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171207.21.27',
+  version: '20171208.9.3',
   util: util
 };
 
@@ -27546,7 +27546,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171207.21.27'
+  version: '20171208.9.3'
 };
 
 module.exports = index;
