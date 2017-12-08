@@ -1,19 +1,30 @@
 const path = require('path')
 const buble = require('rollup-plugin-buble')
+const alias = require('rollup-plugin-alias')
+const cjs = require('rollup-plugin-commonjs')
 const replace = require('rollup-plugin-replace')
 const node_resolve = require('rollup-plugin-node-resolve')
+const flow = require('rollup-plugin-flow-no-whitespace')
 const commonjs = require('rollup-plugin-commonjs')
 const version = process.env.VERSION || require('../package.json').version
 const banner =
 `/**
- * DoveMaxSDK v${version}
- * (c) ${new Date().getFullYear()} Gmagon Inc. && Romanysoft LAB.
+ * DoveMaxSDK ABI v${version}
+ * (c) ${new Date().getFullYear()} Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */`
 
-const resolve = _path => path.resolve(__dirname, '../', _path)
+const aliases = require('./alias')
+const resolve = p => {
+  const base = p.split('/')[0]
+  if (aliases[base]) {
+    return path.resolve(aliases[base], p.slice(base.length + 1))
+  } else {
+    return path.resolve(__dirname, '../', p)
+  }
+}
 
-const configs = {
+const builds = {
   umdDev: {
     entry: resolve('src/index.js'),
     dest: resolve('dist/dovemax-sdk.js'),
@@ -38,13 +49,11 @@ const configs = {
   }
 }
 
-function genConfig (opts) {
+function genConfig (name) {
+  const opts = builds[name]
   const config = {
-    entry: opts.entry,
-    dest: opts.dest,
-    format: opts.format,
-    banner,
-    moduleName: 'DoveMaxSDK',
+    input: opts.entry,
+    external: opts.external,
     plugins: [
       node_resolve({
         jsnext: true,
@@ -55,10 +64,18 @@ function genConfig (opts) {
       replace({
         __VERSION__: version
       }),
+      flow(),
       buble({
         exclude: 'node_modules/**'
-      })
-    ]
+      }),
+      alias(Object.assign({}, aliases, opts.alias))
+    ].concat(opts.plugins || []),
+    output: {
+      file: opts.dest,
+      format: opts.format,
+      banner: banner,
+      name: opts.moduleName || 'DoveMaxSDK'
+    }
   }
 
   if (opts.env) {
@@ -67,15 +84,17 @@ function genConfig (opts) {
     }))
   }
 
+  Object.defineProperty(config, '_name', {
+    enumerable: false,
+    value: name
+  })
+
   return config
 }
 
-function mapValues (obj, fn) {
-  const res = {}
-  Object.keys(obj).forEach(key => {
-    res[key] = fn(obj[key], key)
-  })
-  return res
+if (process.env.TARGET) {
+  module.exports = genConfig(process.env.TARGET)
+} else {
+  exports.getBuild = genConfig
+  exports.getAllBuilds = () => Object.keys(builds).map(genConfig)
 }
-
-module.exports = mapValues(configs, genConfig)

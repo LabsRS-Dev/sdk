@@ -6,7 +6,7 @@ const commonjs = require('rollup-plugin-commonjs')
 const version = process.env.VERSION || require('../package.json').version
 
 module.exports = {
-  entry: process.env.ESM ? 'src/index.esm.js' : 'src/index.js',
+  input: process.env.ESM ? 'src/index.esm.js' : 'src/index.js',
   dest: process.env.ESM ? 'dist/dovemax-sdk.esm.js' : 'dist/dovemax-sdk.js',
   format: process.env.ESM ? 'es' : 'umd',
   moduleName: 'DoveMaxSDK',

@@ -1,6 +1,6 @@
 /**
- * DoveMaxSDK v20171207.9.17
- * (c) 2017 Gmagon Inc. && Romanysoft LAB.
+ * DoveMaxSDK ABI v20171207.21.27
+ * (c) 2017 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
 (function (global, factory) {
@@ -17566,7 +17566,7 @@ $bc_$2.IAP_SE_KEY = 'RSSDK_SE_SANBOX_IAP';
 $bc_$2.IAP_SE_OBJ = {};
 $bc_$2.IAP_SE_Wrapper = {
   _caller: 0,
-  productIdentifiers: [],   // 商品的ID 数组
+  productIdentifiers: [], // 商品的ID 数组
   caller: function () { // 消息回调处理
     if (this._caller === 0) {
       var $ = common.getJQuery$();
@@ -17792,7 +17792,7 @@ $bc_$2.IAP = {
           }));
         }
 
- // / 以下是Demo 处理
+        // / 以下是Demo 处理
 
         // /注册模拟IAP回调
         $bc_$2.IAP_SE_Wrapper.caller().add(function (obj) {
@@ -21248,8 +21248,8 @@ $bc_$13.createTask = function (callMethod, taskId, args, cbFuncName) {
 $bc_$13.runTaskSample = function (method, callbackName, args) {
   if ( method === void 0 ) method = TaskMethodWay.Task;
   if ( args === void 0 ) args = [
-  lodash.now(),   // TaskID
-  [{         // TaskCommand
+  lodash.now(), // TaskID
+  [{ // TaskCommand
     appPath: '',
     command: [],
     mainThread: false
@@ -21744,7 +21744,7 @@ var Tool = {
           arg.self = self;
         }
       } catch (e) {
-          // IE 7&8 throw an error when window.self is deleted
+        // IE 7&8 throw an error when window.self is deleted
         return true
       }
     }
@@ -22055,18 +22055,18 @@ var __key$1 = 'proxy-client-websocket-go';
 var __msgPrefix = __key$1 + '-' + lodash.now() + lodash.random(1, Number.MAX_SAFE_INTEGER) + '-';
 var TypeMsg$1 = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
-  OnWSOpen: __msgPrefix + 'OnWSOpen',          // WebSocket 创建并连接上
-  OnWSClose: __msgPrefix + 'OnWSClose',        // WebSocket 意外关闭
+  OnWSOpen: __msgPrefix + 'OnWSOpen', // WebSocket 创建并连接上
+  OnWSClose: __msgPrefix + 'OnWSClose', // WebSocket 意外关闭
 
-  OnWSGetServerMessage: __msgPrefix + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
+  OnWSGetServerMessage: __msgPrefix + 'OnWSGetServerMessage', // WebSocket 从服务器获取到信息
   OnSendMessageToServer: __msgPrefix + 'OnSendMessageToServer' // 向服务器发送信息
 };
 
 var initializedTip = "\nYou must use init(config) function first, the use listen to start!!!!\n";
 
 var ClientIOType = {
-  SocketIO: 'Socket.io.client',   // 适用于Go服务器使用的Socket.IO
-  EngineIO: 'Engine.io.client'    // 适用于Go服务器使用的Engine.IO
+  SocketIO: 'Socket.io.client', // 适用于Go服务器使用的Socket.IO
+  EngineIO: 'Engine.io.client' // 适用于Go服务器使用的Engine.IO
 };
 
 // ------------------------------------------------------------------------
@@ -22099,14 +22099,14 @@ var __$p$$1 = {
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
-  config: {       // 包含的基本配置
+  config: { // 包含的基本配置
     ip: '127.0.0.1',
     port: '8888',
     protocol: 'ws://',
     reqUrl: '',
-    clientIOType: ClientIOType.SocketIO,              // 默认使用这种的Socket链接方式
+    clientIOType: ClientIOType.SocketIO, // 默认使用这种的Socket链接方式
     autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
-    customSendEventDefine: 'sendMsgEvent',            // 定义核心交互的事件类型
+    customSendEventDefine: 'sendMsgEvent', // 定义核心交互的事件类型
     debug: true
   },
   getUrl: function () {
@@ -22135,13 +22135,13 @@ var __$p$$1 = {
   },
   // ------------------------------------------------
   // 消息交互的核心部分
-  wsHandler: null,              // websocket 对象句柄
+  wsHandler: null, // websocket 对象句柄
 
   // --------------- 核心消息 ------------------------
-  cacheSendMessage: [],         // 缓存发送信息部分
+  cacheSendMessage: [], // 缓存发送信息部分
   sendMessage: function (message, first) {
     if ( first === void 0 ) first = false;
-   // 客户端向服务器发送消息
+ // 客户端向服务器发送消息
     var that = this;
     if (!that.isRunning || !that.wsHandler) {
       that.cacheSendMessage.push(message);
@@ -22189,7 +22189,7 @@ var __$p$$1 = {
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
-  autoCWSTimesIndex: 0,  // 自动启动计数器
+  autoCWSTimesIndex: 0, // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: lodash.uniqueId(__key$1), // 客户端唯一ID
   showInitializedTip: function () {
@@ -22404,18 +22404,18 @@ var __key$2 = 'proxy-client-websocket-node';
 var __msgPrefix$1 = __key$2 + '-' + lodash.now() + lodash.random(1, Number.MAX_SAFE_INTEGER) + '-';
 var TypeMsg$2 = {
   OnCreateError: __msgPrefix$1 + 'OnCreateError', // Websocket 创建失败
-  OnWSOpen: __msgPrefix$1 + 'OnWSOpen',          // WebSocket 创建并连接上
-  OnWSClose: __msgPrefix$1 + 'OnWSClose',        // WebSocket 意外关闭
+  OnWSOpen: __msgPrefix$1 + 'OnWSOpen', // WebSocket 创建并连接上
+  OnWSClose: __msgPrefix$1 + 'OnWSClose', // WebSocket 意外关闭
 
-  OnWSGetServerMessage: __msgPrefix$1 + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
+  OnWSGetServerMessage: __msgPrefix$1 + 'OnWSGetServerMessage', // WebSocket 从服务器获取到信息
   OnSendMessageToServer: __msgPrefix$1 + 'OnSendMessageToServer' // 向服务器发送信息
 };
 
 var initializedTip$1 = "\nYou must use init(config) function first, the use listen to start!!!!\n";
 
 var ClientIOType$1 = {
-  SocketIO: 'Socket.io.client',   // 适用于Node服务器使用的Socket.IO
-  EngineIO: 'Engine.io.client'    // 适用于Node服务器使用的Engine.IO
+  SocketIO: 'Socket.io.client', // 适用于Node服务器使用的Socket.IO
+  EngineIO: 'Engine.io.client' // 适用于Node服务器使用的Engine.IO
 };
 
 // ------------------------------------------------------------------------
@@ -22448,14 +22448,14 @@ var __$p$$3 = {
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
-  config: {       // 包含的基本配置
+  config: { // 包含的基本配置
     ip: '127.0.0.1',
     port: '8888',
     protocol: 'ws://',
     reqUrl: '',
-    clientIOType: ClientIOType$1.SocketIO,              // 默认使用这种的Socket链接方式
+    clientIOType: ClientIOType$1.SocketIO, // 默认使用这种的Socket链接方式
     autoReconnectMaxRunTimes: Number.MAX_SAFE_INTEGER, // 设置重新连接的秒数,
-    customSendEventDefine: 'sendMsgEvent',            // 定义核心交互的事件类型
+    customSendEventDefine: 'sendMsgEvent', // 定义核心交互的事件类型
     debug: true
   },
   getUrl: function () {
@@ -22484,13 +22484,13 @@ var __$p$$3 = {
   },
   // ------------------------------------------------
   // 消息交互的核心部分
-  wsHandler: null,              // websocket 对象句柄
+  wsHandler: null, // websocket 对象句柄
 
   // --------------- 核心消息 ------------------------
-  cacheSendMessage: [],         // 缓存发送信息部分
+  cacheSendMessage: [], // 缓存发送信息部分
   sendMessage: function (message, first) {
     if ( first === void 0 ) first = false;
-   // 客户端向服务器发送消息
+ // 客户端向服务器发送消息
     var that = this;
     if (!that.isRunning || !that.wsHandler) {
       that.cacheSendMessage.push(message);
@@ -22538,7 +22538,7 @@ var __$p$$3 = {
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
-  autoCWSTimesIndex: 0,  // 自动启动计数器
+  autoCWSTimesIndex: 0, // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: lodash.uniqueId(__key$2), // 客户端唯一ID
   showInitializedTip: function () {
@@ -22757,10 +22757,10 @@ var __key$3 = 'proxy-client-websocket-python';
 var __msgPrefix$2 = __key$3 + '-' + lodash.now() + lodash.random(1, Number.MAX_SAFE_INTEGER) + '-';
 var TypeMsg$3 = {
   OnCreateError: __msgPrefix$2 + 'OnCreateError', // Websocket 创建失败
-  OnWSOpen: __msgPrefix$2 + 'OnWSOpen',          // WebSocket 创建并连接上
-  OnWSClose: __msgPrefix$2 + 'OnWSClose',        // WebSocket 意外关闭
+  OnWSOpen: __msgPrefix$2 + 'OnWSOpen', // WebSocket 创建并连接上
+  OnWSClose: __msgPrefix$2 + 'OnWSClose', // WebSocket 意外关闭
 
-  OnWSGetServerMessage: __msgPrefix$2 + 'OnWSGetServerMessage',  // WebSocket 从服务器获取到信息
+  OnWSGetServerMessage: __msgPrefix$2 + 'OnWSGetServerMessage', // WebSocket 从服务器获取到信息
   OnSendMessageToServer: __msgPrefix$2 + 'OnSendMessageToServer' // 向服务器发送信息
 };
 
@@ -22795,7 +22795,7 @@ var __$p$$4 = {
   },
   // -------------------------------------------------------------------------
   initialized: false, // 是否初始化配置
-  config: {       // 包含的基本配置
+  config: { // 包含的基本配置
     ip: '127.0.0.1',
     port: '8080',
     protocol: 'ws://',
@@ -22831,13 +22831,13 @@ var __$p$$4 = {
   },
   // ------------------------------------------------
   // 消息交互的核心部分
-  wsHandler: null,              // websocket 对象句柄
+  wsHandler: null, // websocket 对象句柄
 
   // --------------- 核心消息 ------------------------
-  cacheSendMessage: [],         // 缓存发送信息部分
+  cacheSendMessage: [], // 缓存发送信息部分
   sendMessage: function (message, first) {
     if ( first === void 0 ) first = false;
-   // 客户端向服务器发送消息
+ // 客户端向服务器发送消息
     var that = this;
     if (!that.isRunning || !that.wsHandler) {
       that.cacheSendMessage.push(message);
@@ -22880,7 +22880,7 @@ var __$p$$4 = {
   },
   // --------------------------------------------------------
   // Websocket连接处理内核核心处理函数
-  autoCWSTimesIndex: 0,  // 自动启动计数器
+  autoCWSTimesIndex: 0, // 自动启动计数器
   autoReconnectMaxRunTimes: 3, // 最多尝试启动运行次数
   wsID: lodash.uniqueId(__key$3), // 客户端唯一ID
   showInitializedTip: function () {
@@ -23028,9 +23028,9 @@ var __msgPrefix$3 = __key$4 + '-' + lodash.now() + lodash.random(1, Number.MAX_S
 var TNMT = TypeNativeMessageType;
 var TypeMsg$4 = {
   OnCreateError: __msgPrefix$3 + 'OnCreateError', // 创建失败
-  OnRunning: __msgPrefix$3 + 'OnRunning',         // 创建并连接上
+  OnRunning: __msgPrefix$3 + 'OnRunning', // 创建并连接上
 
-  OnGetServerMessage: __msgPrefix$3 + 'OnGetServerMessage',  // 从服务器获取到信息
+  OnGetServerMessage: __msgPrefix$3 + 'OnGetServerMessage', // 从服务器获取到信息
   OnSendMessageToServer: __msgPrefix$3 + 'OnSendMessageToServer' // 向服务器发送信息
 };
 
@@ -23085,10 +23085,10 @@ var __$p$$5 = {
   },
 
   // --------------- 核心消息 ------------------------
-  cacheSendMessage: [],         // 缓存发送信息部分
+  cacheSendMessage: [], // 缓存发送信息部分
   sendMessage: function (message, first) {
     if ( first === void 0 ) first = false;
-   // 客户端向服务器发送消息
+ // 客户端向服务器发送消息
     var that = this;
     if (!that.isRunning) {
       that.cacheSendMessage.push(message);
@@ -23154,7 +23154,7 @@ var __$p$$5 = {
 
       if (obj.type === TNMT.AddCallTaskQueueSuccess) {
         return $bc_$15.runTaskSample(TaskMethodWay.SendEvent,
-              cbName, ['start', 'calltask', obj.queueInfo.id])
+          cbName, ['start', 'calltask', obj.queueInfo.id])
       } else if (obj.type === TNMT.CallTaskStart) {
         console.log('call task start .... ');
         that.noticeOnRunning(msgPackage);
@@ -23242,7 +23242,7 @@ var ChancelType = {
 
 var Chancel = function Chancel () {};
 
-var prototypeAccessors = { server: {} };
+var prototypeAccessors = { server: { configurable: true } };
 
 Chancel.prototype.build = function build (config) {
     if ( config === void 0 ) config = {};
@@ -23348,7 +23348,7 @@ var __$p$ = {
   // --------------- 信息交互 通道建立 ------------------------
   ChancelType: ChancelType,
   Chancel: Chancel,
-  __chancelList: [],   // 通讯通道对象
+  __chancelList: [], // 通讯通道对象
   getChancelCount: function () {
     var that = this;
     return that.__chancelList.length
@@ -23737,22 +23737,22 @@ var __$p$$7 = {
   // --------------------------------------------------------------
   _isStarted: false,
   baseConfig: {
-    nativePlugins: [],     // 跟随系统启动的插件
+    nativePlugins: [], // 跟随系统启动的插件
     fnOnPluginInit: function () {},
     fnOnExecTaskUpdateInfo: function () {},
-    fnIAP: function () {},       // 内置购买配置接口
+    fnIAP: function () {}, // 内置购买配置接口
     fnMenuPreferences: '', // 用户参数化选择菜单配置接口
-    dropDragConfig: {      // 拖拽处理配置接口
-      enable: false,       // 默认是不开启的
-      enableDir: false,    // 是否允许拖拽文件夹
-      enableFile: true,    // 是否拖拽文件
-      allowTypes: ['*'],   // 允许拖拽的文件类型
+    dropDragConfig: { // 拖拽处理配置接口
+      enable: false, // 默认是不开启的
+      enableDir: false, // 是否允许拖拽文件夹
+      enableFile: true, // 是否拖拽文件
+      allowTypes: ['*'], // 允许拖拽的文件类型
       handler: function (data) {
         console.log(JSON.stringify(data));
       }
     },
-    httpPort: '8080',  // Webserver port
-    enableServer: {    // 哪些本地服务器插件可以同时启动
+    httpPort: '8080', // Webserver port
+    enableServer: { // 哪些本地服务器插件可以同时启动
       python: false,
       node: false,
       csharp: false,
@@ -24085,7 +24085,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171207.9.17',
+  version: '20171207.21.27',
   b$: $bc_
 };
 
@@ -24342,12 +24342,12 @@ uu$$1.tmpl = function (str, data) {
     var fn = cache[str] ||
       new Function('o', 'var p=[];with(o){p.push(\'' +
         str.replace(/[\r\t\n]/g, ' ')
-        .replace(/'(?=[^%]*%})/g, '\t')
-        .split('\'').join('\\\'')
-        .split('\t').join('\'')
-        .replace(/{%=(.+?)%}/g, '\', $1, \'')
-        .split('{%').join('\');')
-        .split('%}').join('p.push(\'') + '\');} return p.join(\'\');');
+          .replace(/'(?=[^%]*%})/g, '\t')
+          .split('\'').join('\\\'')
+          .split('\t').join('\'')
+          .replace(/{%=(.+?)%}/g, '\', $1, \'')
+          .split('{%').join('\');')
+          .split('%}').join('p.push(\'') + '\');} return p.join(\'\');');
     return fn.apply(data, [data])
   } catch (e) {
     console.error(e);
@@ -24605,9 +24605,7 @@ autoForJquery$1(uu$$1);
  */
 
 (function compatibilityWrapper() {
-  'use strict';
-
-var userAgent = navigator.userAgent;
+  var userAgent = navigator.userAgent;
 
 var isAndroid = /Android/.test(userAgent);
 var isAndroidPre3 = /Android\s[0-2][^\d]/.test(userAgent);
@@ -24864,10 +24862,7 @@ if (typeof RTYCompatibilityWrapper === 'undefined') {
       (buffer = input.charAt(idx++));
       // character found in table?
       // initialize bit storage and add its ascii value
-      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-        // and if not first of each 4 characters,
-        // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer, bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
     ) {
       // try to find character in table (0-63, not found => -1)
       buffer = digits.indexOf(buffer);
@@ -25269,7 +25264,7 @@ if (typeof RTYCompatibilityWrapper === 'undefined') {
           };
 
           // The length property of the from method is 1.
-          return function from(arrayLike /*, mapFn, thisArg */) {
+          return function from(arrayLike /* mapFn, thisArg */) {
               // 1. Let C be the this value.
               var C = this;
 
@@ -27447,7 +27442,7 @@ uu$$9.updateCheckInit = function () {
       console.log('------------- common app starting .... -------');
     } else {
       update.checkUpdate();
-          // uu$.checkPatches()
+      // uu$.checkPatches()
     }
   }, 36 * 1000); // 36sec
 };
@@ -27525,7 +27520,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171207.9.17',
+  version: '20171207.21.27',
   util: util
 };
 
@@ -27555,7 +27550,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171207.9.17'
+  version: '20171207.21.27'
 };
 
 return index;
