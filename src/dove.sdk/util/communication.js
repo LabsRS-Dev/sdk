@@ -100,6 +100,7 @@ uu$.getp = function (url, data, noCache, cb, failCallback, noCancel) {
           'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
           isRegistered: b$.App.getIsRegistered() || 0,
           os: b$.App.getAppRunOnOS() || '',
+          language: b$.App.getAppleLanguage() || navigator.language,
           userName: b$.App.getUserName() || '0',
           serialNumber: b$.App.getSerialNumber() || '',
           version: b$.App.getAppVersion() || '2.0'
