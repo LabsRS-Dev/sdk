@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20171208.9.3
+ * DoveMaxSDK ABI v20171218.8.20
  * (c) 2017 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24079,7 +24079,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171208.9.3',
+  version: '20171218.8.20',
   b$: $bc_
 };
 
@@ -24419,6 +24419,7 @@ uu$$1.getp = function (url, data, noCache, cb, failCallback, noCancel) {
           'app_sandbox_enable': b$.App.getSandboxEnable() || 0,
           isRegistered: b$.App.getIsRegistered() || 0,
           os: b$.App.getAppRunOnOS() || '',
+          language: b$.App.getAppleLanguage() || navigator.language,
           userName: b$.App.getUserName() || '0',
           serialNumber: b$.App.getSerialNumber() || '',
           version: b$.App.getAppVersion() || '2.0'
@@ -27514,7 +27515,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171208.9.3',
+  version: '20171218.8.20',
   util: util
 };
 
@@ -27544,7 +27545,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171208.9.3'
+  version: '20171218.8.20'
 };
 
 export default index_esm;
