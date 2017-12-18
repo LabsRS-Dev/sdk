@@ -19,6 +19,7 @@ uu$.ConfigServer = {
   },
   getDomain: function (useDebug = uu$.enableAppConfigDebug, enforceHttps = false) {
     var t$ = this
+    var controlPrefix = enforceHttps ? 'https://' : 'http://' // 升级以后的，都需要https:// 安全请求
     try {
       var b$ = common.getBSb$()
       var aws = b$.App.getReleaseServer()
@@ -27,7 +28,6 @@ uu$.ConfigServer = {
       awsDebug = t$._removeServerControlUrl(awsDebug)
       aws = t$._removeServerControlUrl(aws)
 
-      var controlPrefix = enforceHttps ? 'https://' : 'http://' // 升级以后的，都需要https:// 安全请求
       if (useDebug) {
         if (awsDebug) {
           return controlPrefix + awsDebug
@@ -35,12 +35,14 @@ uu$.ConfigServer = {
         return controlPrefix + '127.0.0.1:3000'
       }
 
-      return controlPrefix + aws
+      if (aws) {
+        return controlPrefix + aws
+      }
     } catch (e) {
       console.error(e)
     }
 
-    return 'http://romanysoft.com'
+    return controlPrefix + 'romanysoft.com'
   },
   getMessageServer: function (useDebug = uu$.enableAppConfigDebug, wsPrefix = 'ws://') {
     var t$ = this
@@ -59,11 +61,13 @@ uu$.ConfigServer = {
         return wsPrefix + '127.0.0.1:3000'
       }
 
-      return wsPrefix + aws
+      if (aws) {
+        return wsPrefix + aws
+      }
     } catch (e) {
       console.error(e)
     }
-    return 'ws://127.0.0.1:3000'
+    return wsPrefix + '127.0.0.1:3000'
   }
 }
 
