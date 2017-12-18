@@ -24303,6 +24303,7 @@ uu$$2.ConfigServer = {
     if ( enforceHttps === void 0 ) enforceHttps = false;
 
     var t$ = this;
+    var controlPrefix = enforceHttps ? 'https://' : 'http://'; // 升级以后的，都需要https:// 安全请求
     try {
       var b$ = common$1.getBSb$();
       var aws = b$.App.getReleaseServer();
@@ -24311,7 +24312,6 @@ uu$$2.ConfigServer = {
       awsDebug = t$._removeServerControlUrl(awsDebug);
       aws = t$._removeServerControlUrl(aws);
 
-      var controlPrefix = enforceHttps ? 'https://' : 'http://'; // 升级以后的，都需要https:// 安全请求
       if (useDebug) {
         if (awsDebug) {
           return controlPrefix + awsDebug
@@ -24319,12 +24319,14 @@ uu$$2.ConfigServer = {
         return controlPrefix + '127.0.0.1:3000'
       }
 
-      return controlPrefix + aws
+      if (aws) {
+        return controlPrefix + aws
+      }
     } catch (e) {
       console.error(e);
     }
 
-    return 'http://romanysoft.com'
+    return controlPrefix + 'romanysoft.com'
   },
   getMessageServer: function (useDebug, wsPrefix) {
     if ( useDebug === void 0 ) useDebug = uu$$2.enableAppConfigDebug;
@@ -24346,11 +24348,13 @@ uu$$2.ConfigServer = {
         return wsPrefix + '127.0.0.1:3000'
       }
 
-      return wsPrefix + aws
+      if (aws) {
+        return wsPrefix + aws
+      }
     } catch (e) {
       console.error(e);
     }
-    return 'ws://127.0.0.1:3000'
+    return wsPrefix + '127.0.0.1:3000'
   }
 };
 
@@ -26580,6 +26584,7 @@ function autoForJquery$4 (ref) {
     console.assert(Tool.isBrowser(), 'Please check current window object is a browser root Window instance !!');
     console.assert(Tool.isWindow(window), 'Please check the current code, window variables are overwritten !!');
     if (window.jQuery && window.$) {
+      window.$.RTYUtils = window.$.extend(window.$.RTYUtils, t$);
       window.$ = window.$.extend(window.$, t$);
     }
   }
