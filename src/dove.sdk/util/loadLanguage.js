@@ -2,7 +2,6 @@
  * Google Lang maps
  */
 import { Tool } from '../include'
-import { common } from './common'
 import { googleLangIDMaps } from './googleLangIDMaps'
 
 var uu$ = {}
@@ -31,10 +30,10 @@ uu$.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, tr
   var t$ = this
 
   // Note: Check jQuery library
-  common.assert(!common.isUndefinedOrNullOrFalse(window.jQuery), 'loadLanguage function require jQuery library')
+  Tool.assert(!Tool.isUndefinedOrNullOrFalse(window.jQuery), 'loadLanguage function require jQuery library')
   var $ = window.jQuery || window.$ || {}
 
-  var referLangList = common.param2Array(referLang, ['string'])
+  var referLangList = Tool.param2Array(referLang, ['string'])
 
   /**
    * [gotoLoadLanguageFile 加载语言文件]
@@ -98,14 +97,14 @@ uu$.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, tr
      * @return {[type]}            [description]
      */
     function _gotoTry (list, ext, callback) {
-      if (common.isArray(list) && list.length > 0) {
+      if (Tool.isArray(list) && list.length > 0) {
         var ele = list[0]
         _tryLoad(ele.path, ele.key, ext, function (cb) {
           var newLangFileList = list.splice(1)
           _gotoTry(newLangFileList, ext, cb)
         }, callback)
       } else {
-        console.warn('[x] language list length is 0 or not a array. TYPE=' + common.getType(list))
+        console.warn('[x] language list length is 0 or not a array. TYPE=' + Tool.getType(list))
       }
     }
 
@@ -116,10 +115,10 @@ uu$.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, tr
   // 加载语言的入口
   var curUserLanguage = null
   var b$ = null
-  if (!common.isUndefinedOrNullOrFalse(window.BS)) {
-    if (!common.isUndefinedOrNullOrFalse(window.BS.b$)) {
+  if (!Tool.isUndefinedOrNullOrFalse(window.BS)) {
+    if (!Tool.isUndefinedOrNullOrFalse(window.BS.b$)) {
       b$ = window.BS.b$
-      if (!common.isUndefinedOrNullOrFalse(b$.App)) {
+      if (!Tool.isUndefinedOrNullOrFalse(b$.App)) {
         curUserLanguage = b$.App.getUserLanguage()
       }
     }
