@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20171218.8.20
+ * DoveMaxSDK ABI v20171218.14.50
  * (c) 2017 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -19481,6 +19481,26 @@ $bc_$4.App = {
     return ''
   },
 
+  /**
+   * 获得最终发布服务地址
+   */
+  getReleaseServer: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getReleaseServer()
+    }
+    return ''
+  },
+
+  /**
+   * 获得调试服务地址
+   */
+  getDebugServer: function () {
+    if ($bc_$4.pN) {
+      return $bc_$4.pN.app.getDebugServer()
+    }
+    return ''
+  },
+
   // {Languages}
   // 获得当前苹果操作系统本地的语言
   getAppleLanguage: function () {
@@ -21947,13 +21967,15 @@ var Tool = {
     // (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
     // (new Date()).Format('yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
     var that = dateObj;
+    var speMonth = that.getMonth();
+    speMonth = speMonth >= 12 ? (speMonth - 1) : speMonth;
     var o = {
-      'M+': that.getMonth() + 1, // 月份
+      'M+': speMonth + 1, // 月份
       'd+': that.getDate(), // 日
       'h+': that.getHours(), // 小时
       'm+': that.getMinutes(), // 分
       's+': that.getSeconds(), // 秒
-      'q+': Math.floor((that.getMonth() + 3) / 3), // 季度
+      'q+': Math.floor((speMonth + 3) / 3), // 季度
       'S': that.getMilliseconds() // 毫秒
     };
 
@@ -24079,7 +24101,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171218.8.20',
+  version: '20171218.14.50',
   b$: $bc_
 };
 
@@ -24267,17 +24289,66 @@ var uu$$2 = {};
 uu$$2.enableAppConfigDebug = uu$$2['enable_AppConfig_debug'] = false; // 是否开启调试AppConfig
 
 uu$$2.ConfigServer = {
-  getDomain: function (useDebug) {
-    if ( useDebug === void 0 ) useDebug = uu$$2.enableAppConfigDebug;
-
-    // var isHttps = (document.location.protocol === 'https:')
-    var prex = 'https://'; // 升级以后的，都需要https:// 安全请求
-    return useDebug ? (prex + '127.0.0.1:3000') : (prex + 'www.romanysoft.com')
+  _removeServerControlUrl: function (url) {
+    if (!url) { return '' }
+    url = lodash.replace(url, 'http://', '');
+    url = lodash.replace(url, 'https://', '');
+    url = lodash.replace(url, 'ws://', '');
+    return url
   },
-  getMessageServer: function (useDebug) {
+  getDomain: function (useDebug, enforceHttps) {
     if ( useDebug === void 0 ) useDebug = uu$$2.enableAppConfigDebug;
+    if ( enforceHttps === void 0 ) enforceHttps = false;
 
-    return useDebug ? 'ws://127.0.0.1:3000' : 'ws://www.romanysoft.com:8000'
+    var t$ = this;
+    try {
+      var b$ = common$1.getBSb$();
+      var aws = b$.App.getReleaseServer();
+      var awsDebug = b$.App.getDebugServer();
+
+      awsDebug = t$._removeServerControlUrl(awsDebug);
+      aws = t$._removeServerControlUrl(aws);
+
+      var controlPrefix = enforceHttps ? 'https://' : 'http://'; // 升级以后的，都需要https:// 安全请求
+      if (useDebug) {
+        if (awsDebug) {
+          return controlPrefix + awsDebug
+        }
+        return controlPrefix + '127.0.0.1:3000'
+      }
+
+      return controlPrefix + aws
+    } catch (e) {
+      console.error(e);
+    }
+
+    return 'http://romanysoft.com'
+  },
+  getMessageServer: function (useDebug, wsPrefix) {
+    if ( useDebug === void 0 ) useDebug = uu$$2.enableAppConfigDebug;
+    if ( wsPrefix === void 0 ) wsPrefix = 'ws://';
+
+    var t$ = this;
+    try {
+      var b$ = common$1.getBSb$();
+      var aws = b$.App.getReleaseServer();
+      var awsDebug = b$.App.getDebugServer();
+
+      awsDebug = t$._removeServerControlUrl(awsDebug);
+      aws = t$._removeServerControlUrl(aws);
+
+      if (useDebug) {
+        if (awsDebug) {
+          return wsPrefix + awsDebug
+        }
+        return wsPrefix + '127.0.0.1:3000'
+      }
+
+      return wsPrefix + aws
+    } catch (e) {
+      console.error(e);
+    }
+    return 'ws://127.0.0.1:3000'
   }
 };
 
@@ -27515,7 +27586,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171218.8.20',
+  version: '20171218.14.50',
   util: util
 };
 
@@ -27545,7 +27616,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171218.8.20'
+  version: '20171218.14.50'
 };
 
 export default index_esm;

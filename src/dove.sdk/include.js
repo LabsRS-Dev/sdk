@@ -346,13 +346,15 @@ var Tool = {
     // (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
     // (new Date()).Format('yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
     var that = dateObj
+    var speMonth = that.getMonth()
+    speMonth = speMonth >= 12 ? (speMonth - 1) : speMonth
     var o = {
-      'M+': that.getMonth() + 1, // 月份
+      'M+': speMonth + 1, // 月份
       'd+': that.getDate(), // 日
       'h+': that.getHours(), // 小时
       'm+': that.getMinutes(), // 分
       's+': that.getSeconds(), // 秒
-      'q+': Math.floor((that.getMonth() + 3) / 3), // 季度
+      'q+': Math.floor((speMonth + 3) / 3), // 季度
       'S': that.getMilliseconds() // 毫秒
     }
 

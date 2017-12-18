@@ -1244,6 +1244,26 @@ $bc_.App = {
     return ''
   },
 
+  /**
+   * 获得最终发布服务地址
+   */
+  getReleaseServer: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getReleaseServer()
+    }
+    return ''
+  },
+
+  /**
+   * 获得调试服务地址
+   */
+  getDebugServer: function () {
+    if ($bc_.pN) {
+      return $bc_.pN.app.getDebugServer()
+    }
+    return ''
+  },
+
   // {Languages}
   // 获得当前苹果操作系统本地的语言
   getAppleLanguage: function () {

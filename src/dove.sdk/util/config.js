@@ -2,19 +2,68 @@
  * Config
  */
 import { Tool } from '../include'
+import { common } from './common'
+import _ from 'lodash'
 
 var uu$ = {}
 
 uu$.enableAppConfigDebug = uu$['enable_AppConfig_debug'] = false // 是否开启调试AppConfig
 
 uu$.ConfigServer = {
-  getDomain: function (useDebug = uu$.enableAppConfigDebug) {
-    // var isHttps = (document.location.protocol === 'https:')
-    var prex = 'https://' // 升级以后的，都需要https:// 安全请求
-    return useDebug ? (prex + '127.0.0.1:3000') : (prex + 'www.romanysoft.com')
+  _removeServerControlUrl: function (url) {
+    if (!url) return ''
+    url = _.replace(url, 'http://', '')
+    url = _.replace(url, 'https://', '')
+    url = _.replace(url, 'ws://', '')
+    return url
   },
-  getMessageServer: function (useDebug = uu$.enableAppConfigDebug) {
-    return useDebug ? 'ws://127.0.0.1:3000' : 'ws://www.romanysoft.com:8000'
+  getDomain: function (useDebug = uu$.enableAppConfigDebug, enforceHttps = false) {
+    var t$ = this
+    try {
+      var b$ = common.getBSb$()
+      var aws = b$.App.getReleaseServer()
+      var awsDebug = b$.App.getDebugServer()
+
+      awsDebug = t$._removeServerControlUrl(awsDebug)
+      aws = t$._removeServerControlUrl(aws)
+
+      var controlPrefix = enforceHttps ? 'https://' : 'http://' // 升级以后的，都需要https:// 安全请求
+      if (useDebug) {
+        if (awsDebug) {
+          return controlPrefix + awsDebug
+        }
+        return controlPrefix + '127.0.0.1:3000'
+      }
+
+      return controlPrefix + aws
+    } catch (e) {
+      console.error(e)
+    }
+
+    return 'http://romanysoft.com'
+  },
+  getMessageServer: function (useDebug = uu$.enableAppConfigDebug, wsPrefix = 'ws://') {
+    var t$ = this
+    try {
+      var b$ = common.getBSb$()
+      var aws = b$.App.getReleaseServer()
+      var awsDebug = b$.App.getDebugServer()
+
+      awsDebug = t$._removeServerControlUrl(awsDebug)
+      aws = t$._removeServerControlUrl(aws)
+
+      if (useDebug) {
+        if (awsDebug) {
+          return wsPrefix + awsDebug
+        }
+        return wsPrefix + '127.0.0.1:3000'
+      }
+
+      return wsPrefix + aws
+    } catch (e) {
+      console.error(e)
+    }
+    return 'ws://127.0.0.1:3000'
   }
 }
 
