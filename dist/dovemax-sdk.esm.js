@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20171218.14.50
+ * DoveMaxSDK ABI v20171218.16.50
  * (c) 2017 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24101,7 +24101,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171218.14.50',
+  version: '20171218.16.50',
   b$: $bc_
 };
 
@@ -26411,10 +26411,10 @@ uu$$4.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, 
   var t$ = this;
 
   // Note: Check jQuery library
-  common$1.assert(!common$1.isUndefinedOrNullOrFalse(window.jQuery), 'loadLanguage function require jQuery library');
+  Tool.assert(!Tool.isUndefinedOrNullOrFalse(window.jQuery), 'loadLanguage function require jQuery library');
   var $ = window.jQuery || window.$ || {};
 
-  var referLangList = common$1.param2Array(referLang, ['string']);
+  var referLangList = Tool.param2Array(referLang, ['string']);
 
   /**
    * [gotoLoadLanguageFile 加载语言文件]
@@ -26478,14 +26478,14 @@ uu$$4.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, 
      * @return {[type]}            [description]
      */
     function _gotoTry (list, ext, callback) {
-      if (common$1.isArray(list) && list.length > 0) {
+      if (Tool.isArray(list) && list.length > 0) {
         var ele = list[0];
         _tryLoad(ele.path, ele.key, ext, function (cb) {
           var newLangFileList = list.splice(1);
           _gotoTry(newLangFileList, ext, cb);
         }, callback);
       } else {
-        console.warn('[x] language list length is 0 or not a array. TYPE=' + common$1.getType(list));
+        console.warn('[x] language list length is 0 or not a array. TYPE=' + Tool.getType(list));
       }
     }
 
@@ -26496,10 +26496,10 @@ uu$$4.loadLanguage = function (languageFilesPath, fileExt, callback, referLang, 
   // 加载语言的入口
   var curUserLanguage = null;
   var b$ = null;
-  if (!common$1.isUndefinedOrNullOrFalse(window.BS)) {
-    if (!common$1.isUndefinedOrNullOrFalse(window.BS.b$)) {
+  if (!Tool.isUndefinedOrNullOrFalse(window.BS)) {
+    if (!Tool.isUndefinedOrNullOrFalse(window.BS.b$)) {
       b$ = window.BS.b$;
-      if (!common$1.isUndefinedOrNullOrFalse(b$.App)) {
+      if (!Tool.isUndefinedOrNullOrFalse(b$.App)) {
         curUserLanguage = b$.App.getUserLanguage();
       }
     }
@@ -27591,7 +27591,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171218.14.50',
+  version: '20171218.16.50',
   util: util
 };
 
@@ -27621,7 +27621,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171218.14.50'
+  version: '20171218.16.50'
 };
 
 export default index_esm;
