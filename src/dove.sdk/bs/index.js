@@ -13,7 +13,7 @@ import { binary } from './binary'
 import { plugin } from './plugin'
 import { dragdrop } from './dragdrop'
 import { task } from './task'
-import { filedialog } from './filedialog'
+import { fileDialog } from './filedialog'
 import { AgentClient } from './agent.client'
 import { AgentServer } from './agent.server'
 
@@ -33,7 +33,7 @@ $bc_ = _.extend($bc_, binary)
 $bc_ = _.extend($bc_, plugin)
 $bc_ = _.extend($bc_, dragdrop)
 $bc_ = _.extend($bc_, task)
-$bc_ = _.extend($bc_, filedialog)
+$bc_ = _.extend($bc_, fileDialog)
 $bc_ = _.extend($bc_, { AgentClient: AgentClient })
 $bc_ = _.extend($bc_, { AgentServer: AgentServer })
 
