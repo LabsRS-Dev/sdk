@@ -19,7 +19,7 @@ $bc_.enablePluginCore = function (pluginList, cbFuncName) {
 
       var extendObj = _.clone($bc_.pCorePlugin)
       extendObj['callMethod'] = 'initCore'
-      if (_.isString(cbFuncName)) {
+      if (_.isString(cbFuncName) && !_.isEmpty(cbFuncName)) {
         extendObj['passBack'] = cbFuncName // 取代默认回调函数
       }
       extendObj['arguments'] = [

@@ -186,7 +186,7 @@ var Observable = SelfClass.extend({
       length
 
     if (events) {
-      if (_.isString(e)) {
+      if (!_.isPlainObject(e)) {
         console.error('e must be {}, not string ')
       }
 

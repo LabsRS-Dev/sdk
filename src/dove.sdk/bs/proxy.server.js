@@ -304,7 +304,7 @@ var __$p$ = {
       fn(obj)
     }, true)
 
-    console.assert(_.isString(cbName), 'cbName must be a string')
+    console.assert(_.isString(cbName) && !_.isEmpty(cbName), 'cbName must be a string')
     return cbName
   }
 }

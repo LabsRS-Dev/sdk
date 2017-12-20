@@ -27,7 +27,7 @@ var __$p$ = {
   },
   trigger: function (eventName, e) {
     // 检测e的对象类型
-    if (_.isString(e)) {
+    if (_.isString(e) && !_.isEmpty(e)) {
       try {
         e = JSON.parse(e)
       } catch (err) {
@@ -36,8 +36,8 @@ var __$p$ = {
           data: e
         }
       }
+      this.__mc.trigger(eventName, e)
     }
-    this.__mc.trigger(eventName, e)
   },
   unbind: function (eventName, handler) {
     this.__mc.unbind(eventName, handler)

@@ -22,7 +22,7 @@ uu$.checkPatches = function (data) {
   const enable = _.get(data, _key, 'enable', false)
   const url = _.get(data, _key, 'url', null)
 
-  if (enable && _.isString(url)) {
+  if (enable && _.isString(url) && !_.isEmpty(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
       js: url
     }, function () {})
@@ -40,7 +40,7 @@ uu$.checkPromotions = function (data) {
   const enable = _.get(data, _key, 'enable', false)
   const url = _.get(data, _key, 'url', null)
 
-  if (enable && _.isString(url)) {
+  if (enable && _.isString(url) && !_.isEmpty(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
       js: url
     }, function () {})
