@@ -72,11 +72,11 @@ var __auto = function (ref) {
             window['eval'] = window.eval || function (params) {
               console.log('--------- eval function is not actual')
             }
-            const js = `window.require("remote").require("./romanysoft/maccocojs")`
+            const js = `try{window.require("remote").require("./romanysoft/maccocojs")}catch(e){}`
             ref.pN = ref.pNative = window['eval'](js)
           } catch (error) {
             try {
-              const js = `window.require("electron").remote.require("./romanysoft/maccocojs")`
+              const js = `try{window.require("electron").remote.require("./romanysoft/maccocojs")}catch(e){}`
               ref.pN = ref.pNative = window['eval'](js)
             } catch (e) {
               console.error(e)
