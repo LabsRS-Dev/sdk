@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20171220.14.48
+ * DoveMaxSDK ABI v20171220.22.0
  * (c) 2017 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -17560,6 +17560,465 @@ $bc_$1.getJQuery$ = function () {
 // -----------------------------------------------
 var common = $bc_$1;
 
+/**
+ * 纯算法，不依赖bs模块及util模块
+ */
+var Tool = {
+  // 构建字符串。来源https://github.com/epeli/underscore.string/blob/master/helper/makeString.js
+  makeString: function (obj) {
+    if (obj == null) { return '' }
+    return '' + obj
+  },
+  /**
+   * Get the first item that pass the test
+   * by second argument function
+   *
+   * @param {Array} list
+   * @param {Function} f
+   * @return {*}
+   */
+  find: function (list, f) {
+    return list.filter(f)[0]
+  },
+  /**
+   * Deep copy the given object considering circular structure.
+   * This function caches all nested objects and its copies.
+   * If it detects circular structure, use cached copy to avoid infinite loop.
+   *
+   * @param {*} obj
+   * @param {Array<Object>} cache
+   * @return {*}
+   */
+  deepCopy: function (obj, cache) {
+    if ( cache === void 0 ) cache = [];
+
+    var t$ = Tool;
+    // just return if obj is immutable value
+    if (obj === null || typeof obj !== 'object') {
+      return obj
+    }
+
+    // if obj is hit, it is in circular structure
+    var hit = t$.find(cache, function (c) { return c.original === obj; });
+    if (hit) {
+      return hit.copy
+    }
+
+    var copy = Array.isArray(obj) ? [] : {};
+    // put the copy into cache at first
+    // because we want to refer it in recursive deepCopy
+    cache.push({
+      original: obj,
+      copy: copy
+    });
+
+    Object.keys(obj).forEach(function (key) {
+      copy[key] = t$.deepCopy(obj[key], cache);
+    });
+
+    return copy
+  },
+  forEachValue: function (obj, fn) {
+    Object.keys(obj).forEach(function (key) { return fn(obj[key], key); });
+  },
+  assert: function (condition, msg) {
+    if (!condition) { throw new Error(("[sdk] " + msg)) }
+  },
+  getType: function (o) {
+    return Object.prototype.toString.call(o)
+  },
+  isUndefinedOrNull: function (o) {
+    return lodash.isUndefined(o) || lodash.isNull(o)
+  },
+  isUndefinedOrNullOrFalse: function (o) {
+    var t$ = Tool;
+    return t$.isUndefinedOrNull(o) || o === false
+  },
+  isObject: lodash.isObject,
+  isError: lodash.isError,
+  isNaN: lodash.isNaN,
+  isFinite: lodash.isFinite,
+  isArguments: lodash.isArguments,
+  isElement: lodash.isElement,
+  isEmpty: lodash.isEmpty,
+  isMatch: lodash.isMatch,
+  isEqual: lodash.isEqual,
+  isPromise: function (val) {
+    return val && typeof val.then === 'function'
+  },
+  isArray: lodash.isArray,
+  isBoolean: lodash.isBoolean,
+  isString: lodash.isString,
+  isBlank: function (str) {
+    if (lodash.isString(str)) {
+      return (/^\s*$/).test(this.makeString(str))
+    }
+    return true
+  },
+  isNull: lodash.isNull,
+  isUndefined: lodash.isUndefined,
+  isNumber: lodash.isNumber,
+  isDate: lodash.isDate,
+  isRegExp: lodash.isRegExp,
+  isFunction: lodash.isFunction,
+  isBlob: function (o) {
+    return Object.prototype.toString.call(o) === '[object Blob]'
+  },
+  isBrowser: function () {
+    var t$ = Tool;
+    var isBrowser = t$.isWindow(window);
+    return isBrowser
+  },
+  isNodeJs: function () {
+    var t$ = Tool;
+    return !(t$.isBrowser())
+  },
+  isWindow: function (arg) {
+    // Safari returns DOMWindow
+    // Chrome returns global
+    // Firefox, Opera & IE9 return Window
+    var objStr = Object.prototype.toString.call(arg || this);
+    switch (objStr) {
+      case '[object DOMWindow]':
+      case '[object Window]':
+      case '[object global]':
+        return true
+    }
+    try {
+      if (arg instanceof Window) {
+        return true
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    // /window objects always have a `self` property;
+    // /however, `arg.self == arg` could be fooled by:
+    // /var o = {};
+    // /o.self = o;
+    if ('self' in arg) {
+      // `'self' in arg` is true if
+      // the property exists on the object _or_ the prototype
+      // `arg.hasOwnProperty('self')` is true only if
+      // the property exists on the object
+      var hasSelf = arg.hasOwnProperty('self');
+      var self;
+      try {
+        if (hasSelf) {
+          self = arg.self;
+        }
+        delete arg.self;
+        if (hasSelf) {
+          arg.self = self;
+        }
+      } catch (e) {
+        // IE 7&8 throw an error when window.self is deleted
+        return true
+      }
+    }
+    return false
+  },
+  /**
+   * Blob data convert to String
+   * @param o Blob obj
+   * @param cb callback function
+   */
+  blobData2String: function (o, cb) {
+    try {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        cb && cb(reader.result);
+      };
+      reader.readAsText(o);
+    } catch (error) {
+      throw error
+    }
+  },
+  /**
+   * Blob data convert to ArrayBuffer
+   * @param o Blob obj
+   * @param cb callback function
+   */
+  blobData2ArrayBuffer: function (o, cb) {
+    try {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        cb && cb(reader.result);
+      };
+      reader.readAsArrayBuffer(o);
+    } catch (error) {
+      throw error
+    }
+  },
+  /**
+   * param wrapper to Array
+   */
+  param2Array: function (param, allowTypes) {
+    var t$ = Tool;
+    allowTypes = allowTypes || [];
+    if (t$.isUndefinedOrNull(param)) { return [] }
+    if (allowTypes.findIndex(function (value, index, err) {
+      return value === t$.getType(param)
+    }) > -1) {
+      return [param]
+    }
+    if (t$.isArray(param)) { return param }
+    return []
+  },
+  /**
+   * convert arguments to a Array
+   */
+  arguments2Array: function () {
+    return [].slice.call(arguments, 0)
+  },
+  /**
+   * Format error string
+   * @param err  error object
+   * @return String
+   */
+  getErrorMessage: function (err) {
+    var msg = '';
+    var t$ = Tool;
+    try {
+      if (t$.isString(err)) {
+        msg = err;
+      } else if (t$.isError(err)) {
+        msg = err.message;
+      } else if (t$.isObject(err)) {
+        var errMsg = [];
+        for (var p in err) {
+          if (err.hasOwnProperty(p)) {
+            errMsg.push(p + '=' + err[p]);
+          }
+        }
+        if (errMsg.length === 0) {
+          msg = err;
+        } else {
+          msg = errMsg.join('\n');
+        }
+      } else {
+        msg += '[RTY_CANT_TYPE] = ' + t$.getType(err);
+        msg += JSON.stringify(err);
+      }
+    } catch (error) {
+      throw error
+    }
+
+    return msg
+  },
+  queue: function (_done) {
+    var _next = [];
+    var callback = function (err) {
+      if (!err) {
+        var next = _next.shift();
+        if (next) {
+          var args = arguments;
+          args.length ? (args[0] = callback) : (args = [callback]);
+          return next.apply(null, args)
+        }
+        return _done.apply(null, arguments)
+      }
+    };
+
+    var r = {
+      next: function (fn) {
+        _next.push(fn);
+        return r
+      },
+      done: function (fn) {
+        _done = fn;
+        r.start();
+      },
+      start: function () {
+        callback(null, callback);
+      }
+    };
+
+    return r
+  },
+  /**
+   * Check fileName's type in the fileTypes
+   * @param fileName String
+   * @param fileTypes Array []
+   * @return Boolean {true, false}
+   */
+  checkFileType: function (fileName, fileTypes) {
+    var _fileNameStr = fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length).toLowerCase();
+    if (fileTypes.indexOf(_fileNameStr) > -1) { return true }
+    return false
+  },
+  obj2string: function (o) {
+    var r = [];
+    var t$ = Tool;
+    if (typeof o === 'string') {
+      return '\'' + o.replace(/([\'\'\\])/g, '\\$1').replace(/(\n)/g, '\\n')
+        .replace(/(\r)/g, '\\r').replace(/(\t)/g, '\\t') + '\''
+    }
+    if (typeof o === 'object' && o != null) {
+      if (!o.sort) {
+        for (var i in o) {
+          r.push(i + ':' + t$.obj2string(o[i]));
+        }
+        if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {
+          r.push('toString:' + o.toString.toString());
+        }
+        r = '{' + r.join() + '}';
+      } else {
+        for (var i$1 = 0; i$1 < o.length; i$1++) {
+          r.push(t$.obj2string(o[i$1]));
+        }
+        r = '[' + r.join() + ']';
+      }
+      return r
+    }
+
+    if (o != null) {
+      return o.toString()
+    }
+
+    return ''
+  },
+  // 字符串参数格式化 {index}
+  stringFormat: function () {
+    var arguments$1 = arguments;
+
+    if (arguments.length === 0) { return null }
+    var str = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+      var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+      str = str.replace(re, arguments$1[i]);
+    }
+    return str
+  },
+  objClone: function (Obj) {
+    var buf;
+    var t$ = Tool;
+    if (Obj instanceof Array) {
+      buf = [];
+      var i = Obj.length;
+      while (i--) {
+        buf[i] = t$.objClone(Obj[i]);
+      }
+      return buf
+    } else if (Obj instanceof Object) {
+      buf = {};
+      for (var k in Obj) {
+        if (Obj.hasOwnProperty(k)) {
+          buf[k] = t$.objClone(Obj[k]);
+        }
+      }
+      return buf
+    } else {
+      return Obj
+    }
+  },
+  // 获取简易的格式化时间
+  getFormatDateStr: function (dateObj, fmt) {
+    // 对Date的扩展，将 Date 转化为指定格式的String
+    // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+    // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+    // 例子：
+    // (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
+    // (new Date()).Format('yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
+    var that = dateObj;
+    var speMonth = that.getMonth();
+    speMonth = speMonth >= 12 ? (speMonth - 1) : speMonth;
+    var o = {
+      'M+': speMonth + 1, // 月份
+      'd+': that.getDate(), // 日
+      'h+': that.getHours(), // 小时
+      'm+': that.getMinutes(), // 分
+      's+': that.getSeconds(), // 秒
+      'q+': Math.floor((speMonth + 3) / 3), // 季度
+      'S': that.getMilliseconds() // 毫秒
+    };
+
+    if (/(y+)/.test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (that.getFullYear() + '').substr(4 - RegExp.$1.length));
+    }
+
+    for (var k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(
+          ('' + o[k]).length)));
+      }
+    }
+
+    return fmt
+  },
+
+  /**
+   * 比较两个版本号
+   * @param version1 {String} || {Number} 版本号1
+   * @param version2 {String} || {Number} 版本号2
+   * @return {Number} 1, 大于；0 等于；-1 小于
+   */
+  compareVersion: function (version1, version2) {
+    try {
+      if (lodash.isNumber(version1) && lodash.isNumber(version2)) {
+        if (version1 > version2) { return 1 }
+        if (version1 === version2) { return 0 }
+        if (version1 < version2) { return -1 }
+      } else if (lodash.isNumber(version1) || lodash.isNumber(version2)) {
+        version1 += '';
+        version2 += '';
+      }
+
+      var version1Array = version1.split('.');
+      var version2Array = version2.split('.');
+
+      var ver1IntList = [];
+      var ver2IntList = [];
+
+      version1Array.forEach(function (value, index, array) {
+        ver1IntList.push(parseInt(value));
+      });
+
+      version2Array.forEach(function (value, index, array) {
+        ver2IntList.push(parseInt(value));
+      });
+
+      // format
+      if (ver1IntList.length < ver2IntList.length) {
+        var i = 0;
+        for (; i < (ver2IntList.length - ver1IntList.length); ++i) {
+          ver1IntList.push(0);
+        }
+      }
+
+      if (ver1IntList.length > ver2IntList.length) {
+        var i$1 = 0;
+        for (; i$1 < (ver1IntList.length - ver2IntList.length); ++i$1) {
+          ver2IntList.push(0);
+        }
+      }
+
+      var i$2 = 0;
+      for (; i$2 < ver1IntList.length; ++i$2) {
+        var cVer1 = ver1IntList[i$2];
+        var cVer2 = ver2IntList[i$2];
+
+        if (cVer1 > cVer2) { return 1 }
+        if (cVer1 < cVer2) { return -1 }
+      }
+
+      return 0
+    } catch (e) {
+      return -1
+    }
+  },
+  // 测试对象类型
+  testObjectType: function (obj, type) {
+    var t$ = Tool;
+    var actualType = t$.getType(obj);
+    if (actualType !== type) {
+      var errMsg = 'TestType:[' + type + '], actual:[' + actualType + '].';
+      console.assert(false, errMsg);
+    }
+  }
+
+};
+
 var $bc_$2 = common;
 // IAP 非本地模拟
 $bc_$2['IAP_SE_KEY'] = 'RSSDK_SE_SANBOX_IAP';
@@ -17737,7 +18196,7 @@ $bc_$2.IAP = {
       }, true);
 
       // / 数据校验
-      console.assert(lodash.isString(params['cb_IAP_js']) && !lodash.isEmpty(params['cb_IAP_js']), 'must be function string and not empty');
+      console.assert(lodash.isString(params['cb_IAP_js']) && !Tool.isBlank(params['cb_IAP_js']), 'must be function string and not empty');
 
       // /Ian(原先的方式)
       if (lodash.isArray(paramOptions['productIds'])) {
@@ -17796,7 +18255,7 @@ $bc_$2.IAP = {
 
         // /注册模拟IAP回调
         $bc_$2.IAP_SE_Wrapper.caller().add(function (obj) {
-          console.assert(lodash.isString(params.cb_IAP_js) && !lodash.isEmpty(params.cb_IAP_js), 'must be function string and not empty');
+          console.assert(lodash.isString(params.cb_IAP_js) && !Tool.isBlank(params.cb_IAP_js), 'must be function string and not empty');
 
           var fnc = window.eval(params.cb_IAP_js);
           if (lodash.isFunction(fnc)) {
@@ -21023,7 +21482,7 @@ $bc_$11.enablePluginCore = function (pluginList, cbFuncName) {
 
       var extendObj = lodash.clone($bc_$11.pCorePlugin);
       extendObj['callMethod'] = 'initCore';
-      if (lodash.isString(cbFuncName) && !lodash.isEmpty(cbFuncName)) {
+      if (lodash.isString(cbFuncName) && !Tool.isBlank(cbFuncName)) {
         extendObj['passBack'] = cbFuncName; // 取代默认回调函数
       }
       extendObj['arguments'] = [
@@ -21604,7 +22063,7 @@ var __$p$$2 = {
   },
   trigger: function (eventName, e) {
     // 检测e的对象类型
-    if (lodash.isString(e) && !lodash.isEmpty(e)) {
+    if (lodash.isString(e) && !Tool.isBlank(e)) {
       try {
         e = JSON.parse(e);
       } catch (err) {
@@ -21622,454 +22081,6 @@ var __$p$$2 = {
 };
 
 var ProxyMessageCenter = SelfClass.extend(__$p$$2);
-
-/**
- * 纯算法，不依赖bs模块及util模块
- */
-var Tool = {
-  /**
-   * Get the first item that pass the test
-   * by second argument function
-   *
-   * @param {Array} list
-   * @param {Function} f
-   * @return {*}
-   */
-  find: function (list, f) {
-    return list.filter(f)[0]
-  },
-  /**
-   * Deep copy the given object considering circular structure.
-   * This function caches all nested objects and its copies.
-   * If it detects circular structure, use cached copy to avoid infinite loop.
-   *
-   * @param {*} obj
-   * @param {Array<Object>} cache
-   * @return {*}
-   */
-  deepCopy: function (obj, cache) {
-    if ( cache === void 0 ) cache = [];
-
-    var t$ = Tool;
-    // just return if obj is immutable value
-    if (obj === null || typeof obj !== 'object') {
-      return obj
-    }
-
-    // if obj is hit, it is in circular structure
-    var hit = t$.find(cache, function (c) { return c.original === obj; });
-    if (hit) {
-      return hit.copy
-    }
-
-    var copy = Array.isArray(obj) ? [] : {};
-    // put the copy into cache at first
-    // because we want to refer it in recursive deepCopy
-    cache.push({
-      original: obj,
-      copy: copy
-    });
-
-    Object.keys(obj).forEach(function (key) {
-      copy[key] = t$.deepCopy(obj[key], cache);
-    });
-
-    return copy
-  },
-  forEachValue: function (obj, fn) {
-    Object.keys(obj).forEach(function (key) { return fn(obj[key], key); });
-  },
-  assert: function (condition, msg) {
-    if (!condition) { throw new Error(("[sdk] " + msg)) }
-  },
-  getType: function (o) {
-    return Object.prototype.toString.call(o)
-  },
-  isUndefinedOrNull: function (o) {
-    return lodash.isUndefined(o) || lodash.isNull(o)
-  },
-  isUndefinedOrNullOrFalse: function (o) {
-    var t$ = Tool;
-    return t$.isUndefinedOrNull(o) || o === false
-  },
-  isObject: lodash.isObject,
-  isError: lodash.isError,
-  isNaN: lodash.isNaN,
-  isFinite: lodash.isFinite,
-  isArguments: lodash.isArguments,
-  isElement: lodash.isElement,
-  isEmpty: lodash.isEmpty,
-  isMatch: lodash.isMatch,
-  isEqual: lodash.isEqual,
-  isPromise: function (val) {
-    return val && typeof val.then === 'function'
-  },
-  isArray: lodash.isArray,
-  isBoolean: lodash.isBoolean,
-  isString: lodash.isString,
-  isNull: lodash.isNull,
-  isUndefined: lodash.isUndefined,
-  isNumber: lodash.isNumber,
-  isDate: lodash.isDate,
-  isRegExp: lodash.isRegExp,
-  isFunction: lodash.isFunction,
-  isBlob: function (o) {
-    return Object.prototype.toString.call(o) === '[object Blob]'
-  },
-  isBrowser: function () {
-    var t$ = Tool;
-    var isBrowser = t$.isWindow(window);
-    return isBrowser
-  },
-  isNodeJs: function () {
-    var t$ = Tool;
-    return !(t$.isBrowser())
-  },
-  isWindow: function (arg) {
-    // Safari returns DOMWindow
-    // Chrome returns global
-    // Firefox, Opera & IE9 return Window
-    var objStr = Object.prototype.toString.call(arg || this);
-    switch (objStr) {
-      case '[object DOMWindow]':
-      case '[object Window]':
-      case '[object global]':
-        return true
-    }
-    try {
-      if (arg instanceof Window) {
-        return true
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    // /window objects always have a `self` property;
-    // /however, `arg.self == arg` could be fooled by:
-    // /var o = {};
-    // /o.self = o;
-    if ('self' in arg) {
-      // `'self' in arg` is true if
-      // the property exists on the object _or_ the prototype
-      // `arg.hasOwnProperty('self')` is true only if
-      // the property exists on the object
-      var hasSelf = arg.hasOwnProperty('self');
-      var self;
-      try {
-        if (hasSelf) {
-          self = arg.self;
-        }
-        delete arg.self;
-        if (hasSelf) {
-          arg.self = self;
-        }
-      } catch (e) {
-        // IE 7&8 throw an error when window.self is deleted
-        return true
-      }
-    }
-    return false
-  },
-  /**
-   * Blob data convert to String
-   * @param o Blob obj
-   * @param cb callback function
-   */
-  blobData2String: function (o, cb) {
-    try {
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        cb && cb(reader.result);
-      };
-      reader.readAsText(o);
-    } catch (error) {
-      throw error
-    }
-  },
-  /**
-   * Blob data convert to ArrayBuffer
-   * @param o Blob obj
-   * @param cb callback function
-   */
-  blobData2ArrayBuffer: function (o, cb) {
-    try {
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        cb && cb(reader.result);
-      };
-      reader.readAsArrayBuffer(o);
-    } catch (error) {
-      throw error
-    }
-  },
-  /**
-   * param wrapper to Array
-   */
-  param2Array: function (param, allowTypes) {
-    var t$ = Tool;
-    allowTypes = allowTypes || [];
-    if (t$.isUndefinedOrNull(param)) { return [] }
-    if (allowTypes.findIndex(function (value, index, err) {
-      return value === t$.getType(param)
-    }) > -1) {
-      return [param]
-    }
-    if (t$.isArray(param)) { return param }
-    return []
-  },
-  /**
-   * convert arguments to a Array
-   */
-  arguments2Array: function () {
-    return [].slice.call(arguments, 0)
-  },
-  /**
-   * Format error string
-   * @param err  error object
-   * @return String
-   */
-  getErrorMessage: function (err) {
-    var msg = '';
-    var t$ = Tool;
-    try {
-      if (t$.isString(err)) {
-        msg = err;
-      } else if (t$.isError(err)) {
-        msg = err.message;
-      } else if (t$.isObject(err)) {
-        var errMsg = [];
-        for (var p in err) {
-          if (err.hasOwnProperty(p)) {
-            errMsg.push(p + '=' + err[p]);
-          }
-        }
-        if (errMsg.length === 0) {
-          msg = err;
-        } else {
-          msg = errMsg.join('\n');
-        }
-      } else {
-        msg += '[RTY_CANT_TYPE] = ' + t$.getType(err);
-        msg += JSON.stringify(err);
-      }
-    } catch (error) {
-      throw error
-    }
-
-    return msg
-  },
-  queue: function (_done) {
-    var _next = [];
-    var callback = function (err) {
-      if (!err) {
-        var next = _next.shift();
-        if (next) {
-          var args = arguments;
-          args.length ? (args[0] = callback) : (args = [callback]);
-          return next.apply(null, args)
-        }
-        return _done.apply(null, arguments)
-      }
-    };
-
-    var r = {
-      next: function (fn) {
-        _next.push(fn);
-        return r
-      },
-      done: function (fn) {
-        _done = fn;
-        r.start();
-      },
-      start: function () {
-        callback(null, callback);
-      }
-    };
-
-    return r
-  },
-  /**
-   * Check fileName's type in the fileTypes
-   * @param fileName String
-   * @param fileTypes Array []
-   * @return Boolean {true, false}
-   */
-  checkFileType: function (fileName, fileTypes) {
-    var _fileNameStr = fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length).toLowerCase();
-    if (fileTypes.indexOf(_fileNameStr) > -1) { return true }
-    return false
-  },
-  obj2string: function (o) {
-    var r = [];
-    var t$ = Tool;
-    if (typeof o === 'string') {
-      return '\'' + o.replace(/([\'\'\\])/g, '\\$1').replace(/(\n)/g, '\\n')
-        .replace(/(\r)/g, '\\r').replace(/(\t)/g, '\\t') + '\''
-    }
-    if (typeof o === 'object' && o != null) {
-      if (!o.sort) {
-        for (var i in o) {
-          r.push(i + ':' + t$.obj2string(o[i]));
-        }
-        if (!!document.all && !/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)) {
-          r.push('toString:' + o.toString.toString());
-        }
-        r = '{' + r.join() + '}';
-      } else {
-        for (var i$1 = 0; i$1 < o.length; i$1++) {
-          r.push(t$.obj2string(o[i$1]));
-        }
-        r = '[' + r.join() + ']';
-      }
-      return r
-    }
-
-    if (o != null) {
-      return o.toString()
-    }
-
-    return ''
-  },
-  // 字符串参数格式化 {index}
-  stringFormat: function () {
-    var arguments$1 = arguments;
-
-    if (arguments.length === 0) { return null }
-    var str = arguments[0];
-    for (var i = 1; i < arguments.length; i++) {
-      var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
-      str = str.replace(re, arguments$1[i]);
-    }
-    return str
-  },
-  objClone: function (Obj) {
-    var buf;
-    var t$ = Tool;
-    if (Obj instanceof Array) {
-      buf = [];
-      var i = Obj.length;
-      while (i--) {
-        buf[i] = t$.objClone(Obj[i]);
-      }
-      return buf
-    } else if (Obj instanceof Object) {
-      buf = {};
-      for (var k in Obj) {
-        if (Obj.hasOwnProperty(k)) {
-          buf[k] = t$.objClone(Obj[k]);
-        }
-      }
-      return buf
-    } else {
-      return Obj
-    }
-  },
-  // 获取简易的格式化时间
-  getFormatDateStr: function (dateObj, fmt) {
-    // 对Date的扩展，将 Date 转化为指定格式的String
-    // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
-    // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
-    // 例子：
-    // (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
-    // (new Date()).Format('yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
-    var that = dateObj;
-    var speMonth = that.getMonth();
-    speMonth = speMonth >= 12 ? (speMonth - 1) : speMonth;
-    var o = {
-      'M+': speMonth + 1, // 月份
-      'd+': that.getDate(), // 日
-      'h+': that.getHours(), // 小时
-      'm+': that.getMinutes(), // 分
-      's+': that.getSeconds(), // 秒
-      'q+': Math.floor((speMonth + 3) / 3), // 季度
-      'S': that.getMilliseconds() // 毫秒
-    };
-
-    if (/(y+)/.test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, (that.getFullYear() + '').substr(4 - RegExp.$1.length));
-    }
-
-    for (var k in o) {
-      if (new RegExp('(' + k + ')').test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(
-          ('' + o[k]).length)));
-      }
-    }
-
-    return fmt
-  },
-
-  /**
-   * 比较两个版本号
-   * @param version1 {String} || {Number} 版本号1
-   * @param version2 {String} || {Number} 版本号2
-   * @return {Number} 1, 大于；0 等于；-1 小于
-   */
-  compareVersion: function (version1, version2) {
-    try {
-      if (lodash.isNumber(version1) && lodash.isNumber(version2)) {
-        if (version1 > version2) { return 1 }
-        if (version1 === version2) { return 0 }
-        if (version1 < version2) { return -1 }
-      } else if (lodash.isNumber(version1) || lodash.isNumber(version2)) {
-        version1 += '';
-        version2 += '';
-      }
-
-      var version1Array = version1.split('.');
-      var version2Array = version2.split('.');
-
-      var ver1IntList = [];
-      var ver2IntList = [];
-
-      version1Array.forEach(function (value, index, array) {
-        ver1IntList.push(parseInt(value));
-      });
-
-      version2Array.forEach(function (value, index, array) {
-        ver2IntList.push(parseInt(value));
-      });
-
-      // format
-      if (ver1IntList.length < ver2IntList.length) {
-        var i = 0;
-        for (; i < (ver2IntList.length - ver1IntList.length); ++i) {
-          ver1IntList.push(0);
-        }
-      }
-
-      if (ver1IntList.length > ver2IntList.length) {
-        var i$1 = 0;
-        for (; i$1 < (ver1IntList.length - ver2IntList.length); ++i$1) {
-          ver2IntList.push(0);
-        }
-      }
-
-      var i$2 = 0;
-      for (; i$2 < ver1IntList.length; ++i$2) {
-        var cVer1 = ver1IntList[i$2];
-        var cVer2 = ver2IntList[i$2];
-
-        if (cVer1 > cVer2) { return 1 }
-        if (cVer1 < cVer2) { return -1 }
-      }
-
-      return 0
-    } catch (e) {
-      return -1
-    }
-  },
-  // 测试对象类型
-  testObjectType: function (obj, type) {
-    var t$ = Tool;
-    var actualType = t$.getType(obj);
-    if (actualType !== type) {
-      var errMsg = 'TestType:[' + type + '], actual:[' + actualType + '].';
-      console.assert(false, errMsg);
-    }
-  }
-
-};
 
 var logCord$1 = '[SDK.Proxy.Client.Websocket.Go]';
 
@@ -24021,7 +24032,7 @@ var __$p$$7 = {
       fn(obj);
     }, true);
 
-    console.assert(lodash.isString(cbName) && !lodash.isEmpty(cbName), 'cbName must be a string');
+    console.assert(lodash.isString(cbName) && !Tool.isBlank(cbName), 'cbName must be a string');
     return cbName
   }
 };
@@ -24107,9 +24118,9 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171220.14.48',
+  version: '20171220.22.0',
   b$: $bc_
-}
+};
 
 /** Copyright 2012 Mozilla Foundation
  * RTYUtils
@@ -24141,6 +24152,7 @@ uu$.RTYUtils = {
   isArray: Tool.isArray,
   isBoolean: Tool.isBoolean,
   isString: Tool.isString,
+  isBlank: Tool.isBlank,
   isNull: Tool.isNull,
   isUndefined: Tool.isUndefined,
   isNumber: Tool.isNumber,
@@ -27310,7 +27322,7 @@ uu$$7.checkPatches = function (data) {
   var enable = lodash.get(data, _key, 'enable', false);
   var url = lodash.get(data, _key, 'url', null);
 
-  if (enable && lodash.isString(url) && !lodash.isEmpty(url)) {
+  if (enable && lodash.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
       js: url
     }, function () {});
@@ -27328,7 +27340,7 @@ uu$$7.checkPromotions = function (data) {
   var enable = lodash.get(data, _key, 'enable', false);
   var url = lodash.get(data, _key, 'url', null);
 
-  if (enable && lodash.isString(url) && !lodash.isEmpty(url)) {
+  if (enable && lodash.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
       js: url
     }, function () {});
@@ -27638,9 +27650,9 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171220.14.48',
+  version: '20171220.22.0',
   util: util
-}
+};
 
 try {
   if (window) {
@@ -27668,8 +27680,8 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171220.14.48'
-}
+  version: '20171220.22.0'
+};
 
 return index;
 
