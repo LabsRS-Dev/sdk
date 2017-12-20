@@ -1,4 +1,5 @@
 import { Observable } from '../observable'
+import { Tool } from '../include'
 import { common } from './common'
 import _ from 'lodash'
 
@@ -179,7 +180,7 @@ $bc_.IAP = {
       }, true)
 
       // / 数据校验
-      console.assert(_.isString(params['cb_IAP_js']) && !_.isEmpty(params['cb_IAP_js']), 'must be function string and not empty')
+      console.assert(_.isString(params['cb_IAP_js']) && !Tool.isBlank(params['cb_IAP_js']), 'must be function string and not empty')
 
       // /Ian(原先的方式)
       if (_.isArray(paramOptions['productIds'])) {
@@ -238,7 +239,7 @@ $bc_.IAP = {
 
         // /注册模拟IAP回调
         $bc_.IAP_SE_Wrapper.caller().add(function (obj) {
-          console.assert(_.isString(params.cb_IAP_js) && !_.isEmpty(params.cb_IAP_js), 'must be function string and not empty')
+          console.assert(_.isString(params.cb_IAP_js) && !Tool.isBlank(params.cb_IAP_js), 'must be function string and not empty')
 
           var fnc = window.eval(params.cb_IAP_js)
           if (_.isFunction(fnc)) {

@@ -31,6 +31,7 @@ uu$.RTYUtils = {
   isArray: Tool.isArray,
   isBoolean: Tool.isBoolean,
   isString: Tool.isString,
+  isBlank: Tool.isBlank,
   isNull: Tool.isNull,
   isUndefined: Tool.isUndefined,
   isNumber: Tool.isNumber,

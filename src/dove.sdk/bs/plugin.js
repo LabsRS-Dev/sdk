@@ -1,4 +1,5 @@
 import { common } from './common'
+import { Tool } from '../include'
 import _ from 'lodash'
 
 var $bc_ = common
@@ -19,7 +20,7 @@ $bc_.enablePluginCore = function (pluginList, cbFuncName) {
 
       var extendObj = _.clone($bc_.pCorePlugin)
       extendObj['callMethod'] = 'initCore'
-      if (_.isString(cbFuncName) && !_.isEmpty(cbFuncName)) {
+      if (_.isString(cbFuncName) && !Tool.isBlank(cbFuncName)) {
         extendObj['passBack'] = cbFuncName // 取代默认回调函数
       }
       extendObj['arguments'] = [

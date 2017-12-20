@@ -1,6 +1,7 @@
 import { common } from './common'
 import { communication } from './communication'
 import { loaderWrapper } from './loaderWrapper'
+import { Tool } from '../include'
 import _ from 'lodash'
 
 // 自动更新设置
@@ -22,7 +23,7 @@ uu$.checkPatches = function (data) {
   const enable = _.get(data, _key, 'enable', false)
   const url = _.get(data, _key, 'url', null)
 
-  if (enable && _.isString(url) && !_.isEmpty(url)) {
+  if (enable && _.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
       js: url
     }, function () {})
@@ -40,7 +41,7 @@ uu$.checkPromotions = function (data) {
   const enable = _.get(data, _key, 'enable', false)
   const url = _.get(data, _key, 'url', null)
 
-  if (enable && _.isString(url) && !_.isEmpty(url)) {
+  if (enable && _.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
       js: url
     }, function () {})

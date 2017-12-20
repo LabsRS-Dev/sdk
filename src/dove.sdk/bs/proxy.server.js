@@ -4,6 +4,7 @@ import { ProxyMessageCenter } from './proxy'
 import { ProxyServerPluginWebServerNode } from './proxy.server.plugin.webserver.node'
 import { ProxyServerPluginWebServerPython } from './proxy.server.plugin.webserver.python'
 import { SelfClass } from '../observable'
+import { Tool } from '../include'
 import _ from 'lodash'
 
 var $bc_ = task
@@ -304,7 +305,7 @@ var __$p$ = {
       fn(obj)
     }, true)
 
-    console.assert(_.isString(cbName) && !_.isEmpty(cbName), 'cbName must be a string')
+    console.assert(_.isString(cbName) && !Tool.isBlank(cbName), 'cbName must be a string')
     return cbName
   }
 }

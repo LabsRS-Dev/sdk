@@ -1,5 +1,5 @@
 import { Observable, SelfClass } from '../observable'
-
+import { Tool } from '../include'
 import _ from 'lodash'
 
 var __$p$ = {
@@ -27,7 +27,7 @@ var __$p$ = {
   },
   trigger: function (eventName, e) {
     // 检测e的对象类型
-    if (_.isString(e) && !_.isEmpty(e)) {
+    if (_.isString(e) && !Tool.isBlank(e)) {
       try {
         e = JSON.parse(e)
       } catch (err) {

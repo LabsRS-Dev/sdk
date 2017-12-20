@@ -45,6 +45,24 @@ describe('SDK.Include', () => {
     expect(Tool.compareVersion('1.20.6', '1.0.20')).toEqual(1)
   })
 
+  describe('Test Tool.isBlank', function () {
+    it('Tool isBlank', () => {
+      expect(Tool.isBlank('')).toEqual(true)
+      expect(Tool.isBlank(' ')).toEqual(true)
+      expect(Tool.isBlank('\n')).toEqual(true)
+      expect(Tool.isBlank('\n\n')).toEqual(true)
+      expect(Tool.isBlank(' \n')).toEqual(true)
+
+      expect(Tool.isBlank('s')).toEqual(false)
+      expect(Tool.isBlank('s ')).toEqual(false)
+
+      expect(Tool.isBlank(null)).toEqual(true)
+      expect(Tool.isBlank(true)).toEqual(true)
+      expect(Tool.isBlank({})).toEqual(true)
+      expect(Tool.isBlank([])).toEqual(true)
+    })
+  })
+
   describe('Test Tool.queue', function () {
     var foo = null
 

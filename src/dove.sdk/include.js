@@ -4,6 +4,11 @@ import _ from 'lodash'
  * 纯算法，不依赖bs模块及util模块
  */
 var Tool = {
+  // 构建字符串。来源https://github.com/epeli/underscore.string/blob/master/helper/makeString.js
+  makeString: function (obj) {
+    if (obj == null) return ''
+    return '' + obj
+  },
   /**
    * Get the first item that pass the test
    * by second argument function
@@ -82,6 +87,12 @@ var Tool = {
   isArray: _.isArray,
   isBoolean: _.isBoolean,
   isString: _.isString,
+  isBlank: function (str) {
+    if (_.isString(str)) {
+      return (/^\s*$/).test(this.makeString(str))
+    }
+    return true
+  },
   isNull: _.isNull,
   isUndefined: _.isUndefined,
   isNumber: _.isNumber,
