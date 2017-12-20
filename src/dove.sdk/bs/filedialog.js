@@ -25,7 +25,7 @@ var $bc_ = common
   ]
 });
   **/
-$bc_.cb_importFiles = null // 导入文件的回调
+$bc_['cb_importFiles'] = null // 导入文件的回调
 /**
  * 导入文件
  * @param params 参数的json对象
@@ -97,7 +97,7 @@ $bc_.importFiles = function (paramOptions, noNcb, cb) {
     }
   * @type {null}
   */
-$bc_.cb_selectOutDir = null // 选择输出目录的回调
+$bc_['cb_selectOutDir'] = null // 选择输出目录的回调
 /**
  * 选择输出目录
  * @param params 传递的json对象
@@ -158,7 +158,7 @@ $bc_.selectDir = $bc_.selectOutDir = function (paramOptions, noNcb, cb) {
   "filePath":"/Volumes/DiskShareUser/Users/ian/TestResource/xls/untitled.csv"
   });
   */
-$bc_.cb_selectOutFile = null // 选择输出文件的回调
+$bc_['cb_selectOutFile'] = null // 选择输出文件的回调
 /**
  * 选择输出文件
  * @param params 传递的json对象
@@ -215,7 +215,7 @@ $bc_.selectOutFile = function (paramOptions, noNcb, cb) {
 }
 
 // -----------------------------------------------
-const filedialog = $bc_
+const fileDialog = $bc_
 export {
-  filedialog
+  fileDialog
 }

@@ -10,7 +10,7 @@ $bc_.pIsUseMacCocoEngine = false // 是否使用了MacOSX本地引擎
 
 // 定义临时回调处理函数定义接口
 
-$bc_._get_callback = function (func, noDelete = true) {
+$bc_['_get_callback'] = function (func, noDelete = true) {
   var _nativeCallback = {}
   try {
     window._nativeCallback = window._nativeCallback || {}
@@ -40,7 +40,7 @@ $bc_._get_callback = function (func, noDelete = true) {
   return '_nativeCallback.' + r
 }
 
-$bc_.cb_execTaskUpdateInfo = null // 执行任务的回调
+$bc_['cb_execTaskUpdateInfo'] = null // 执行任务的回调
 $bc_.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
   useThread: true,
   passBack: 'BS.b$.cb_execTaskUpdateInfo',
@@ -109,7 +109,7 @@ $bc_ = __auto($bc_)
 
 // Define some common function for old app
 // 定位文件/目录
-$bc_.cb_revealInFinder = null // 选择定位文件的回调
+$bc_['cb_revealInFinder'] = null // 选择定位文件的回调
 $bc_.revealInFinder = function (path, cb) {
   path = path || ''
   path = path.trim()
@@ -157,7 +157,7 @@ $bc_.previewFile = function (paramOptions, cb) {
 }
 
 // 检测是否支持本地存储
-$bc_.check_supportHtml5Storage = function () {
+$bc_['check_supportHtml5Storage'] = function () {
   try {
     return 'localStorage' in window && window['localStorage'] != null
   } catch (e) {
@@ -166,7 +166,7 @@ $bc_.check_supportHtml5Storage = function () {
 }
 
 // 初始化默认的Manifest文件, callback 必须定义才有效
-$bc_.defaultManifest_key = 'js_defaultManifest_key'
+$bc_['defaultManifest_key'] = 'js_defaultManifest_key'
 $bc_.defaultManifest = {}
 
 // 保存默认Manifest对象

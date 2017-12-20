@@ -6,12 +6,12 @@ var $bc_ = common
 $bc_.enablePluginCore = function (pluginList, cbFuncName) {
   if ($bc_.pN) {
     try {
-      var org_pluginArray = pluginList || [] // 插件信息数组
+      var orgPluginArray = pluginList || [] // 插件信息数组
       var pluginArray = []
 
       // 过滤调用方式非'call' 的插件
-      for (var i = 0; i < org_pluginArray.length; ++i) {
-        var plugin = org_pluginArray[i]
+      for (var i = 0; i < orgPluginArray.length; ++i) {
+        var plugin = orgPluginArray[i]
         if (plugin['callMethod'] === 'call') {
           pluginArray.push(plugin)
         }

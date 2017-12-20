@@ -409,7 +409,7 @@ $bc_.App = {
   },
 
   // {方便函数，设置评价App功能是否开启}
-  setOptions_RateAppClose: function (enable) {
+  'setOptions_RateAppClose': function (enable) {
     $bc_.App.setInfoToUserDefaults({
       key: 'RateApp_CLOSE',
       value: enable

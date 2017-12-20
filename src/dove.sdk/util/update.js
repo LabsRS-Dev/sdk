@@ -11,6 +11,42 @@ import _ from 'lodash'
  * foundNewVersionCallback, 内置处理完成后，回调处理
  */
 var uu$ = {}
+
+// 检测在线补丁包
+uu$.checkPatches = function (data) {
+  console.log('#[get core_patch info data] .......')
+  const _key = 'checkPatchs'
+
+  if (!_.has(data, _key)) return
+
+  const enable = _.get(data, _key, 'enable', false)
+  const url = _.get(data, _key, 'url', null)
+
+  if (enable && _.isString(url)) {
+    loaderWrapper.RTY_3rd_Ensure.ensure({
+      js: url
+    }, function () {})
+  }
+}
+
+// 检测促销包
+uu$.checkPromotions = function (data) {
+  console.log('#[get core_promo info data] .......')
+
+  const _key = 'checkPromotions'
+
+  if (!_.has(data, _key)) return
+
+  const enable = _.get(data, _key, 'enable', false)
+  const url = _.get(data, _key, 'url', null)
+
+  if (enable && _.isString(url)) {
+    loaderWrapper.RTY_3rd_Ensure.ensure({
+      js: url
+    }, function () {})
+  }
+}
+
 uu$.hasUpdateChecked = false
 uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallback) {
   try {
@@ -20,7 +56,7 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
 
     var _checkUpdate = function (data) {
       // 先检测是否有checkUpdate属性
-      if (!data.checkUpdate) return
+      if (!_.has(data, 'checkUpdate')) return
 
       try {
         var lastVersion = data.checkUpdate.lastVersion || ''
@@ -82,7 +118,19 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
 
       console.log('#[get update info data] .......')
       console.dir(serverData)
-      _checkUpdate(serverData['data'])
+
+      if (!_.has(serverData, 'data')) return
+
+      const dataInfo = serverData['data']
+
+      // 检查更新
+      _checkUpdate(dataInfo)
+
+      // 检测补丁
+      t$.checkPatches(dataInfo)
+
+      // 检测促销包
+      t$.checkPromotions(dataInfo)
     })
   } catch (e) {
     console.error(e)
@@ -98,13 +146,6 @@ uu$.checkStartInfo = function (info) {
       'Add_info': info || {}
     })
   }
-}
-
-// 检测在线补丁包
-uu$.checkPatches = function (info) {
-  loaderWrapper.RTY_3rd_Ensure.ensure({
-    js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
-  }, function () {})
 }
 
 // -----------------------------------------------

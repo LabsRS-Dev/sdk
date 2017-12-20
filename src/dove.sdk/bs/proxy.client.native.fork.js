@@ -116,7 +116,7 @@ var __$p$ = {
   __processNativeTask: function (message) {
     var that = this
     const dataObj = _.extend({
-      task_id: '',
+      'task_id': '',
       commands: [],
       taskMethodWay: TaskMethodWay.Task
     }, message)

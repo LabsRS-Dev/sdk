@@ -4,7 +4,7 @@ import _ from 'lodash'
 var $bc_ = common
 
 // 启用拖拽功能
-$bc_.cb_dragdrop = null // 启动
+$bc_['cb_dragdrop'] = null // 启动
 /**
  *
  * @param params 参数处理

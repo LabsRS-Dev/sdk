@@ -16,7 +16,7 @@ $bc_.XPC = {
     if ($bc_.pN) {
       try {
         var params = {
-          key: jsonObj.xpc_key || 'default',
+          key: jsonObj['xpc_key'] || 'default',
           id: jsonObj.bundleID || 'com.romanysoft.app.mac.xpc.AgentHelper'
         }
 
@@ -38,13 +38,13 @@ $bc_.XPC = {
 
   /**
   * 解除XPC的关联
-  * @param xpc_key
+  * @param xpcKey
   * @returns {*}
   */
-  unInstall: function (xpc_key) {
+  unInstall: function (xpcKey) {
     if ($bc_.pN) {
       try {
-        return $bc_.pN.app.unRegisterXPCService(xpc_key)
+        return $bc_.pN.app.unRegisterXPCService(xpcKey)
       } catch (e) {
         console.error(e)
       }
@@ -55,13 +55,13 @@ $bc_.XPC = {
 
   /**
   * 查找XPC是否存在
-  * @param xpc_key  xpc关联的Key的唯一标识
+  * @param xpcKey  xpc关联的Key的唯一标识
   * @returns {true/false}
   */
-  find: function (xpc_key) {
+  find: function (xpcKey) {
     if ($bc_.pN) {
       try {
-        return $bc_.pN.app.hasXPCService(xpc_key || 'default')
+        return $bc_.pN.app.hasXPCService(xpcKey || 'default')
       } catch (e) {
         console.error(e)
       }
@@ -72,12 +72,12 @@ $bc_.XPC = {
 
   /**
   * 恢复XPC服务
-  * @param xpc_key
+  * @param xpcKey
   */
-  resume: function (xpc_key) {
+  resume: function (xpcKey) {
     if ($bc_.pN) {
       try {
-        $bc_.pN.app.resumeXPCService(xpc_key)
+        $bc_.pN.app.resumeXPCService(xpcKey)
       } catch (e) {
         console.error(e)
       }
@@ -86,12 +86,12 @@ $bc_.XPC = {
 
   /**
   * 挂起XPC服务
-  * @param xpc_key
+  * @param xpcKey
   */
-  suspend: function (xpc_key) {
+  suspend: function (xpcKey) {
     if ($bc_.pN) {
       try {
-        $bc_.pN.app.suspendXPCService(xpc_key)
+        $bc_.pN.app.suspendXPCService(xpcKey)
       } catch (e) {
         console.error(e)
       }
@@ -100,12 +100,12 @@ $bc_.XPC = {
 
   /**
   * 使XPC服务失效
-  * @param xpc_key
+  * @param xpcKey
   */
-  invalidate: function (xpc_key) {
+  invalidate: function (xpcKey) {
     if ($bc_.pN) {
       try {
-        $bc_.pN.app.invalidateXPCService(xpc_key)
+        $bc_.pN.app.invalidateXPCService(xpcKey)
       } catch (e) {
         console.error(e)
       }
@@ -123,7 +123,7 @@ $bc_.XPC = {
       try {
         var _json = jsonObj || {}
         var params = {
-          xpc_key: _json.xpc_key || 'default',
+          'xpc_key': _json['xpc_key'] || 'default',
           callback: _json.callback || $bc_._get_callback(function (obj) {
             cb && cb(obj)
           }, true),
@@ -175,7 +175,7 @@ $bc_.XPCNodeHelper = {
   exec: function (jsonObj, successCB, failedCB) {
     var $t = this
 
-    var xpc_key = $t.getXPCKey()
+    var xpcKey = $t.getXPCKey()
     var helperID = $t.getHelperBundleID()
 
     var canExec = false
@@ -184,9 +184,9 @@ $bc_.XPCNodeHelper = {
     alert('这是个弃用的方式,因为现在没有办法突破Sandbox')
 
     // 检查是否已经安装过
-    if ($bc_.XPC.find(xpc_key) === false) {
+    if ($bc_.XPC.find(xpcKey) === false) {
       canExec = $bc_.XPC.install({
-        xpc_key: xpc_key,
+        'xpc_key': xpcKey,
         bundleID: helperID
       })
     } else {
@@ -196,7 +196,7 @@ $bc_.XPCNodeHelper = {
     // 根据是否可以执行来处理
     if (canExec) {
       var pluginDir = $bc_.App.getAppPluginDir()
-      var node_path = pluginDir + '/node'
+      var nodePath = pluginDir + '/node'
 
       var _json = jsonObj || {}
 
@@ -211,7 +211,7 @@ $bc_.XPCNodeHelper = {
       var messageDic = {
         'ms_type': 'CALL_TASK',
         'ms_obj': {
-          'taskAppPath': node_path,
+          'taskAppPath': nodePath,
           'command': _json.command || ['-v'],
           'currentDirectoryPath': _json.currentDirectoryPath || '',
           'environmentDic': _json.environmentDic || {},
@@ -221,7 +221,7 @@ $bc_.XPCNodeHelper = {
 
       // 发送消息
       $bc_.XPC.sendMessage({
-        'xpc_key': xpc_key,
+        'xpc_key': xpcKey,
         'messageDic': messageDic
       }, function (obj) {
         successCB && successCB(obj)
@@ -256,10 +256,10 @@ $bc_.XPCPythonHelper = {
   * @param successCB
   * @param failedCB
   */
-  common_exec: function (jsonObj, successCB, failedCB) {
+  'common_exec': function (jsonObj, successCB, failedCB) {
     var $t = this
 
-    var xpc_key = $t.getXPCKey()
+    var xpcKey = $t.getXPCKey()
     var helperID = $t.getHelperBundleID()
 
     var canExec = false
@@ -268,9 +268,9 @@ $bc_.XPCPythonHelper = {
     alert('这是个弃用的方式,因为现在没有办法突破Sandbox')
 
     // 检查是否已经安装过
-    if ($bc_.XPC.find(xpc_key) === false) {
+    if ($bc_.XPC.find(xpcKey) === false) {
       canExec = $bc_.XPC.install({
-        xpc_key: xpc_key,
+        'xpc_key': xpcKey,
         bundleID: helperID
       })
     } else {
@@ -280,7 +280,7 @@ $bc_.XPCPythonHelper = {
     // 根据是否可以执行来处理
     if (canExec) {
       var pluginDir = $bc_.App.getAppPluginDir()
-      var pythonCLI_path = pluginDir + '/pythonCLI'
+      var pythonCLIPath = pluginDir + '/pythonCLI'
 
       var _json = jsonObj || {}
 
@@ -288,7 +288,7 @@ $bc_.XPCPythonHelper = {
       var messageDic = {
         'ms_type': 'CALL_TASK',
         'ms_obj': {
-          'taskAppPath': pythonCLI_path,
+          'taskAppPath': pythonCLIPath,
           'command': _json.command || ['-v'],
           'currentDirectoryPath': _json.currentDirectoryPath || '',
           'environmentDic': _json.environmentDic || {},
@@ -298,7 +298,7 @@ $bc_.XPCPythonHelper = {
 
       // 发送消息
       $bc_.XPC.sendMessage({
-        'xpc_key': xpc_key,
+        'xpc_key': xpcKey,
         'messageDic': messageDic
       }, function (obj) {
         successCB && successCB(obj)

@@ -176,7 +176,7 @@ var HttpLibrary = $du.HttpLibrary = {
       body.appendChild(script)
     }
   },
-  loadJavascript_jQuery: function (data) {
+  'loadJavascript_jQuery': function (data) {
     if (HttpLibrary.browser.safari) {
       return window.jQuery.ajax({
         type: 'GET',
@@ -199,7 +199,7 @@ var HttpLibrary = $du.HttpLibrary = {
       HttpLibrary.createScriptTag(data.url, data.success, data.error)
     }
   },
-  loadJavascript_MSAJAX: function (data) {
+  'loadJavascript_MSAJAX': function (data) {
     if (HttpLibrary.browser.safari) {
       var params = {
         url: data.url,
@@ -214,7 +214,7 @@ var HttpLibrary = $du.HttpLibrary = {
       HttpLibrary.createScriptTag(data.url, data.success, data.error)
     }
   },
-  loadJavascript_Prototype: function (data) {
+  'loadJavascript_Prototype': function (data) {
     if (HttpLibrary.browser.safari) {
       var params = {
         url: data.url,
@@ -229,7 +229,7 @@ var HttpLibrary = $du.HttpLibrary = {
       HttpLibrary.createScriptTag(data.url, data.success, data.error)
     }
   },
-  httpGet_jQuery: function (data) {
+  'httpGet_jQuery': function (data) {
     return window.jQuery.ajax({
       type: 'GET',
       url: data.url,
@@ -245,7 +245,7 @@ var HttpLibrary = $du.HttpLibrary = {
       dataType: data.type || 'html'
     })
   },
-  httpGet_MSAJAX: function (data) {
+  'httpGet_MSAJAX': function (data) {
     var _wRequest = new Sys.Net.WebRequest()
     _wRequest.set_url(data.url)
     _wRequest.set_httpVerb('GET')
@@ -266,7 +266,7 @@ var HttpLibrary = $du.HttpLibrary = {
     _wRequest.set_executor(executor)
     executor.executeRequest()
   },
-  httpGet_Prototype: function (data) {
+  'httpGet_Prototype': function (data) {
     new Ajax.Request(data.url, {
       method: 'get',
       evalJS: false, // Make sure prototype does not automatically evan scripts
@@ -317,7 +317,7 @@ $du.EnsureExecutor.prototype = {
     // abstract function to make HTTP GET call
   },
   load: function () {
-    var fnc_fail = function (urlList) {
+    var fncFail = function (urlList) {
       this.failcall && this.failcall(urlList)
     }
 
@@ -326,9 +326,9 @@ $du.EnsureExecutor.prototype = {
         this.loadCSS(this.delegate(function () {
           this.loadHtml(this.delegate(function () {
             this.callback && this.callback()
-          }), this.delegate(fnc_fail))
-        }), this.delegate(fnc_fail))
-      }), this.delegate(fnc_fail))
+          }), this.delegate(fncFail))
+        }), this.delegate(fncFail))
+      }), this.delegate(fncFail))
   },
   loadJavascripts: function (complete, fail) {
     var scriptsToLoad = this.data.js.length

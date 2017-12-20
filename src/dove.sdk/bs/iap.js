@@ -4,9 +4,9 @@ import _ from 'lodash'
 
 var $bc_ = common
 // IAP 非本地模拟
-$bc_.IAP_SE_KEY = 'RSSDK_SE_SANBOX_IAP'
-$bc_.IAP_SE_OBJ = {}
-$bc_.IAP_SE_Wrapper = {
+$bc_['IAP_SE_KEY'] = 'RSSDK_SE_SANBOX_IAP'
+$bc_['IAP_SE_OBJ'] = {}
+$bc_['IAP_SE_Wrapper'] = {
   _caller: 0,
   productIdentifiers: [], // 商品的ID 数组
   caller: function () { // 消息回调处理
@@ -19,7 +19,7 @@ $bc_.IAP_SE_Wrapper = {
 }
 
 // IAP 功能封装
-$bc_.cb_handleIAPCallback = null // IAP的回调函数
+$bc_['cb_handleIAPCallback'] = null // IAP的回调函数
 $bc_.IAP = {
   _pNoticeCenter: 0,
   NoticeCenter: function () {

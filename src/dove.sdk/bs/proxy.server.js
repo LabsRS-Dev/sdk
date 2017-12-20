@@ -167,7 +167,7 @@ var __$p$ = {
       __agent.log(debugBand, JSON.stringify(obj))
 
       // 声明处理插件初始化的方法
-      function process_init (obj) {
+      function processInit (obj) {
         console.assert(obj)
         try {
           if (obj.type === TNMT.InitCoreSuccess) {
@@ -187,7 +187,7 @@ var __$p$ = {
       }
 
       // 声明处理CLI的回调处理
-      function process_dylibCLI (obj) {
+      function processDylibCLI (obj) {
         console.assert(obj)
         try {
           if (obj.type === TNMT.CliCallStart) {
@@ -212,7 +212,7 @@ var __$p$ = {
       }
 
       // 声明处理ExecCommand的方法
-      function process_execCommand (obj) {
+      function processExecCommand (obj) {
         console.assert(obj)
         try {
           if (obj.type === TNMT.AddExecCommandQueueSuccess) {
@@ -254,7 +254,7 @@ var __$p$ = {
       }
 
       // 声明处理Task的方法
-      function process_task (obj) {
+      function processTask (obj) {
         console.assert(obj)
         try {
           if (obj.type === TNMT.AddCallTaskQueueSuccess) {
@@ -294,10 +294,10 @@ var __$p$ = {
       }
 
       // 以下是调用顺序
-      process_init(obj)
-      process_dylibCLI(obj)
-      process_execCommand(obj)
-      process_task(obj)
+      processInit(obj)
+      processDylibCLI(obj)
+      processExecCommand(obj)
+      processTask(obj)
     }
 
     const cbName = $bc_._get_callback(function (obj) {
