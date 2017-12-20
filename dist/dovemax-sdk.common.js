@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20171218.16.50
+ * DoveMaxSDK ABI v20171220.14.48
  * (c) 2017 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -17290,7 +17290,7 @@ var Observable = SelfClass.extend({
       length;
 
     if (events) {
-      if (lodash.isString(e)) {
+      if (!lodash.isPlainObject(e)) {
         console.error('e must be {}, not string ');
       }
 
@@ -17349,7 +17349,7 @@ $bc_$1.pIsUseMacCocoEngine = false; // 是否使用了MacOSX本地引擎
 
 // 定义临时回调处理函数定义接口
 
-$bc_$1._get_callback = function (func, noDelete) {
+$bc_$1['_get_callback'] = function (func, noDelete) {
   if ( noDelete === void 0 ) noDelete = true;
 
   var _nativeCallback = {};
@@ -17381,7 +17381,7 @@ $bc_$1._get_callback = function (func, noDelete) {
   return '_nativeCallback.' + r
 };
 
-$bc_$1.cb_execTaskUpdateInfo = null; // 执行任务的回调
+$bc_$1['cb_execTaskUpdateInfo'] = null; // 执行任务的回调
 $bc_$1.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
   useThread: true,
   passBack: 'BS.b$.cb_execTaskUpdateInfo',
@@ -17413,11 +17413,11 @@ var __auto = function (ref) {
             window['eval'] = window.eval || function (params) {
               console.log('--------- eval function is not actual');
             };
-            var js = "window.require(\"remote\").require(\"./romanysoft/maccocojs\")";
+            var js = "try{window.require(\"remote\").require(\"./romanysoft/maccocojs\")}catch(e){}";
             ref.pN = ref.pNative = window['eval'](js);
           } catch (error) {
             try {
-              var js$1 = "window.require(\"electron\").remote.require(\"./romanysoft/maccocojs\")";
+              var js$1 = "try{window.require(\"electron\").remote.require(\"./romanysoft/maccocojs\")}catch(e){}";
               ref.pN = ref.pNative = window['eval'](js$1);
             } catch (e) {
               console.error(e);
@@ -17450,7 +17450,7 @@ $bc_$1 = __auto($bc_$1);
 
 // Define some common function for old app
 // 定位文件/目录
-$bc_$1.cb_revealInFinder = null; // 选择定位文件的回调
+$bc_$1['cb_revealInFinder'] = null; // 选择定位文件的回调
 $bc_$1.revealInFinder = function (path, cb) {
   path = path || '';
   path = path.trim();
@@ -17498,7 +17498,7 @@ $bc_$1.previewFile = function (paramOptions, cb) {
 };
 
 // 检测是否支持本地存储
-$bc_$1.check_supportHtml5Storage = function () {
+$bc_$1['check_supportHtml5Storage'] = function () {
   try {
     return 'localStorage' in window && window['localStorage'] != null
   } catch (e) {
@@ -17507,7 +17507,7 @@ $bc_$1.check_supportHtml5Storage = function () {
 };
 
 // 初始化默认的Manifest文件, callback 必须定义才有效
-$bc_$1.defaultManifest_key = 'js_defaultManifest_key';
+$bc_$1['defaultManifest_key'] = 'js_defaultManifest_key';
 $bc_$1.defaultManifest = {};
 
 // 保存默认Manifest对象
@@ -17558,9 +17558,9 @@ var common = $bc_$1;
 
 var $bc_$2 = common;
 // IAP 非本地模拟
-$bc_$2.IAP_SE_KEY = 'RSSDK_SE_SANBOX_IAP';
-$bc_$2.IAP_SE_OBJ = {};
-$bc_$2.IAP_SE_Wrapper = {
+$bc_$2['IAP_SE_KEY'] = 'RSSDK_SE_SANBOX_IAP';
+$bc_$2['IAP_SE_OBJ'] = {};
+$bc_$2['IAP_SE_Wrapper'] = {
   _caller: 0,
   productIdentifiers: [], // 商品的ID 数组
   caller: function () { // 消息回调处理
@@ -17573,7 +17573,7 @@ $bc_$2.IAP_SE_Wrapper = {
 };
 
 // IAP 功能封装
-$bc_$2.cb_handleIAPCallback = null; // IAP的回调函数
+$bc_$2['cb_handleIAPCallback'] = null; // IAP的回调函数
 $bc_$2.IAP = {
   _pNoticeCenter: 0,
   NoticeCenter: function () {
@@ -17733,7 +17733,7 @@ $bc_$2.IAP = {
       }, true);
 
       // / 数据校验
-      console.assert(lodash.isString(params['cb_IAP_js']) === true, 'must be function string');
+      console.assert(lodash.isString(params['cb_IAP_js']) && !lodash.isEmpty(params['cb_IAP_js']), 'must be function string and not empty');
 
       // /Ian(原先的方式)
       if (lodash.isArray(paramOptions['productIds'])) {
@@ -17792,7 +17792,7 @@ $bc_$2.IAP = {
 
         // /注册模拟IAP回调
         $bc_$2.IAP_SE_Wrapper.caller().add(function (obj) {
-          console.assert(lodash.isString(params.cb_IAP_js) === true, 'must be function string');
+          console.assert(lodash.isString(params.cb_IAP_js) && !lodash.isEmpty(params.cb_IAP_js), 'must be function string and not empty');
 
           var fnc = window.eval(params.cb_IAP_js);
           if (lodash.isFunction(fnc)) {
@@ -18645,7 +18645,7 @@ $bc_$4.App = {
   },
 
   // {方便函数，设置评价App功能是否开启}
-  setOptions_RateAppClose: function (enable) {
+  'setOptions_RateAppClose': function (enable) {
     $bc_$4.App.setInfoToUserDefaults({
       key: 'RateApp_CLOSE',
       value: enable
@@ -20056,7 +20056,7 @@ $bc_$5.XPC = {
     if ($bc_$5.pN) {
       try {
         var params = {
-          key: jsonObj.xpc_key || 'default',
+          key: jsonObj['xpc_key'] || 'default',
           id: jsonObj.bundleID || 'com.romanysoft.app.mac.xpc.AgentHelper'
         };
 
@@ -20078,13 +20078,13 @@ $bc_$5.XPC = {
 
   /**
   * 解除XPC的关联
-  * @param xpc_key
+  * @param xpcKey
   * @returns {*}
   */
-  unInstall: function (xpc_key) {
+  unInstall: function (xpcKey) {
     if ($bc_$5.pN) {
       try {
-        return $bc_$5.pN.app.unRegisterXPCService(xpc_key)
+        return $bc_$5.pN.app.unRegisterXPCService(xpcKey)
       } catch (e) {
         console.error(e);
       }
@@ -20095,13 +20095,13 @@ $bc_$5.XPC = {
 
   /**
   * 查找XPC是否存在
-  * @param xpc_key  xpc关联的Key的唯一标识
+  * @param xpcKey  xpc关联的Key的唯一标识
   * @returns {true/false}
   */
-  find: function (xpc_key) {
+  find: function (xpcKey) {
     if ($bc_$5.pN) {
       try {
-        return $bc_$5.pN.app.hasXPCService(xpc_key || 'default')
+        return $bc_$5.pN.app.hasXPCService(xpcKey || 'default')
       } catch (e) {
         console.error(e);
       }
@@ -20112,12 +20112,12 @@ $bc_$5.XPC = {
 
   /**
   * 恢复XPC服务
-  * @param xpc_key
+  * @param xpcKey
   */
-  resume: function (xpc_key) {
+  resume: function (xpcKey) {
     if ($bc_$5.pN) {
       try {
-        $bc_$5.pN.app.resumeXPCService(xpc_key);
+        $bc_$5.pN.app.resumeXPCService(xpcKey);
       } catch (e) {
         console.error(e);
       }
@@ -20126,12 +20126,12 @@ $bc_$5.XPC = {
 
   /**
   * 挂起XPC服务
-  * @param xpc_key
+  * @param xpcKey
   */
-  suspend: function (xpc_key) {
+  suspend: function (xpcKey) {
     if ($bc_$5.pN) {
       try {
-        $bc_$5.pN.app.suspendXPCService(xpc_key);
+        $bc_$5.pN.app.suspendXPCService(xpcKey);
       } catch (e) {
         console.error(e);
       }
@@ -20140,12 +20140,12 @@ $bc_$5.XPC = {
 
   /**
   * 使XPC服务失效
-  * @param xpc_key
+  * @param xpcKey
   */
-  invalidate: function (xpc_key) {
+  invalidate: function (xpcKey) {
     if ($bc_$5.pN) {
       try {
-        $bc_$5.pN.app.invalidateXPCService(xpc_key);
+        $bc_$5.pN.app.invalidateXPCService(xpcKey);
       } catch (e) {
         console.error(e);
       }
@@ -20163,7 +20163,7 @@ $bc_$5.XPC = {
       try {
         var _json = jsonObj || {};
         var params = {
-          xpc_key: _json.xpc_key || 'default',
+          'xpc_key': _json['xpc_key'] || 'default',
           callback: _json.callback || $bc_$5._get_callback(function (obj) {
             cb && cb(obj);
           }, true),
@@ -20215,7 +20215,7 @@ $bc_$5.XPCNodeHelper = {
   exec: function (jsonObj, successCB, failedCB) {
     var $t = this;
 
-    var xpc_key = $t.getXPCKey();
+    var xpcKey = $t.getXPCKey();
     var helperID = $t.getHelperBundleID();
 
     var canExec = false;
@@ -20224,9 +20224,9 @@ $bc_$5.XPCNodeHelper = {
     alert('这是个弃用的方式,因为现在没有办法突破Sandbox');
 
     // 检查是否已经安装过
-    if ($bc_$5.XPC.find(xpc_key) === false) {
+    if ($bc_$5.XPC.find(xpcKey) === false) {
       canExec = $bc_$5.XPC.install({
-        xpc_key: xpc_key,
+        'xpc_key': xpcKey,
         bundleID: helperID
       });
     } else {
@@ -20236,7 +20236,7 @@ $bc_$5.XPCNodeHelper = {
     // 根据是否可以执行来处理
     if (canExec) {
       var pluginDir = $bc_$5.App.getAppPluginDir();
-      var node_path = pluginDir + '/node';
+      var nodePath = pluginDir + '/node';
 
       var _json = jsonObj || {};
 
@@ -20251,7 +20251,7 @@ $bc_$5.XPCNodeHelper = {
       var messageDic = {
         'ms_type': 'CALL_TASK',
         'ms_obj': {
-          'taskAppPath': node_path,
+          'taskAppPath': nodePath,
           'command': _json.command || ['-v'],
           'currentDirectoryPath': _json.currentDirectoryPath || '',
           'environmentDic': _json.environmentDic || {},
@@ -20261,7 +20261,7 @@ $bc_$5.XPCNodeHelper = {
 
       // 发送消息
       $bc_$5.XPC.sendMessage({
-        'xpc_key': xpc_key,
+        'xpc_key': xpcKey,
         'messageDic': messageDic
       }, function (obj) {
         successCB && successCB(obj);
@@ -20296,10 +20296,10 @@ $bc_$5.XPCPythonHelper = {
   * @param successCB
   * @param failedCB
   */
-  common_exec: function (jsonObj, successCB, failedCB) {
+  'common_exec': function (jsonObj, successCB, failedCB) {
     var $t = this;
 
-    var xpc_key = $t.getXPCKey();
+    var xpcKey = $t.getXPCKey();
     var helperID = $t.getHelperBundleID();
 
     var canExec = false;
@@ -20308,9 +20308,9 @@ $bc_$5.XPCPythonHelper = {
     alert('这是个弃用的方式,因为现在没有办法突破Sandbox');
 
     // 检查是否已经安装过
-    if ($bc_$5.XPC.find(xpc_key) === false) {
+    if ($bc_$5.XPC.find(xpcKey) === false) {
       canExec = $bc_$5.XPC.install({
-        xpc_key: xpc_key,
+        'xpc_key': xpcKey,
         bundleID: helperID
       });
     } else {
@@ -20320,7 +20320,7 @@ $bc_$5.XPCPythonHelper = {
     // 根据是否可以执行来处理
     if (canExec) {
       var pluginDir = $bc_$5.App.getAppPluginDir();
-      var pythonCLI_path = pluginDir + '/pythonCLI';
+      var pythonCLIPath = pluginDir + '/pythonCLI';
 
       var _json = jsonObj || {};
 
@@ -20328,7 +20328,7 @@ $bc_$5.XPCPythonHelper = {
       var messageDic = {
         'ms_type': 'CALL_TASK',
         'ms_obj': {
-          'taskAppPath': pythonCLI_path,
+          'taskAppPath': pythonCLIPath,
           'command': _json.command || ['-v'],
           'currentDirectoryPath': _json.currentDirectoryPath || '',
           'environmentDic': _json.environmentDic || {},
@@ -20338,7 +20338,7 @@ $bc_$5.XPCPythonHelper = {
 
       // 发送消息
       $bc_$5.XPC.sendMessage({
-        'xpc_key': xpc_key,
+        'xpc_key': xpcKey,
         'messageDic': messageDic
       }, function (obj) {
         successCB && successCB(obj);
@@ -21006,12 +21006,12 @@ var $bc_$11 = common;
 $bc_$11.enablePluginCore = function (pluginList, cbFuncName) {
   if ($bc_$11.pN) {
     try {
-      var org_pluginArray = pluginList || []; // 插件信息数组
+      var orgPluginArray = pluginList || []; // 插件信息数组
       var pluginArray = [];
 
       // 过滤调用方式非'call' 的插件
-      for (var i = 0; i < org_pluginArray.length; ++i) {
-        var plugin = org_pluginArray[i];
+      for (var i = 0; i < orgPluginArray.length; ++i) {
+        var plugin = orgPluginArray[i];
         if (plugin['callMethod'] === 'call') {
           pluginArray.push(plugin);
         }
@@ -21019,7 +21019,7 @@ $bc_$11.enablePluginCore = function (pluginList, cbFuncName) {
 
       var extendObj = lodash.clone($bc_$11.pCorePlugin);
       extendObj['callMethod'] = 'initCore';
-      if (lodash.isString(cbFuncName)) {
+      if (lodash.isString(cbFuncName) && !lodash.isEmpty(cbFuncName)) {
         extendObj['passBack'] = cbFuncName; // 取代默认回调函数
       }
       extendObj['arguments'] = [
@@ -21040,7 +21040,7 @@ var plugin = $bc_$11;
 var $bc_$12 = common;
 
 // 启用拖拽功能
-$bc_$12.cb_dragdrop = null; // 启动
+$bc_$12['cb_dragdrop'] = null; // 启动
 /**
  *
  * @param params 参数处理
@@ -21379,7 +21379,7 @@ var $bc_$14 = common;
   ]
 });
   **/
-$bc_$14.cb_importFiles = null; // 导入文件的回调
+$bc_$14['cb_importFiles'] = null; // 导入文件的回调
 /**
  * 导入文件
  * @param params 参数的json对象
@@ -21451,7 +21451,7 @@ $bc_$14.importFiles = function (paramOptions, noNcb, cb) {
     }
   * @type {null}
   */
-$bc_$14.cb_selectOutDir = null; // 选择输出目录的回调
+$bc_$14['cb_selectOutDir'] = null; // 选择输出目录的回调
 /**
  * 选择输出目录
  * @param params 传递的json对象
@@ -21512,7 +21512,7 @@ $bc_$14.selectDir = $bc_$14.selectOutDir = function (paramOptions, noNcb, cb) {
   "filePath":"/Volumes/DiskShareUser/Users/ian/TestResource/xls/untitled.csv"
   });
   */
-$bc_$14.cb_selectOutFile = null; // 选择输出文件的回调
+$bc_$14['cb_selectOutFile'] = null; // 选择输出文件的回调
 /**
  * 选择输出文件
  * @param params 传递的json对象
@@ -21569,7 +21569,7 @@ $bc_$14.selectOutFile = function (paramOptions, noNcb, cb) {
 };
 
 // -----------------------------------------------
-var filedialog = $bc_$14;
+var fileDialog = $bc_$14;
 
 var __$p$$2 = {
   init: function () {
@@ -21600,7 +21600,7 @@ var __$p$$2 = {
   },
   trigger: function (eventName, e) {
     // 检测e的对象类型
-    if (lodash.isString(e)) {
+    if (lodash.isString(e) && !lodash.isEmpty(e)) {
       try {
         e = JSON.parse(e);
       } catch (err) {
@@ -21609,8 +21609,8 @@ var __$p$$2 = {
           data: e
         };
       }
+      this.__mc.trigger(eventName, e);
     }
-    this.__mc.trigger(eventName, e);
   },
   unbind: function (eventName, handler) {
     this.__mc.unbind(eventName, handler);
@@ -23153,7 +23153,7 @@ var __$p$$5 = {
   __processNativeTask: function (message) {
     var that = this;
     var dataObj = lodash.extend({
-      task_id: '',
+      'task_id': '',
       commands: [],
       taskMethodWay: TaskMethodWay.Task
     }, message);
@@ -23880,7 +23880,7 @@ var __$p$$7 = {
       __agent.log(debugBand, JSON.stringify(obj));
 
       // 声明处理插件初始化的方法
-      function process_init (obj) {
+      function processInit (obj) {
         console.assert(obj);
         try {
           if (obj.type === TNMT$1.InitCoreSuccess) {
@@ -23900,7 +23900,7 @@ var __$p$$7 = {
       }
 
       // 声明处理CLI的回调处理
-      function process_dylibCLI (obj) {
+      function processDylibCLI (obj) {
         console.assert(obj);
         try {
           if (obj.type === TNMT$1.CliCallStart) {
@@ -23925,7 +23925,7 @@ var __$p$$7 = {
       }
 
       // 声明处理ExecCommand的方法
-      function process_execCommand (obj) {
+      function processExecCommand (obj) {
         console.assert(obj);
         try {
           if (obj.type === TNMT$1.AddExecCommandQueueSuccess) {
@@ -23967,7 +23967,7 @@ var __$p$$7 = {
       }
 
       // 声明处理Task的方法
-      function process_task (obj) {
+      function processTask (obj) {
         console.assert(obj);
         try {
           if (obj.type === TNMT$1.AddCallTaskQueueSuccess) {
@@ -24007,17 +24007,17 @@ var __$p$$7 = {
       }
 
       // 以下是调用顺序
-      process_init(obj);
-      process_dylibCLI(obj);
-      process_execCommand(obj);
-      process_task(obj);
+      processInit(obj);
+      processDylibCLI(obj);
+      processExecCommand(obj);
+      processTask(obj);
     };
 
     var cbName = $bc_$16._get_callback(function (obj) {
       fn(obj);
     }, true);
 
-    console.assert(lodash.isString(cbName), 'cbName must be a string');
+    console.assert(lodash.isString(cbName) && !lodash.isEmpty(cbName), 'cbName must be a string');
     return cbName
   }
 };
@@ -24098,14 +24098,14 @@ $bc_ = lodash.extend($bc_, binary);
 $bc_ = lodash.extend($bc_, plugin);
 $bc_ = lodash.extend($bc_, dragdrop);
 $bc_ = lodash.extend($bc_, task);
-$bc_ = lodash.extend($bc_, filedialog);
+$bc_ = lodash.extend($bc_, fileDialog);
 $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171218.16.50',
+  version: '20171220.14.48',
   b$: $bc_
-};
+}
 
 /** Copyright 2012 Mozilla Foundation
  * RTYUtils
@@ -26880,7 +26880,7 @@ var HttpLibrary = $du.HttpLibrary = {
       body.appendChild(script);
     }
   },
-  loadJavascript_jQuery: function (data) {
+  'loadJavascript_jQuery': function (data) {
     if (HttpLibrary.browser.safari) {
       return window.jQuery.ajax({
         type: 'GET',
@@ -26903,7 +26903,7 @@ var HttpLibrary = $du.HttpLibrary = {
       HttpLibrary.createScriptTag(data.url, data.success, data.error);
     }
   },
-  loadJavascript_MSAJAX: function (data) {
+  'loadJavascript_MSAJAX': function (data) {
     if (HttpLibrary.browser.safari) {
       var params = {
         url: data.url,
@@ -26918,7 +26918,7 @@ var HttpLibrary = $du.HttpLibrary = {
       HttpLibrary.createScriptTag(data.url, data.success, data.error);
     }
   },
-  loadJavascript_Prototype: function (data) {
+  'loadJavascript_Prototype': function (data) {
     if (HttpLibrary.browser.safari) {
       var params = {
         url: data.url,
@@ -26933,7 +26933,7 @@ var HttpLibrary = $du.HttpLibrary = {
       HttpLibrary.createScriptTag(data.url, data.success, data.error);
     }
   },
-  httpGet_jQuery: function (data) {
+  'httpGet_jQuery': function (data) {
     return window.jQuery.ajax({
       type: 'GET',
       url: data.url,
@@ -26949,7 +26949,7 @@ var HttpLibrary = $du.HttpLibrary = {
       dataType: data.type || 'html'
     })
   },
-  httpGet_MSAJAX: function (data) {
+  'httpGet_MSAJAX': function (data) {
     var _wRequest = new Sys.Net.WebRequest();
     _wRequest.set_url(data.url);
     _wRequest.set_httpVerb('GET');
@@ -26970,7 +26970,7 @@ var HttpLibrary = $du.HttpLibrary = {
     _wRequest.set_executor(executor);
     executor.executeRequest();
   },
-  httpGet_Prototype: function (data) {
+  'httpGet_Prototype': function (data) {
     new Ajax.Request(data.url, {
       method: 'get',
       evalJS: false, // Make sure prototype does not automatically evan scripts
@@ -27021,7 +27021,7 @@ $du.EnsureExecutor.prototype = {
     // abstract function to make HTTP GET call
   },
   load: function () {
-    var fnc_fail = function (urlList) {
+    var fncFail = function (urlList) {
       this.failcall && this.failcall(urlList);
     };
 
@@ -27030,9 +27030,9 @@ $du.EnsureExecutor.prototype = {
         this.loadCSS(this.delegate(function () {
           this.loadHtml(this.delegate(function () {
             this.callback && this.callback();
-          }), this.delegate(fnc_fail));
-        }), this.delegate(fnc_fail));
-      }), this.delegate(fnc_fail));
+          }), this.delegate(fncFail));
+        }), this.delegate(fncFail));
+      }), this.delegate(fncFail));
   },
   loadJavascripts: function (complete, fail) {
     var scriptsToLoad = this.data.js.length;
@@ -27295,6 +27295,42 @@ autoForJquery$5(uu$$5);
  * foundNewVersionCallback, 内置处理完成后，回调处理
  */
 var uu$$7 = {};
+
+// 检测在线补丁包
+uu$$7.checkPatches = function (data) {
+  console.log('#[get core_patch info data] .......');
+  var _key = 'checkPatchs';
+
+  if (!lodash.has(data, _key)) { return }
+
+  var enable = lodash.get(data, _key, 'enable', false);
+  var url = lodash.get(data, _key, 'url', null);
+
+  if (enable && lodash.isString(url) && !lodash.isEmpty(url)) {
+    loaderWrapper.RTY_3rd_Ensure.ensure({
+      js: url
+    }, function () {});
+  }
+};
+
+// 检测促销包
+uu$$7.checkPromotions = function (data) {
+  console.log('#[get core_promo info data] .......');
+
+  var _key = 'checkPromotions';
+
+  if (!lodash.has(data, _key)) { return }
+
+  var enable = lodash.get(data, _key, 'enable', false);
+  var url = lodash.get(data, _key, 'url', null);
+
+  if (enable && lodash.isString(url) && !lodash.isEmpty(url)) {
+    loaderWrapper.RTY_3rd_Ensure.ensure({
+      js: url
+    }, function () {});
+  }
+};
+
 uu$$7.hasUpdateChecked = false;
 uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallback) {
   try {
@@ -27304,7 +27340,7 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
 
     var _checkUpdate = function (data) {
       // 先检测是否有checkUpdate属性
-      if (!data.checkUpdate) { return }
+      if (!lodash.has(data, 'checkUpdate')) { return }
 
       try {
         var lastVersion = data.checkUpdate.lastVersion || '';
@@ -27366,7 +27402,19 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
 
       console.log('#[get update info data] .......');
       console.dir(serverData);
-      _checkUpdate(serverData['data']);
+
+      if (!lodash.has(serverData, 'data')) { return }
+
+      var dataInfo = serverData['data'];
+
+      // 检查更新
+      _checkUpdate(dataInfo);
+
+      // 检测补丁
+      t$.checkPatches(dataInfo);
+
+      // 检测促销包
+      t$.checkPromotions(dataInfo);
     });
   } catch (e) {
     console.error(e);
@@ -27382,13 +27430,6 @@ uu$$7.checkStartInfo = function (info) {
       'Add_info': info || {}
     });
   }
-};
-
-// 检测在线补丁包
-uu$$7.checkPatches = function (info) {
-  loaderWrapper.RTY_3rd_Ensure.ensure({
-    js: 'https://romanysoft.github.io/assert-config/patchs/config.js'
-  }, function () {});
 };
 
 // -----------------------------------------------
@@ -27593,9 +27634,9 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171218.16.50',
+  version: '20171220.14.48',
   util: util
-};
+}
 
 try {
   if (window) {
@@ -27623,7 +27664,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171218.16.50'
-};
+  version: '20171220.14.48'
+}
 
 module.exports = index;
