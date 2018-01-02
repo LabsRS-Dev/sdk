@@ -1,6 +1,6 @@
 /**
- * DoveMaxSDK ABI v20171220.22.0
- * (c) 2017 Romanysoft LAB. && GMagon Inc. 
+ * DoveMaxSDK ABI v20180102.10.48
+ * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -24112,9 +24112,9 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20171220.22.0',
+  version: '20180102.10.48',
   b$: $bc_
-};
+}
 
 /** Copyright 2012 Mozilla Foundation
  * RTYUtils
@@ -27644,9 +27644,9 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20171220.22.0',
+  version: '20180102.10.48',
   util: util
-};
+}
 
 try {
   if (window) {
@@ -27674,7 +27674,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20171220.22.0'
-};
+  version: '20180102.10.48'
+}
 
 export default index_esm;
