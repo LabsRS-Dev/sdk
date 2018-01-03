@@ -1,6 +1,6 @@
 {
   "name": "dove.max.sdk",
-  "version": "20180102.10.48",
+  "version": "20180103.13.56",
   "description": "common api for native macOS and electron",
   "main": "dist/dovemax-sdk.js",
   "module": "dist/dovemax-sdk.esm.js",
@@ -28,7 +28,7 @@
     "docs:deploy": "cd docs && ./deploy.sh",
     "remove:yarn.lock": "git rm --cached -r -- yarn.lock"
   },
-  "dev-docs":{
+  "dev-docs": {
     "yarn-upgrade": "yarn upgrade --latest && yarn upgrade --latest --dev"
   },
   "repository": {

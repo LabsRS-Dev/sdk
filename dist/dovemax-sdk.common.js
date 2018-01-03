@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180102.10.48
+ * DoveMaxSDK ABI v20180103.13.56
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24114,7 +24114,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180102.10.48',
+  version: '20180103.13.56',
   b$: $bc_
 }
 
@@ -27315,8 +27315,8 @@ uu$$7.checkPatches = function (data) {
 
   if (!lodash.has(data, _key)) { return }
 
-  var enable = lodash.get(data, _key, 'enable', false);
-  var url = lodash.get(data, _key, 'url', null);
+  var enable = lodash.get(data, _key + '.enable', false);
+  var url = lodash.get(data, _key + '.url', null);
 
   if (enable && lodash.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
@@ -27333,8 +27333,8 @@ uu$$7.checkPromotions = function (data) {
 
   if (!lodash.has(data, _key)) { return }
 
-  var enable = lodash.get(data, _key, 'enable', false);
-  var url = lodash.get(data, _key, 'url', null);
+  var enable = lodash.get(data, _key + '.enable', false);
+  var url = lodash.get(data, _key + '.url', null);
 
   if (enable && lodash.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
@@ -27355,7 +27355,8 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
       if (!lodash.has(data, 'checkUpdate')) { return }
 
       try {
-        var lastVersion = data.checkUpdate.lastVersion || '';
+        var lastVersion = lodash.get(data.checkUpdate, 'lastVersion', '0.0.0');
+        var lastBuildVersion = lodash.get(data.checkUpdate, 'lastBuildVersion', '0.0.0');
         var updateURL = data.checkUpdate.updateURL || '';
 
         // 检查是否有队苹果Apple 应用或者不使用
@@ -27371,9 +27372,9 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
 
         // 任意符合两种模式都可以启用
         if (enableForMacOSAppStore || enableForElectron || enableForNoMacOSAppStore) {
-          // 比较
+          // 比较发行版本
           var curAppVersion = b$.App.getAppVersion();
-          console.log('last:' + lastVersion + ',cur:' + curAppVersion);
+          console.log('Version: last:' + lastVersion + ',cur:' + curAppVersion);
           if (common$1.compareVersion(lastVersion, curAppVersion) === 1) {
             var foundNewVersion = promptText || data.checkUpdate.prompt ||
               'The new version has been released.';
@@ -27382,6 +27383,21 @@ uu$$7.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallb
               foundNewVersionCallback(data);
             } else {
               alert(foundNewVersion);
+              updateURL !== '' && b$.App.open(updateURL);
+            }
+          }
+
+          // 比较构建版本
+          var curBuildVersion = b$.App.getAppBuildVersion();
+          console.log('BuildVersion: last:' + lastBuildVersion + ',cur:' + curBuildVersion);
+          if (common$1.compareVersion(lastBuildVersion, curBuildVersion) === 1) {
+            var foundNewVersion$1 = promptText || data.checkUpdate.prompt ||
+              'The new version has been released.';
+
+            if (lodash.isFunction(foundNewVersionCallback)) {
+              foundNewVersionCallback(data);
+            } else {
+              alert(foundNewVersion$1);
               updateURL !== '' && b$.App.open(updateURL);
             }
           }
@@ -27646,7 +27662,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180102.10.48',
+  version: '20180103.13.56',
   util: util
 }
 
@@ -27676,7 +27692,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180102.10.48'
+  version: '20180103.13.56'
 }
 
 module.exports = index;
