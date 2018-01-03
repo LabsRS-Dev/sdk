@@ -77,10 +77,13 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
 
         // 任意符合两种模式都可以启用
         if (enableForMacOSAppStore || enableForElectron || enableForNoMacOSAppStore) {
+          var foundUpdate = false
+
           // 比较发行版本
           var curAppVersion = b$.App.getAppVersion()
           console.log('Version: last:' + lastVersion + ',cur:' + curAppVersion)
           if (common.compareVersion(lastVersion, curAppVersion) === 1) {
+            foundUpdate = true
             const foundNewVersion = promptText || data.checkUpdate.prompt ||
               'The new version has been released.'
 
@@ -93,17 +96,19 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
           }
 
           // 比较构建版本
-          var curBuildVersion = b$.App.getAppBuildVersion()
-          console.log('BuildVersion: last:' + lastBuildVersion + ',cur:' + curBuildVersion)
-          if (common.compareVersion(lastBuildVersion, curBuildVersion) === 1) {
-            const foundNewVersion = promptText || data.checkUpdate.prompt ||
-              'The new version has been released.'
+          if (!foundUpdate) {
+            var curBuildVersion = b$.App.getAppBuildVersion()
+            console.log('BuildVersion: last:' + lastBuildVersion + ',cur:' + curBuildVersion)
+            if (common.compareVersion(lastBuildVersion, curBuildVersion) === 1) {
+              const foundNewVersion = promptText || data.checkUpdate.prompt ||
+                'The new version has been released.'
 
-            if (_.isFunction(foundNewVersionCallback)) {
-              foundNewVersionCallback(data)
-            } else {
-              alert(foundNewVersion)
-              updateURL !== '' && b$.App.open(updateURL)
+              if (_.isFunction(foundNewVersionCallback)) {
+                foundNewVersionCallback(data)
+              } else {
+                alert(foundNewVersion)
+                updateURL !== '' && b$.App.open(updateURL)
+              }
             }
           }
         }
