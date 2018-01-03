@@ -20,8 +20,8 @@ uu$.checkPatches = function (data) {
 
   if (!_.has(data, _key)) return
 
-  const enable = _.get(data, _key, 'enable', false)
-  const url = _.get(data, _key, 'url', null)
+  const enable = _.get(data, _key + '.enable', false)
+  const url = _.get(data, _key + '.url', null)
 
   if (enable && _.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
@@ -38,8 +38,8 @@ uu$.checkPromotions = function (data) {
 
   if (!_.has(data, _key)) return
 
-  const enable = _.get(data, _key, 'enable', false)
-  const url = _.get(data, _key, 'url', null)
+  const enable = _.get(data, _key + '.enable', false)
+  const url = _.get(data, _key + '.url', null)
 
   if (enable && _.isString(url) && !Tool.isBlank(url)) {
     loaderWrapper.RTY_3rd_Ensure.ensure({
@@ -60,7 +60,8 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
       if (!_.has(data, 'checkUpdate')) return
 
       try {
-        var lastVersion = data.checkUpdate.lastVersion || ''
+        var lastVersion = _.get(data.checkUpdate, 'lastVersion', '0.0.0')
+        var lastBuildVersion = _.get(data.checkUpdate, 'lastBuildVersion', '0.0.0')
         var updateURL = data.checkUpdate.updateURL || ''
 
         // 检查是否有队苹果Apple 应用或者不使用
@@ -76,11 +77,26 @@ uu$.checkUpdate = function (appId, promptText, getDataCB, foundNewVersionCallbac
 
         // 任意符合两种模式都可以启用
         if (enableForMacOSAppStore || enableForElectron || enableForNoMacOSAppStore) {
-          // 比较
+          // 比较发行版本
           var curAppVersion = b$.App.getAppVersion()
-          console.log('last:' + lastVersion + ',cur:' + curAppVersion)
+          console.log('Version: last:' + lastVersion + ',cur:' + curAppVersion)
           if (common.compareVersion(lastVersion, curAppVersion) === 1) {
-            var foundNewVersion = promptText || data.checkUpdate.prompt ||
+            const foundNewVersion = promptText || data.checkUpdate.prompt ||
+              'The new version has been released.'
+
+            if (_.isFunction(foundNewVersionCallback)) {
+              foundNewVersionCallback(data)
+            } else {
+              alert(foundNewVersion)
+              updateURL !== '' && b$.App.open(updateURL)
+            }
+          }
+
+          // 比较构建版本
+          var curBuildVersion = b$.App.getAppBuildVersion()
+          console.log('BuildVersion: last:' + lastBuildVersion + ',cur:' + curBuildVersion)
+          if (common.compareVersion(lastBuildVersion, curBuildVersion) === 1) {
+            const foundNewVersion = promptText || data.checkUpdate.prompt ||
               'The new version has been released.'
 
             if (_.isFunction(foundNewVersionCallback)) {
