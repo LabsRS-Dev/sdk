@@ -40,7 +40,7 @@ $bc_['_get_callback'] = function (func, noDelete = true) {
   return '_nativeCallback.' + r
 }
 
-$bc_['cb_execTaskUpdateInfo'] = null // 执行任务的回调
+$bc_['cb_execTaskUpdateInfo'] = () => {} // 执行任务的回调
 $bc_.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
   useThread: true,
   passBack: 'BS.b$.cb_execTaskUpdateInfo',

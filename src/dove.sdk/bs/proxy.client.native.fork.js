@@ -8,7 +8,7 @@ var $bc_ = task
 
 const logCord = '[SDK.Proxy.Client.NativeFork]'
 const __key = 'proxy-client-native-fork'
-const __msgPrefix = __key + '-' + _.now() + _.random(1, Number.MAX_SAFE_INTEGER) + '-'
+const __msgPrefix = __key + '-' + _.now() + _.uniqueId('id') + '-'
 
 const TNMT = TypeNativeMessageType
 const TypeMsg = {
@@ -41,9 +41,14 @@ var __$p$ = {
     return TypeMsg
   },
   // ------------------ log -------------------------------------------------
-  _traceLogEventsCount: function () {
-    const _events = this.mc.getEvents()
-    this.log(logCord, ' _events count = ' + _.keys(_events).length)
+  _traceLogEventsCount: function (funcName) {
+    var that = this
+    const _events = that.mc.getEvents()
+    let _model = ''
+    if (_.isString(funcName)) {
+      _model = '[' + funcName + ']'
+    }
+    that.log(logCord, _model + ' _events count = ' + _.keys(_events).length)
   },
   _traceLogCacheSendMessageCount: function () {
     this.log(logCord, ' cacheMessage count = ' + this.cacheSendMessage.length)
@@ -83,7 +88,7 @@ var __$p$ = {
       // 发送信息
       that._processNativeForkMessage(curMessage)
 
-      that._traceLogEventsCount()
+      that._traceLogEventsCount(TypeMsg.OnSendMessageToServer)
       that.mc.trigger(TypeMsg.OnSendMessageToServer, curMessage)
       that.cacheSendMessage.shift()
     })
@@ -91,18 +96,18 @@ var __$p$ = {
   },
   onReceiveMessage: function (message) {
     var that = this
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnGetServerMessage)
     that.mc.trigger(TypeMsg.OnGetServerMessage, message)
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: function (message) {
     var that = this
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnCreateError)
     that.mc.trigger(TypeMsg.OnCreateError, message)
   },
   noticeOnRunning: function (message) {
     var that = this
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnRunning)
     that.mc.trigger(TypeMsg.OnRunning, message)
   },
   // -------------------------------------------------------

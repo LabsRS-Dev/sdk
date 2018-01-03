@@ -6,7 +6,7 @@ import _ from 'lodash'
 const logCord = '[SDK.Proxy.Client.Websocket.Python]'
 
 const __key = 'proxy-client-websocket-python'
-const __msgPrefix = __key + '-' + _.now() + _.random(1, Number.MAX_SAFE_INTEGER) + '-'
+const __msgPrefix = __key + '-' + _.now() + _.uniqueId('id') + '-'
 const TypeMsg = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
   OnWSOpen: __msgPrefix + 'OnWSOpen', // WebSocket 创建并连接上

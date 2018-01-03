@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180103.14.8
+ * DoveMaxSDK ABI v20180103.22.36
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -17379,7 +17379,7 @@ $bc_$1['_get_callback'] = function (func, noDelete) {
   return '_nativeCallback.' + r
 };
 
-$bc_$1['cb_execTaskUpdateInfo'] = null; // 执行任务的回调
+$bc_$1['cb_execTaskUpdateInfo'] = function () {}; // 执行任务的回调
 $bc_$1.pCorePlugin = { // 核心处理引导插件部分,尽量不要修改
   useThread: true,
   passBack: 'BS.b$.cb_execTaskUpdateInfo',
@@ -22056,18 +22056,21 @@ var __$p$$2 = {
     this.__mc.first(eventName, handlers);
   },
   trigger: function (eventName, e) {
+    var msgData = e;
     // 检测e的对象类型
-    if (lodash.isString(e) && !Tool.isBlank(e)) {
+    if (lodash.isString(eventName) && !Tool.isBlank(eventName)) {
       try {
         e = JSON.parse(e);
       } catch (err) {
         this.log('found err:', err);
-        e = {
+        msgData = {
           data: e
         };
       }
-      this.__mc.trigger(eventName, e);
     }
+
+    // 不管什么数据，都要发送
+    this.__mc.trigger(eventName, msgData);
   },
   unbind: function (eventName, handler) {
     this.__mc.unbind(eventName, handler);
@@ -22079,7 +22082,7 @@ var ProxyMessageCenter = SelfClass.extend(__$p$$2);
 var logCord$1 = '[SDK.Proxy.Client.Websocket.Go]';
 
 var __key$1 = 'proxy-client-websocket-go';
-var __msgPrefix = __key$1 + '-' + lodash.now() + lodash.random(1, Number.MAX_SAFE_INTEGER) + '-';
+var __msgPrefix = __key$1 + '-' + lodash.now() + lodash.uniqueId('id') + '-';
 var TypeMsg$1 = {
   OnCreateError: __msgPrefix + 'OnCreateError', // Websocket 创建失败
   OnWSOpen: __msgPrefix + 'OnWSOpen', // WebSocket 创建并连接上
@@ -22428,7 +22431,7 @@ var ProxyClientWebsocketForGo = SelfClass.extend(__$p$$1);
 var logCord$2 = '[SDK.Proxy.Client.Websocket.Node]';
 
 var __key$2 = 'proxy-client-websocket-node';
-var __msgPrefix$1 = __key$2 + '-' + lodash.now() + lodash.random(1, Number.MAX_SAFE_INTEGER) + '-';
+var __msgPrefix$1 = __key$2 + '-' + lodash.now() + lodash.uniqueId('id') + '-';
 var TypeMsg$2 = {
   OnCreateError: __msgPrefix$1 + 'OnCreateError', // Websocket 创建失败
   OnWSOpen: __msgPrefix$1 + 'OnWSOpen', // WebSocket 创建并连接上
@@ -22781,7 +22784,7 @@ var ProxyClientWebsocketForNode = SelfClass.extend(__$p$$3);
 var logCord$3 = '[SDK.Proxy.Client.Websocket.Python]';
 
 var __key$3 = 'proxy-client-websocket-python';
-var __msgPrefix$2 = __key$3 + '-' + lodash.now() + lodash.random(1, Number.MAX_SAFE_INTEGER) + '-';
+var __msgPrefix$2 = __key$3 + '-' + lodash.now() + lodash.uniqueId('id') + '-';
 var TypeMsg$3 = {
   OnCreateError: __msgPrefix$2 + 'OnCreateError', // Websocket 创建失败
   OnWSOpen: __msgPrefix$2 + 'OnWSOpen', // WebSocket 创建并连接上
@@ -23050,7 +23053,7 @@ var $bc_$15 = task;
 
 var logCord$4 = '[SDK.Proxy.Client.NativeFork]';
 var __key$4 = 'proxy-client-native-fork';
-var __msgPrefix$3 = __key$4 + '-' + lodash.now() + lodash.random(1, Number.MAX_SAFE_INTEGER) + '-';
+var __msgPrefix$3 = __key$4 + '-' + lodash.now() + lodash.uniqueId('id') + '-';
 
 var TNMT = TypeNativeMessageType;
 var TypeMsg$4 = {
@@ -23083,9 +23086,14 @@ var __$p$$5 = {
     return TypeMsg$4
   },
   // ------------------ log -------------------------------------------------
-  _traceLogEventsCount: function () {
-    var _events = this.mc.getEvents();
-    this.log(logCord$4, ' _events count = ' + lodash.keys(_events).length);
+  _traceLogEventsCount: function (funcName) {
+    var that = this;
+    var _events = that.mc.getEvents();
+    var _model = '';
+    if (lodash.isString(funcName)) {
+      _model = '[' + funcName + ']';
+    }
+    that.log(logCord$4, _model + ' _events count = ' + lodash.keys(_events).length);
   },
   _traceLogCacheSendMessageCount: function () {
     this.log(logCord$4, ' cacheMessage count = ' + this.cacheSendMessage.length);
@@ -23129,7 +23137,7 @@ var __$p$$5 = {
       // 发送信息
       that._processNativeForkMessage(curMessage);
 
-      that._traceLogEventsCount();
+      that._traceLogEventsCount(TypeMsg$4.OnSendMessageToServer);
       that.mc.trigger(TypeMsg$4.OnSendMessageToServer, curMessage);
       that.cacheSendMessage.shift();
     });
@@ -23137,18 +23145,18 @@ var __$p$$5 = {
   },
   onReceiveMessage: function (message) {
     var that = this;
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg$4.OnGetServerMessage);
     that.mc.trigger(TypeMsg$4.OnGetServerMessage, message);
   },
   // ---------------- 创建失败是回话被关闭交互 ----------------
   noticeCreateError: function (message) {
     var that = this;
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg$4.OnCreateError);
     that.mc.trigger(TypeMsg$4.OnCreateError, message);
   },
   noticeOnRunning: function (message) {
     var that = this;
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg$4.OnRunning);
     that.mc.trigger(TypeMsg$4.OnRunning, message);
   },
   // -------------------------------------------------------
@@ -23332,7 +23340,7 @@ Chancel2HandlerHelper.prototype.getNewFunction = function getNewFunction (assEve
 Chancel2HandlerHelper.prototype.getThatFunctionList = function getThatFunctionList (assEvent, assObj) {
   var that = this;
   var _fnList = [];
-  lodash.each(lodash.kes(that.mapAssObj), function (key) {
+  lodash.each(lodash.keys(that.mapAssObj), function (key) {
     if (assObj === that.mapAssObj[key] &&
     assEvent === that.mapAssEvent[key]
     ) {
@@ -23362,10 +23370,14 @@ var __$p$ = {
     }
   },
   // ------------------ log -------------------------------------------------
-  _traceLogEventsCount: function () {
+  _traceLogEventsCount: function (funcName) {
     var that = this;
     var _events = that.mc.getEvents();
-    that.log(logCord, ' _events count = ' + lodash.keys(_events).length);
+    var _model = '';
+    if (lodash.isString(funcName)) {
+      _model = '[' + funcName + ']';
+    }
+    that.log(logCord, _model + ' _events count = ' + lodash.keys(_events).length);
   },
   // --------------------------------------------------------
   init: function () {
@@ -23387,13 +23399,18 @@ var __$p$ = {
     var _c2hhFn = _c2hh.getNewFunction;
     var _cs = chancel.server;
     var _msgType = _cs.getInternalMessageType();
+    // 打印信息
+    if (that.debug) {
+      console.log(that.logCord, '[打印信息]');
+      console.dir(_cs);
+      console.dir(_msgType);
+    }
 
     // 建立信息关联
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython ||
     chancel.type === ChancelType.websocketForGo
     ) {
-      console.dir(chancel.server);
       _cs.registerOnWSGetServerMessage(_c2hhFn(_msgType.OnWSGetServerMessage, _cs, function (message) { that.onReceiveFromServer(message); }));
       _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, function (message) { }));
       _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, function (message) { that.onBuildChannelError(message); }));
@@ -23401,8 +23418,9 @@ var __$p$ = {
       _cs.registerOnWSOpen(_c2hhFn(_msgType.OnWSOpen, _cs, function (message) { that.onFinishBuildChannel(message); }));
 
       chancel.active();
-    } else if (chancel.type === ChancelType.nativeFork) {
-      console.dir(chancel.server);
+    }
+
+    if (chancel.type === ChancelType.nativeFork) {
       _cs.registerOnGetServerMessage(_c2hhFn(_msgType.OnGetServerMessage, _cs, function (message) { that.onReceiveFromServer(message); }));
       _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, function (message) { }));
 
@@ -23467,7 +23485,7 @@ var __$p$ = {
     lodash.each(that.__chancelList, function (chancel) {
       chancel.server.sendMessage(message);
     });
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg.OnNoticeToServer);
     that.mc.trigger(TypeMsg.OnNoticeToServer, message);
     return that
   },
@@ -23475,35 +23493,35 @@ var __$p$ = {
     var that = this;
     console.assert(this !== undefined, '[SDK] this !== undefined');
 
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg.OnReceiveFromServer);
     that.mc.trigger(TypeMsg.OnReceiveFromServer, message);
   },
   onStartBuildChannel: function (message) {
     var that = this;
     console.assert(this !== undefined, '[SDK] this !== undefined');
 
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg.OnStartBuildChannel);
     that.mc.trigger(TypeMsg.OnStartBuildChannel, message);
   },
   onBuildChannelError: function (message) {
     var that = this;
     console.assert(this !== undefined, '[SDK] this !== undefined');
 
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg.OnBuildChannelError);
     that.mc.trigger(TypeMsg.OnBuildChannelError, message);
   },
   onFinishBuildChannel: function (message) {
     var that = this;
     console.assert(this !== undefined, '[SDK] this !== undefined');
 
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg.OnFinishBuildChannel);
     that.mc.trigger(TypeMsg.OnFinishBuildChannel, message);
   },
   onChannelFault: function (message) {
     var that = this;
     console.assert(this !== undefined, '[SDK] this !== undefined');
 
-    that._traceLogEventsCount();
+    that._traceLogEventsCount(TypeMsg.OnChannelFault);
     that.mc.trigger(TypeMsg.OnChannelFault, message);
   }
 };
@@ -24112,7 +24130,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180103.14.8',
+  version: '20180103.22.36',
   b$: $bc_
 }
 
@@ -27665,7 +27683,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180103.14.8',
+  version: '20180103.22.36',
   util: util
 }
 
@@ -27695,7 +27713,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180103.14.8'
+  version: '20180103.22.36'
 }
 
 export default index_esm;

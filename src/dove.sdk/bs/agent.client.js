@@ -93,7 +93,7 @@ class Chancel2HandlerHelper {
   getThatFunctionList (assEvent, assObj) {
     var that = this
     var _fnList = []
-    _.each(_.kes(that.mapAssObj), function (key) {
+    _.each(_.keys(that.mapAssObj), function (key) {
       if (assObj === that.mapAssObj[key] &&
       assEvent === that.mapAssEvent[key]
       ) {
@@ -122,10 +122,14 @@ var __$p$ = {
     }
   },
   // ------------------ log -------------------------------------------------
-  _traceLogEventsCount: function () {
+  _traceLogEventsCount: function (funcName) {
     var that = this
     const _events = that.mc.getEvents()
-    that.log(logCord, ' _events count = ' + _.keys(_events).length)
+    let _model = ''
+    if (_.isString(funcName)) {
+      _model = '[' + funcName + ']'
+    }
+    that.log(logCord, _model + ' _events count = ' + _.keys(_events).length)
   },
   // --------------------------------------------------------
   init: function () {
@@ -147,13 +151,18 @@ var __$p$ = {
     var _c2hhFn = _c2hh.getNewFunction
     var _cs = chancel.server
     var _msgType = _cs.getInternalMessageType()
+    // 打印信息
+    if (that.debug) {
+      console.log(that.logCord, '[打印信息]')
+      console.dir(_cs)
+      console.dir(_msgType)
+    }
 
     // 建立信息关联
     if (chancel.type === ChancelType.websocketForNode ||
     chancel.type === ChancelType.websocketForPython ||
     chancel.type === ChancelType.websocketForGo
     ) {
-      console.dir(chancel.server)
       _cs.registerOnWSGetServerMessage(_c2hhFn(_msgType.OnWSGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
       _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, (message) => { }))
       _cs.registerOnCreateError(_c2hhFn(_msgType.OnCreateError, _cs, (message) => { that.onBuildChannelError(message) }))
@@ -161,8 +170,9 @@ var __$p$ = {
       _cs.registerOnWSOpen(_c2hhFn(_msgType.OnWSOpen, _cs, (message) => { that.onFinishBuildChannel(message) }))
 
       chancel.active()
-    } else if (chancel.type === ChancelType.nativeFork) {
-      console.dir(chancel.server)
+    }
+
+    if (chancel.type === ChancelType.nativeFork) {
       _cs.registerOnGetServerMessage(_c2hhFn(_msgType.OnGetServerMessage, _cs, (message) => { that.onReceiveFromServer(message) }))
       _cs.registerOnSendMessageToServer(_c2hhFn(_msgType.OnSendMessageToServer, _cs, (message) => { }))
 
@@ -227,7 +237,7 @@ var __$p$ = {
     _.each(that.__chancelList, function (chancel) {
       chancel.server.sendMessage(message)
     })
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnNoticeToServer)
     that.mc.trigger(TypeMsg.OnNoticeToServer, message)
     return that
   },
@@ -235,35 +245,35 @@ var __$p$ = {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')
 
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnReceiveFromServer)
     that.mc.trigger(TypeMsg.OnReceiveFromServer, message)
   },
   onStartBuildChannel: function (message) {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')
 
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnStartBuildChannel)
     that.mc.trigger(TypeMsg.OnStartBuildChannel, message)
   },
   onBuildChannelError: function (message) {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')
 
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnBuildChannelError)
     that.mc.trigger(TypeMsg.OnBuildChannelError, message)
   },
   onFinishBuildChannel: function (message) {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')
 
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnFinishBuildChannel)
     that.mc.trigger(TypeMsg.OnFinishBuildChannel, message)
   },
   onChannelFault: function (message) {
     var that = this
     console.assert(this !== undefined, '[SDK] this !== undefined')
 
-    that._traceLogEventsCount()
+    that._traceLogEventsCount(TypeMsg.OnChannelFault)
     that.mc.trigger(TypeMsg.OnChannelFault, message)
   }
 }
