@@ -26,22 +26,7 @@ var __$p$ = {
     this.__mc.first(eventName, handlers)
   },
   trigger: function (eventName, e) {
-    let msgData = e
-    // 检测e的对象类型
-    if (_.isString(eventName) && !Tool.isBlank(eventName)) {
-      try {
-        e = JSON.parse(e)
-        msgData = e
-      } catch (err) {
-        this.log('found err:', err)
-        msgData = {
-          data: e
-        }
-      }
-    }
-
-    // 不管什么数据，都要发送
-    this.__mc.trigger(eventName, msgData)
+    this.__mc.trigger(eventName, e)
   },
   unbind: function (eventName, handler) {
     this.__mc.unbind(eventName, handler)

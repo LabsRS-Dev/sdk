@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180104.09.15
+ * DoveMaxSDK ABI v20180104.09.38
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -17290,7 +17290,8 @@ var Observable = SelfClass.extend({
       length;
 
     if (events) {
-      //
+      // Auto check by self
+      e = e || {};
       // Auto check object value
       if (!lodash.isPlainObject(e)) {
         try {
@@ -17309,17 +17310,12 @@ var Observable = SelfClass.extend({
       }
 
       e = e || {};
-
       e.sender = that;
-
       e._defaultPrevented = false;
-
       e.preventDefault = preventDefault;
-
       e.isDefaultPrevented = isDefaultPrevented;
 
       events = events.slice();
-
       for (idx = 0, length = events.length; idx < length; idx++) {
         events[idx].call(that, e);
       }
@@ -22072,22 +22068,7 @@ var __$p$$2 = {
     this.__mc.first(eventName, handlers);
   },
   trigger: function (eventName, e) {
-    var msgData = e;
-    // 检测e的对象类型
-    if (lodash.isString(eventName) && !Tool.isBlank(eventName)) {
-      try {
-        e = JSON.parse(e);
-        msgData = e;
-      } catch (err) {
-        this.log('found err:', err);
-        msgData = {
-          data: e
-        };
-      }
-    }
-
-    // 不管什么数据，都要发送
-    this.__mc.trigger(eventName, msgData);
+    this.__mc.trigger(eventName, e);
   },
   unbind: function (eventName, handler) {
     this.__mc.unbind(eventName, handler);
@@ -24147,7 +24128,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180104.09.15',
+  version: '20180104.09.38',
   b$: $bc_
 }
 
@@ -27700,7 +27681,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180104.09.15',
+  version: '20180104.09.38',
   util: util
 }
 
@@ -27730,7 +27711,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180104.09.15'
+  version: '20180104.09.38'
 }
 
 module.exports = index;

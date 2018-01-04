@@ -186,7 +186,8 @@ var Observable = SelfClass.extend({
       length
 
     if (events) {
-      //
+      // Auto check by self
+      e = e || {}
       // Auto check object value
       if (!_.isPlainObject(e)) {
         try {
@@ -205,17 +206,12 @@ var Observable = SelfClass.extend({
       }
 
       e = e || {}
-
       e.sender = that
-
       e._defaultPrevented = false
-
       e.preventDefault = preventDefault
-
       e.isDefaultPrevented = isDefaultPrevented
 
       events = events.slice()
-
       for (idx = 0, length = events.length; idx < length; idx++) {
         events[idx].call(that, e)
       }
