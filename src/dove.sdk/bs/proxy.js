@@ -31,6 +31,7 @@ var __$p$ = {
     if (_.isString(eventName) && !Tool.isBlank(eventName)) {
       try {
         e = JSON.parse(e)
+        msgData = e
       } catch (err) {
         this.log('found err:', err)
         msgData = {
