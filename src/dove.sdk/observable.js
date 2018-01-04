@@ -186,8 +186,22 @@ var Observable = SelfClass.extend({
       length
 
     if (events) {
+      //
+      // Auto check object value
       if (!_.isPlainObject(e)) {
-        console.error('e must be {}, not string ')
+        try {
+          if (_.isString(e)) {
+            e = JSON.parse(e)
+          } else {
+            e = {
+              data: e || {}
+            }
+          }
+        } catch (err) {
+          e = {
+            data: e
+          }
+        }
       }
 
       e = e || {}

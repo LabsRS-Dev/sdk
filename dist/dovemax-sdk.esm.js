@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180103.22.36
+ * DoveMaxSDK ABI v20180104.08.39
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -17288,8 +17288,22 @@ var Observable = SelfClass.extend({
       length;
 
     if (events) {
+      //
+      // Auto check object value
       if (!lodash.isPlainObject(e)) {
-        console.error('e must be {}, not string ');
+        try {
+          if (lodash.isString(e)) {
+            e = JSON.parse(e);
+          } else {
+            e = {
+              data: e || {}
+            };
+          }
+        } catch (err) {
+          e = {
+            data: e
+          };
+        }
       }
 
       e = e || {};
@@ -24130,7 +24144,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180103.22.36',
+  version: '20180104.08.39',
   b$: $bc_
 }
 
@@ -27683,7 +27697,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180103.22.36',
+  version: '20180104.08.39',
   util: util
 }
 
@@ -27713,7 +27727,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180103.22.36'
+  version: '20180104.08.39'
 }
 
 export default index_esm;
