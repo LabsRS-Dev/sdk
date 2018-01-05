@@ -10,7 +10,6 @@
   "parserOptions": {
     "sourceType": "module"
   },
-  "extends":"vue",
   "rules": {
     "new-cap":"off",
     "one-var": 0,
