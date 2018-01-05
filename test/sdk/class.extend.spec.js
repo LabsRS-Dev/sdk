@@ -52,6 +52,11 @@ describe('SDK.Observable', () => {
     mc.bind('helloInfo', (msgObj) => {
       expect(msgObj.data).toEqual(info)
     }, false)
+    mc.bind('helloInfo', (msgObj) => {
+      console.dir(msgObj)
+      expect(msgObj['myName']).toEqual(info['myName'])
+    }, false)
+    expect(mc._events['helloInfo'].length).toEqual(2)
     mc.trigger('helloInfo', info)
 
     const nullV = null

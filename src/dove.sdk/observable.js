@@ -53,12 +53,12 @@ function deepExtendOne (destination, source) {
   return destination
 }
 
-var preventDefault = function () {
-  this._defaultPrevented = true
+var __$kernal$preventDefault = function () {
+  this.__$kernal$defaultPrevented = true
 }
 
-var isDefaultPrevented = function () {
-  return this._defaultPrevented === true
+var __$kernal$isDefaultPrevented = function () {
+  return this.__$kernal$defaultPrevented === true
 }
 
 function SelfClass () {}
@@ -193,18 +193,26 @@ var Observable = SelfClass.extend({
     if (events) {
       // Auto check by self
       var eObj = {}
-      eObj.data = anyData
-      eObj.sender = that
-      eObj._defaultPrevented = false
-      eObj.preventDefault = preventDefault
-      eObj.isDefaultPrevented = isDefaultPrevented
+      eObj.__$kernal$message = anyData
+      eObj.__$kernal$sender = that
+      eObj.__$kernal$defaultPrevented = false
+      eObj.__$kernal$preventDefault = __$kernal$preventDefault
+      eObj.__$kernal$isDefaultPrevented = __$kernal$isDefaultPrevented
+
+      if (_.isPlainObject(anyData)) {
+        eObj = _.extend(eObj, anyData)
+      }
+
+      if (!_.has(anyData, 'data')) {
+        eObj.data = anyData // 新语法{非PlainObject或者内部无data属性}
+      }
 
       events = events.slice()
       for (idx = 0, length = events.length; idx < length; idx++) {
         events[idx].call(that, eObj)
       }
 
-      return eObj._defaultPrevented === true
+      return eObj.__$kernal$defaultPrevented === true
     }
 
     return false

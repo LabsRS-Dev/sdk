@@ -1,6 +1,6 @@
 {
   "name": "dove.max.sdk",
-  "version": "20180104.09.38",
+  "version": "20180105.19.48",
   "description": "common api for native macOS and electron",
   "main": "dist/dovemax-sdk.js",
   "module": "dist/dovemax-sdk.esm.js",

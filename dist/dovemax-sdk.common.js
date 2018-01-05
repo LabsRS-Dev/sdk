@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180104.09.38
+ * DoveMaxSDK ABI v20180105.19.48
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -17157,12 +17157,12 @@ function deepExtendOne (destination, source) {
   return destination
 }
 
-var preventDefault = function () {
-  this._defaultPrevented = true;
+var __$kernal$preventDefault = function () {
+  this.__$kernal$defaultPrevented = true;
 };
 
-var isDefaultPrevented = function () {
-  return this._defaultPrevented === true
+var __$kernal$isDefaultPrevented = function () {
+  return this.__$kernal$defaultPrevented === true
 };
 
 function SelfClass () {}
@@ -17283,7 +17283,12 @@ var Observable = SelfClass.extend({
     return that
   },
 
-  trigger: function (eventName, e) {
+  /**
+   * 触发事件，附带数据
+   * @argument eventName {String} 事件类型标识
+   * @argument anyData {Any} 任何数据
+   */
+  trigger: function (eventName, anyData) {
     var that = this,
       events = that._events[eventName],
       idx,
@@ -17291,36 +17296,27 @@ var Observable = SelfClass.extend({
 
     if (events) {
       // Auto check by self
-      e = e || {};
-      // Auto check object value
-      if (!lodash.isPlainObject(e)) {
-        try {
-          if (lodash.isString(e)) {
-            e = JSON.parse(e);
-          } else {
-            e = {
-              data: e || {}
-            };
-          }
-        } catch (err) {
-          e = {
-            data: e
-          };
-        }
+      var eObj = {};
+      eObj.__$kernal$message = anyData;
+      eObj.__$kernal$sender = that;
+      eObj.__$kernal$defaultPrevented = false;
+      eObj.__$kernal$preventDefault = __$kernal$preventDefault;
+      eObj.__$kernal$isDefaultPrevented = __$kernal$isDefaultPrevented;
+
+      if (lodash.isPlainObject(anyData)) {
+        eObj = lodash.extend(eObj, anyData);
       }
 
-      e = e || {};
-      e.sender = that;
-      e._defaultPrevented = false;
-      e.preventDefault = preventDefault;
-      e.isDefaultPrevented = isDefaultPrevented;
+      if (!lodash.has(anyData, 'data')) {
+        eObj.data = anyData; // 新语法{非PlainObject或者内部无data属性}
+      }
 
       events = events.slice();
       for (idx = 0, length = events.length; idx < length; idx++) {
-        events[idx].call(that, e);
+        events[idx].call(that, eObj);
       }
 
-      return e._defaultPrevented === true
+      return eObj.__$kernal$defaultPrevented === true
     }
 
     return false
@@ -22067,8 +22063,8 @@ var __$p$$2 = {
   first: function (eventName, handlers) {
     this.__mc.first(eventName, handlers);
   },
-  trigger: function (eventName, e) {
-    this.__mc.trigger(eventName, e);
+  trigger: function (eventName, anyData) {
+    this.__mc.trigger(eventName, anyData);
   },
   unbind: function (eventName, handler) {
     this.__mc.unbind(eventName, handler);
@@ -24128,7 +24124,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180104.09.38',
+  version: '20180105.19.48',
   b$: $bc_
 }
 
@@ -27681,7 +27677,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180104.09.38',
+  version: '20180105.19.48',
   util: util
 }
 
@@ -27711,7 +27707,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180104.09.38'
+  version: '20180105.19.48'
 }
 
 module.exports = index;
