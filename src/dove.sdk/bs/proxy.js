@@ -1,6 +1,4 @@
 import { Observable, SelfClass } from '../observable'
-import { Tool } from '../include'
-import _ from 'lodash'
 
 var __$p$ = {
   init: function () {
@@ -25,8 +23,8 @@ var __$p$ = {
   first: function (eventName, handlers) {
     this.__mc.first(eventName, handlers)
   },
-  trigger: function (eventName, e) {
-    this.__mc.trigger(eventName, e)
+  trigger: function (eventName, anyData) {
+    this.__mc.trigger(eventName, anyData)
   },
   unbind: function (eventName, handler) {
     this.__mc.unbind(eventName, handler)

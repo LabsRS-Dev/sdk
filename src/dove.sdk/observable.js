@@ -179,7 +179,12 @@ var Observable = SelfClass.extend({
     return that
   },
 
-  trigger: function (eventName, e) {
+  /**
+   * 触发事件，附带数据
+   * @argument eventName {String} 事件类型标识
+   * @argument anyData {Any} 任何数据
+   */
+  trigger: function (eventName, anyData) {
     var that = this,
       events = that._events[eventName],
       idx,
@@ -187,36 +192,19 @@ var Observable = SelfClass.extend({
 
     if (events) {
       // Auto check by self
-      e = e || {}
-      // Auto check object value
-      if (!_.isPlainObject(e)) {
-        try {
-          if (_.isString(e)) {
-            e = JSON.parse(e)
-          } else {
-            e = {
-              data: e || {}
-            }
-          }
-        } catch (err) {
-          e = {
-            data: e
-          }
-        }
-      }
-
-      e = e || {}
-      e.sender = that
-      e._defaultPrevented = false
-      e.preventDefault = preventDefault
-      e.isDefaultPrevented = isDefaultPrevented
+      var eObj = {}
+      eObj.data = anyData
+      eObj.sender = that
+      eObj._defaultPrevented = false
+      eObj.preventDefault = preventDefault
+      eObj.isDefaultPrevented = isDefaultPrevented
 
       events = events.slice()
       for (idx = 0, length = events.length; idx < length; idx++) {
-        events[idx].call(that, e)
+        events[idx].call(that, eObj)
       }
 
-      return e._defaultPrevented === true
+      return eObj._defaultPrevented === true
     }
 
     return false
