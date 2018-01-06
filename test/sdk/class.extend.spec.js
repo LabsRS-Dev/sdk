@@ -35,22 +35,32 @@ describe('SDK.Class', () => {
 describe('SDK.Observable', () => {
   it('Observable: Test trigger method ..', () => {
     const mc = new Observable()
+    console.log('getInternalName:', mc.getInternalName())
+    expect(mc.getInternalName()).toEqual(mc._name)
+    mc.setEnableDebug(true)
 
     const stringV = 'BestForYou'
     mc.bind('hello', (msgObj) => {
-      expect(msgObj.data).toEqual(stringV)
+      expect(msgObj).toEqual(stringV)
     }, false)
     mc.trigger('hello', stringV)
 
+    const stringJsonV = '{"type": 1}'
+    mc.bind('getJSON', (msgObj) => {
+      expect(msgObj).not.toBeUndefined()
+      expect(msgObj.type).toEqual(1)
+    })
+    mc.trigger('getJSON', stringJsonV)
+
     const boolV = true
     mc.bind('helloBool', (msgObj) => {
-      expect(msgObj.data).toEqual(boolV)
+      expect(msgObj).toEqual(boolV)
     }, false)
     mc.trigger('helloBool', boolV)
 
     const info = { 'myName': 'ian' }
     mc.bind('helloInfo', (msgObj) => {
-      expect(msgObj.data).toEqual(info)
+      expect(msgObj['myName']).toEqual(info['myName'])
     }, false)
     mc.bind('helloInfo', (msgObj) => {
       console.dir(msgObj)
@@ -61,13 +71,13 @@ describe('SDK.Observable', () => {
 
     const nullV = null
     mc.bind('helloNull', (msgObj) => {
-      expect(msgObj.data).toEqual(nullV)
+      expect(msgObj).toEqual(nullV)
     }, false)
     mc.trigger('helloNull', nullV)
 
     const undefinedV = undefined
     mc.bind('helloUndefined', (msgObj) => {
-      expect(msgObj.data).toEqual(undefinedV)
+      expect(msgObj).toEqual(undefinedV)
     }, false)
     mc.trigger('helloUndefined', undefinedV)
   })
@@ -113,12 +123,31 @@ describe('SDK.Observable', () => {
     const msg = 'Hello'
     __$p$.registerOnCreateError(function(msgObj){
       console.log("[1]registerOnCreateError ...")
-      expect(msgObj.data).toEqual(msg)
+      expect(msgObj).toEqual(msg)
     })
     __$p$.registerOnSendMessageToServer(function(msgObj){
       console.log("[2]registerOnSendMessageToServer: ...")
-      expect(msgObj.data).toEqual(msg)
+      expect(msgObj).toEqual(msg)
     })
     __$p$.mc.trigger(TypeMsg.OnCreateError, msg)
+  })
+
+  describe('SDK.Observable Issues', () => {
+    it('Observable: 传入破坏数据 ..', () => {
+      const mc = new Observable()
+      mc.setEnableDebug(true)
+
+      const stringJsonV = '{"_events": 1}'
+      mc.bind('getJSON', (msgObj) => {
+        expect(msgObj._events).toEqual(1)
+        console.dir(msgObj)
+        console.log('mc: \n')
+        console.dir(mc, '\n')
+      })
+      mc.trigger('getJSON', stringJsonV)
+
+    })
+
+
   })
 })

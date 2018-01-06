@@ -1,5 +1,6 @@
 import _ from 'lodash'
 
+const logCord = '[SDK.Observable].'
 // -----------------------------------------------------------------
 // extend from kendo.core.js
 
@@ -53,12 +54,12 @@ function deepExtendOne (destination, source) {
   return destination
 }
 
-var __$kernal$preventDefault = function () {
-  this.__$kernal$defaultPrevented = true
+var preventDefault = function () {
+  this.defaultPrevented = true
 }
 
-var __$kernal$isDefaultPrevented = function () {
-  return this.__$kernal$defaultPrevented === true
+var isDefaultPrevented = function () {
+  return this.defaultPrevented === true
 }
 
 function SelfClass () {}
@@ -102,11 +103,20 @@ SelfClass.prototype._initOptions = function (options) {
 var Observable = SelfClass.extend({
   init: function () {
     this._events = {}
-    this._name = _.uniqueId('SDK-Observable-')
+    this._name = _.uniqueId(logCord),
+    this._debug = false
   },
 
   getInternalName: function () {
-    return this._name
+    return _.get(this, '_name', '')
+  },
+
+  getEnableDebug: function () {
+    return _.get(this, '_debug', false)
+  },
+
+  setEnableDebug: function (enable) {
+    this._debug = enable && true
   },
 
   getMetaDataEvents: function () {
@@ -116,11 +126,11 @@ var Observable = SelfClass.extend({
   bind: function (eventName, handlers, one) {
     var that = this,
       idx,
-      eventNames = typeof eventName === 'string' ? [eventName] : eventName,
+      eventNames = _.isString(eventName) ? [eventName] : eventName,
       length,
       original,
       handler,
-      handlersIsFunction = typeof handlers === 'function',
+      handlersIsFunction = _.isFunction(handlers),
       events
 
     if (handlers === undefined) {
@@ -159,10 +169,10 @@ var Observable = SelfClass.extend({
   first: function (eventName, handlers) {
     var that = this,
       idx,
-      eventNames = typeof eventName === 'string' ? [eventName] : eventName,
+      eventNames = _.isString(eventName) ? [eventName] : eventName,
       length,
       handler,
-      handlersIsFunction = typeof handlers === 'function',
+      handlersIsFunction = _.isFunction(handlers),
       events
 
     for (idx = 0, length = eventNames.length; idx < length; idx++) {
@@ -192,27 +202,59 @@ var Observable = SelfClass.extend({
 
     if (events) {
       // Auto check by self
-      var eObj = {}
-      eObj.__$kernal$message = anyData
-      eObj.__$kernal$sender = that
-      eObj.__$kernal$defaultPrevented = false
-      eObj.__$kernal$preventDefault = __$kernal$preventDefault
-      eObj.__$kernal$isDefaultPrevented = __$kernal$isDefaultPrevented
+      var eventObj = {
+          data: {}
+        },
+        dataIsDirectTransfer = false,
+        dataIsStringToJSON = false
 
       if (_.isPlainObject(anyData)) {
-        eObj = _.extend(eObj, anyData)
+        eventObj.data = anyData
+      } else if (_.isString(anyData)) {
+        try {
+          const jsonData = JSON.parse(anyData)
+          if (that.getEnableDebug()) {
+            console.warn(logCord, '[Y] anyData is json string, parsed to Object => ', anyData)
+          }
+          dataIsStringToJSON = true
+          eventObj.data = jsonData
+        } catch(err){
+          if (that.getEnableDebug()) {
+            console.warn(logCord, '[X] anyData is not json string => ', anyData)
+          }
+          eventObj.data = anyData
+          dataIsDirectTransfer = true
+        }
+      } else {
+        eventObj.data = anyData
+        dataIsDirectTransfer = true
       }
 
-      if (!_.has(anyData, 'data')) {
-        eObj.data = anyData // 新语法{非PlainObject或者内部无data属性}
+      eventObj.sender = that
+      eventObj.defaultPrevented = false
+      eventObj.preventDefault = preventDefault
+      eventObj.isDefaultPrevented = isDefaultPrevented
+
+      //添加extend函数
+      eventObj.extends = {
+        getDataIsDirectTransfer: () => { return dataIsDirectTransfer },
+        getDataIsStringToJSON: () => { return dataIsStringToJSON },
+        getHasDataProperty: () => { return _.has(eventObj, 'data')}
       }
 
       events = events.slice()
       for (idx = 0, length = events.length; idx < length; idx++) {
-        events[idx].call(that, eObj)
+
+        /**
+         * 调用注册的Handler， 附带参数
+         * @param {any} data 数据 eventObj.data
+         * @param {Object} eventObj 事件对象
+         * @returns
+         */
+        events[idx].call(that, eventObj.data, eventObj)
       }
 
-      return eObj.__$kernal$defaultPrevented === true
+      return eventObj.defaultPrevented === true
     }
 
     return false
