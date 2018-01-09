@@ -38,7 +38,14 @@ uu$.certificateManagerInit = function () {
 // 更新检测初始化
 uu$.updateCheckInit = function () {
   setTimeout(function () {
-    update.checkStartInfo()
+    const startInfo = {}
+    if (!b$.App.getSandboxEnable()
+      && !b$.App.getIsRegistered()
+      && !b$.App.getIsSubscriptionProduct()) {
+        startInfo.HasNotExpired = b$.App.getTrialHasNotExpired()
+    }
+
+    update.checkStartInfo(startInfo)
 
     if (b$.App.getSandboxEnable() && b$.App.getAppRunOnOS() === 'MacOSX') {
       console.log('------------- common app starting .... -------')

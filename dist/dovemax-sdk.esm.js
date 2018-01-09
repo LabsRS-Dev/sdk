@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180108.10.19
+ * DoveMaxSDK ABI v20180110.6.40
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -18841,6 +18841,16 @@ $bc_$4.App = {
     return false
   },
 
+  // 获取App是否试用机会没有过期
+  getTrialHasNotExpired: function () {
+    var t$ = this;
+    if ($bc_$4.pN) {
+      if (t$.getSandboxEnable()) { return true }
+      return $bc_$4.pN.app.getTrialHasNotExpired()
+    }
+    return true
+  },
+
   // 获取App是否已经注册(证书信息已经安装)
   getIsRegistered: function () {
     var t$ = this;
@@ -24163,7 +24173,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180108.10.19',
+  version: '20180110.6.40',
   b$: $bc_
 }
 
@@ -27632,7 +27642,14 @@ uu$$9.certificateManagerInit = function () {
 // 更新检测初始化
 uu$$9.updateCheckInit = function () {
   setTimeout(function () {
-    update.checkStartInfo();
+    var startInfo = {};
+    if (!b$$1.App.getSandboxEnable()
+      && !b$$1.App.getIsRegistered()
+      && !b$$1.App.getIsSubscriptionProduct()) {
+        startInfo.HasNotExpired = b$$1.App.getTrialHasNotExpired();
+    }
+
+    update.checkStartInfo(startInfo);
 
     if (b$$1.App.getSandboxEnable() && b$$1.App.getAppRunOnOS() === 'MacOSX') {
       console.log('------------- common app starting .... -------');
@@ -27716,7 +27733,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180108.10.19',
+  version: '20180110.6.40',
   util: util
 }
 
@@ -27746,7 +27763,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180108.10.19'
+  version: '20180110.6.40'
 }
 
 export default index_esm;

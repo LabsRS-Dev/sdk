@@ -101,6 +101,16 @@ $bc_.App = {
     return false
   },
 
+  // 获取App是否试用机会没有过期
+  getTrialHasNotExpired: function () {
+    var t$ = this
+    if ($bc_.pN) {
+      if (t$.getSandboxEnable()) return true
+      return $bc_.pN.app.getTrialHasNotExpired()
+    }
+    return true
+  },
+
   // 获取App是否已经注册(证书信息已经安装)
   getIsRegistered: function () {
     var t$ = this
