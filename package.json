@@ -1,6 +1,6 @@
 {
   "name": "dove.max.sdk",
-  "version": "20180110.6.40",
+  "version": "20180110.21.18",
   "description": "common api for native macOS and electron",
   "main": "dist/dovemax-sdk.js",
   "module": "dist/dovemax-sdk.esm.js",
@@ -52,18 +52,20 @@
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-2": "^6.22.0",
+    "babel-register": "^6.26.0",
     "babel-runtime": "^6.23.0",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.8",
     "eslint": "^4.15.0",
     "express": "^4.16.2",
-    "jasmine": "^2.5.3",
-    "jasmine-core": "^2.5.2",
+    "jasmine": "^2.8.0",
+    "jasmine-core": "^2.8.0",
     "jquery": "^3.2.1",
     "jquery-migrate": "^3.0.1",
     "jsdom": "^11.5.1",
     "nightwatch": "^0.9.19",
     "nightwatch-helpers": "^1.2.0",
+    "request": "^2.83.0",
     "rollup": "^0.53.2",
     "rollup-plugin-alias": "^1.4.0",
     "rollup-plugin-buble": "^0.18.0",
@@ -75,7 +77,8 @@
     "selenium-server": "^3.8.1",
     "todomvc-app-css": "^2.1.0",
     "typescript": "^2.6.2",
-    "uglify-js": "^3.3.5"
+    "uglify-js": "^3.3.5",
+    "webpack": "^3.10.0"
   },
   "dependencies": {
     "lodash": "^4.17.4"

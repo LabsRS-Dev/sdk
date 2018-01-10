@@ -44,11 +44,11 @@ uu$.updateCheckInit = function () {
       && !b$.App.getIsSubscriptionProduct()) {
         startInfo.HasNotExpired = b$.App.getTrialHasNotExpired()
     }
-
+    console.log('------------- common app starting .... -------')
     update.checkStartInfo(startInfo)
 
     if (b$.App.getSandboxEnable() && b$.App.getAppRunOnOS() === 'MacOSX') {
-      console.log('------------- common app starting .... -------')
+      console.log('------------- mac os sandbox app starting .... -------')
     } else {
       update.checkUpdate()
       // uu$.checkPatches()

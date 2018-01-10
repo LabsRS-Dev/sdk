@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180110.6.40
+ * DoveMaxSDK ABI v20180110.21.18
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24173,7 +24173,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180110.6.40',
+  version: '20180110.21.18',
   b$: $bc_
 }
 
@@ -27648,11 +27648,11 @@ uu$$9.updateCheckInit = function () {
       && !b$$1.App.getIsSubscriptionProduct()) {
         startInfo.HasNotExpired = b$$1.App.getTrialHasNotExpired();
     }
-
+    console.log('------------- common app starting .... -------');
     update.checkStartInfo(startInfo);
 
     if (b$$1.App.getSandboxEnable() && b$$1.App.getAppRunOnOS() === 'MacOSX') {
-      console.log('------------- common app starting .... -------');
+      console.log('------------- mac os sandbox app starting .... -------');
     } else {
       update.checkUpdate();
       // uu$.checkPatches()
@@ -27733,7 +27733,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180110.6.40',
+  version: '20180110.21.18',
   util: util
 }
 
@@ -27763,7 +27763,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180110.6.40'
+  version: '20180110.21.18'
 }
 
 export default index_esm;
