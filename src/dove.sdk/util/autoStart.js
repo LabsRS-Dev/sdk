@@ -51,7 +51,6 @@ uu$.updateCheckInit = function () {
       console.log('------------- mac os sandbox app starting .... -------')
     } else {
       update.checkUpdate()
-      // uu$.checkPatches()
     }
   }, 36 * 1000) // 36sec
 }

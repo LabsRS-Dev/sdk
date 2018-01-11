@@ -37,15 +37,16 @@ uu$.setp = function (key) {
   var t$ = this
   var $ = common.getJQuery$()
   return function (r) {
-    var cb = t$.getpcb[key]
+    var curCbObj = t$.getpcb[key]
+    var cb = curCbObj['cb']
     try {
       if (typeof r === 'object') {
         r.__t = (new Date()).getTime()
-        cache[cb.cache_key] = r
+        cache[curCbObj['cache_key']] = r
       }
     } catch (error) {}
 
-    if (t$.getpcb['now'] === cb || cb.no_cancel) {
+    if (t$.getpcb['now'] === cb || curCbObj['no_cancel']) {
       $.event.trigger('ajaxComplete')
       cb(r)
     }
@@ -81,13 +82,21 @@ uu$.getp = function (url, data, noCache, cb, failCallback, noCancel) {
         delete cache[cacheKey]
       }
     }
-    var key = Math.random()
-    t$.getpcb['now'] = t$.getpcb[key] = cb
-    t$.getpcb[key]['no_cancel'] = noCancel
-    t$.getpcb[key]['cache_key'] = cacheKey
 
+    // process key
+    var key = 'key-' + Math.random()
+    t$.getpcb = _.extend(t$.getpcb, {
+      'now': cb
+    })
+    t$.getpcb[key] = _.extend({}, {
+      'cb': cb,
+      'no_cancel': noCancel,
+      'cache_key': cacheKey
+    })
+
+    // extend
     data = $.extend(data, {
-      cb: '$.setp(' + key + ')',
+      cb: '$.setp("' + key + '")',
       navigatorInfo: navigator.userAgent
     })
 
@@ -246,6 +255,8 @@ function autoForJquery (ref) {
         window.$['feedbackInfoEx'] = t$.feedbackInfoEx
 
         window.$ = window.$.extend(window.$, t$)
+      } else {
+        console.warn('Can not found jQuery ... [communication.js]')
       }
     }
   } catch (error) {

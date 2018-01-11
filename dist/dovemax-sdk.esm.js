@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180110.21.18
+ * DoveMaxSDK ABI v20180111.19.39
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24173,7 +24173,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180110.21.18',
+  version: '20180111.19.39',
   b$: $bc_
 }
 
@@ -24504,15 +24504,16 @@ uu$$1.setp = function (key) {
   var t$ = this;
   var $ = common$1.getJQuery$();
   return function (r) {
-    var cb = t$.getpcb[key];
+    var curCbObj = t$.getpcb[key];
+    var cb = curCbObj['cb'];
     try {
       if (typeof r === 'object') {
         r.__t = (new Date()).getTime();
-        cache[cb.cache_key] = r;
+        cache[curCbObj['cache_key']] = r;
       }
     } catch (error) {}
 
-    if (t$.getpcb['now'] === cb || cb.no_cancel) {
+    if (t$.getpcb['now'] === cb || curCbObj['no_cancel']) {
       $.event.trigger('ajaxComplete');
       cb(r);
     }
@@ -24548,13 +24549,21 @@ uu$$1.getp = function (url, data, noCache, cb, failCallback, noCancel) {
         delete cache[cacheKey];
       }
     }
-    var key = Math.random();
-    t$.getpcb['now'] = t$.getpcb[key] = cb;
-    t$.getpcb[key]['no_cancel'] = noCancel;
-    t$.getpcb[key]['cache_key'] = cacheKey;
 
+    // process key
+    var key = 'key-' + Math.random();
+    t$.getpcb = lodash.extend(t$.getpcb, {
+      'now': cb
+    });
+    t$.getpcb[key] = lodash.extend({}, {
+      'cb': cb,
+      'no_cancel': noCancel,
+      'cache_key': cacheKey
+    });
+
+    // extend
     data = $.extend(data, {
-      cb: '$.setp(' + key + ')',
+      cb: '$.setp("' + key + '")',
       navigatorInfo: navigator.userAgent
     });
 
@@ -24720,6 +24729,8 @@ function autoForJquery$1 (ref) {
         window.$['feedbackInfoEx'] = t$.feedbackInfoEx;
 
         window.$ = window.$.extend(window.$, t$);
+      } else {
+        console.warn('Can not found jQuery ... [communication.js]');
       }
     }
   } catch (error) {
@@ -27655,7 +27666,6 @@ uu$$9.updateCheckInit = function () {
       console.log('------------- mac os sandbox app starting .... -------');
     } else {
       update.checkUpdate();
-      // uu$.checkPatches()
     }
   }, 36 * 1000); // 36sec
 };
@@ -27733,7 +27743,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180110.21.18',
+  version: '20180111.19.39',
   util: util
 }
 
@@ -27763,7 +27773,7 @@ var index_esm = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180110.21.18'
+  version: '20180111.19.39'
 }
 
 export default index_esm;
