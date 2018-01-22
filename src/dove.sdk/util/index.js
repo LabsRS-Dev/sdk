@@ -30,7 +30,7 @@ try {
       var titleError = this.errorMessage + "\n"
       var contentError = this.globalErrorMessage.replace("{message}", e).replace("{line}", i).replace("{file}", t) + "\n"
       var stackError = ""
-      if ("undefined" != typeof s && "undefined" != typeof s.stack) {
+      if ("undefined" != typeof s && "undefined" != typeof s['stack']) {
         stackError = s.stack + "\n"
       }
 
