@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180122.9.59
+ * DoveMaxSDK ABI v20180122.10.40
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24179,7 +24179,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180122.9.59',
+  version: '20180122.10.40',
   b$: $bc_
 }
 
@@ -27714,12 +27714,34 @@ var autoStart = uu$$9;
  * 该用法用来捕捉不在try... catch 内的Error
  */
 try {
-  var _callReport = function (e) {
-    try {
-      var message = common$1.RTYUtils.getErrorMessage(e);
-      if (message && message !== '') {
-        console.log('------异常捕获 _callReport -----');
-        console.log(message);
+  var _errorHandler = {
+    errorMessage: "Dove.SDK caught the following JavaScript error.",
+    globalErrorMessage: "\"{message}\" on line {line} of {file}.",
+    log: function(e) {
+      "undefined" != typeof window.console && "undefined" != typeof window.console.log && console.log(e);
+    },
+    getFormatError: function(e, t, i, l, s) {
+      var splitMsg = "************************************************************************\n";
+      var titleError = this.errorMessage + "\n";
+      var contentError = this.globalErrorMessage.replace("{message}", e).replace("{line}", i).replace("{file}", t) + "\n";
+      var stackError = "";
+      if ("undefined" != typeof s && "undefined" != typeof s.stack) {
+        stackError = s.stack + "\n";
+      }
+
+      return splitMsg + titleError + contentError + stackError + splitMsg
+    },
+    logGlobalError: function(e, t, i, l, s) {
+      this.log("************************************************************************");
+      this.log(this.errorMessage);
+      this.log(this.globalErrorMessage.replace("{message}", e).replace("{line}", i).replace("{file}", t));
+      "undefined" != typeof s && "undefined" != typeof s.stack && (this.log(s.stack), this.log("************************************************************************"));
+    },
+    onError: function (e, t, i, l, s) {
+      this.log('------异常捕获 _callReport -----');
+      try {
+        this.logGlobalError(e, t, i, l, s);
+        var message = this.getFormatError(e, t, i, l, s) || "";
 
         if (config.reportErr) {
           // 发送到服务器
@@ -27728,14 +27750,14 @@ try {
             errorMessage: message
           });
         }
+      }catch(error){
+        this.log(error);
       }
-    } catch (err) {
-      console.error(err);
     }
   };
 
-  window.addEventListener('error', function (e) {
-    _callReport(e);
+  window.addEventListener('error', function (e, t, i, l, s) {
+    _errorHandler.onError(e, t, i, l, s);
   });
 } catch (error) {
   console.error(error);
@@ -27755,7 +27777,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180122.9.59',
+  version: '20180122.10.40',
   util: util
 }
 
@@ -27785,7 +27807,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180122.9.59'
+  version: '20180122.10.40'
 }
 
 return index;
