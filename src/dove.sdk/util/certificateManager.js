@@ -37,6 +37,9 @@ uu$.CertificateManagerOnline = {
 
     const info = {
       machine: b$.App.getSerialNumber(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion(),
       certificate: certificate
     }
     communication.commitMessage('/services/machine_certificate_bind', info, cb)
@@ -48,6 +51,9 @@ uu$.CertificateManagerOnline = {
 
     const info = {
       machine: b$.App.getSerialNumber(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion(),
       certificate: certificate
     }
     communication.commitMessage('/services/machine_certificate_unbind', info, cb)
