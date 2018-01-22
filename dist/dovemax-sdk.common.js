@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180111.19.39
+ * DoveMaxSDK ABI v20180122.9.59
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24175,7 +24175,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180111.19.39',
+  version: '20180122.9.59',
   b$: $bc_
 }
 
@@ -27582,6 +27582,9 @@ uu$$8.CertificateManagerOnline = {
 
     var info = {
       machine: b$.App.getSerialNumber(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion(),
       certificate: certificate
     };
     communication.commitMessage('/services/machine_certificate_bind', info, cb);
@@ -27595,6 +27598,9 @@ uu$$8.CertificateManagerOnline = {
 
     var info = {
       machine: b$.App.getSerialNumber(),
+      appId: b$.App.getAppId(),
+      appName: b$.App.getAppName(),
+      appVersion: b$.App.getAppVersion(),
       certificate: certificate
     };
     communication.commitMessage('/services/machine_certificate_unbind', info, cb);
@@ -27745,7 +27751,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180111.19.39',
+  version: '20180122.9.59',
   util: util
 }
 
@@ -27775,7 +27781,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180111.19.39'
+  version: '20180122.9.59'
 }
 
 module.exports = index;
