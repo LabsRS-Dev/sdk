@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180122.10.40
+ * DoveMaxSDK ABI v20180122.10.50
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24179,7 +24179,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180122.10.40',
+  version: '20180122.10.50',
   b$: $bc_
 }
 
@@ -27725,7 +27725,7 @@ try {
       var titleError = this.errorMessage + "\n";
       var contentError = this.globalErrorMessage.replace("{message}", e).replace("{line}", i).replace("{file}", t) + "\n";
       var stackError = "";
-      if ("undefined" != typeof s && "undefined" != typeof s.stack) {
+      if ("undefined" != typeof s && "undefined" != typeof s['stack']) {
         stackError = s.stack + "\n";
       }
 
@@ -27777,7 +27777,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180122.10.40',
+  version: '20180122.10.50',
   util: util
 }
 
@@ -27807,7 +27807,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180122.10.40'
+  version: '20180122.10.50'
 }
 
 return index;
