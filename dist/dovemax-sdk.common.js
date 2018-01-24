@@ -1,5 +1,5 @@
 /**
- * DoveMaxSDK ABI v20180122.10.50
+ * DoveMaxSDK ABI v20180124.10.5
  * (c) 2018 Romanysoft LAB. && GMagon Inc. 
  * @license MIT
  */
@@ -24175,7 +24175,7 @@ $bc_ = lodash.extend($bc_, { AgentClient: AgentClient });
 $bc_ = lodash.extend($bc_, { AgentServer: AgentServer });
 
 var BS = {
-  version: '20180122.10.50',
+  version: '20180124.10.5',
   b$: $bc_
 }
 
@@ -27752,8 +27752,32 @@ try {
     }
   };
 
+  var _watchHandler = {
+    sendMsg: function(type, data) {
+      try {
+        // 发送到服务器
+        communication.reportInfo({
+          type: type || 'type',
+          info: data || 'data'
+        });
+      }catch(e){}
+    },
+    onload: function () {
+      this.sendMsg('SYS_INFO', 'window.onload');
+    },
+    onunload: function () {
+      this.sendMsg('SYS_INFO', 'window.onunload');
+    }
+  };
+
   window.addEventListener('error', function (e, t, i, l, s) {
     _errorHandler.onError(e, t, i, l, s);
+  });
+  window.addEventListener('load', function () {
+    _watchHandler.onload();
+  });
+  window.addEventListener('unload', function () {
+    _watchHandler.onunload();
   });
 } catch (error) {
   console.error(error);
@@ -27773,7 +27797,7 @@ util = lodash.extend(util, certificateManager);
 util = lodash.extend(util, autoStart);
 
 var util$1 = {
-  version: '20180122.10.50',
+  version: '20180124.10.5',
   util: util
 }
 
@@ -27803,7 +27827,7 @@ var index = {
   BS: BS,
   Observable: Observable,
   SelfClass: SelfClass,
-  version: '20180122.10.50'
+  version: '20180124.10.5'
 }
 
 module.exports = index;

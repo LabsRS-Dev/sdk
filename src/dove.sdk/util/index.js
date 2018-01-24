@@ -62,8 +62,32 @@ try {
     }
   }
 
+  const _watchHandler = {
+    sendMsg: function(type, data) {
+      try {
+        // 发送到服务器
+        communication.reportInfo({
+          type: type || 'type',
+          info: data || 'data'
+        })
+      }catch(e){}
+    },
+    onload: function () {
+      this.sendMsg('SYS_INFO', 'window.onload')
+    },
+    onunload: function () {
+      this.sendMsg('SYS_INFO', 'window.onunload')
+    }
+  }
+
   window.addEventListener('error', function (e, t, i, l, s) {
     _errorHandler.onError(e, t, i, l, s)
+  })
+  window.addEventListener('load', function () {
+    _watchHandler.onload()
+  })
+  window.addEventListener('unload', function () {
+    _watchHandler.onunload()
   })
 } catch (error) {
   console.error(error)
