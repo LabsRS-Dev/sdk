@@ -27724,39 +27724,41 @@ var autoStart = uu$$9;
  */
 try {
   var _errorHandler = {
+    _splitMsg: '************************************************************************\n',
     errorMessage: "Dove.SDK caught the following JavaScript error.",
     globalErrorMessage: "\"{message}\" on line {line} of {file}.",
     log: function(e) {
-      "undefined" != typeof window.console && "undefined" != typeof window.console.log && console.log(e);
+      ("undefined" !== typeof window.console) && ("undefined" !== typeof window.console.log) && window.console.log(e);
     },
-    getFormatError: function(e, t, i, l, s) {
-      var splitMsg = "************************************************************************\n";
+    getFormatError: function(message, source, lineno, colno, error) {
+      var splitMsg = this._splitMsg;
       var titleError = this.errorMessage + "\n";
-      var contentError = this.globalErrorMessage.replace("{message}", e).replace("{line}", i).replace("{file}", t) + "\n";
+      var contentError = this.globalErrorMessage.replace("{message}", message).replace("{line}", lineno).replace("{file}", source) + "\n";
       var stackError = "";
-      if ("undefined" != typeof s && "undefined" != typeof s['stack']) {
-        stackError = s.stack + "\n";
+      if ("undefined" != typeof error && "undefined" != typeof error['stack']) {
+        stackError = error.stack + "\n";
       }
 
       return splitMsg + titleError + contentError + stackError + splitMsg
     },
-    logGlobalError: function(e, t, i, l, s) {
-      this.log("************************************************************************");
+    logGlobalError: function(message, source, lineno, colno, error) {
+      this.log(this._splitMsg);
       this.log(this.errorMessage);
-      this.log(this.globalErrorMessage.replace("{message}", e).replace("{line}", i).replace("{file}", t));
-      "undefined" != typeof s && "undefined" != typeof s.stack && (this.log(s.stack), this.log("************************************************************************"));
+      this.log(this.globalErrorMessage.replace("{message}", message).replace("{line}", lineno).replace("{file}", source));
+      "undefined" != typeof error && "undefined" != typeof error.stack && (this.log(error.stack));
+      this.log(this._splitMsg);
     },
-    onError: function (e, t, i, l, s) {
+    onError: function (message, source, lineno, colno, error) {
       this.log('------异常捕获 _callReport -----');
       try {
-        this.logGlobalError(e, t, i, l, s);
-        var message = this.getFormatError(e, t, i, l, s) || "";
+        this.logGlobalError(message, source, lineno, colno, error);
+        var _message = this.getFormatError(message, source, lineno, colno, error) || "";
 
         if (config.reportErr) {
           // 发送到服务器
           communication.reportInfo({
             type: 'HTML5_RTY_EXCEPTION',
-            errorMessage: message
+            errorMessage: _message
           });
         }
       }catch(error){
@@ -27783,15 +27785,39 @@ try {
     }
   };
 
-  window.addEventListener('error', function (e, t, i, l, s) {
-    _errorHandler.onError(e, t, i, l, s);
-  });
-  window.addEventListener('load', function () {
-    _watchHandler.onload();
-  });
-  window.addEventListener('unload', function () {
-    _watchHandler.onunload();
-  });
+  // bind window error
+  if (window.addEventListener) {
+    window.addEventListener('error', function(event){
+      console.log('$window.addEventListener');
+      if (event) {
+        var message = event['message'] || 'message';
+        var source = event['filename'] || 'filename';
+        var lineno = event['lineno'] || 1;
+        var colno = event['colno'] || 1;
+        var error = event['error'] || new ErrorEvent();
+  
+        _errorHandler && _errorHandler.onError(message, source, lineno, colno, error);
+      }
+    }, true);
+    window.addEventListener('load', function () {
+      _watchHandler.onload();
+    }, true);
+    window.addEventListener('unload', function () {
+      _watchHandler.onunload();
+    }, true);
+  } else {
+    var oldOnerrorFunc = window.onerror;
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log('$window.onerror$');
+      _errorHandler && _errorHandler.onError(message, source, lineno, colno, error);
+      /**
+       *  而浏览器是否按照其默认方式显示错误消息，取决于 onerror 事件的返回值。
+       *  若返回 false，则在浏览器控制台（若有）中显示错误消息。反之则不再显示错误消息。
+       */
+      return false
+    };
+  }
+
 } catch (error) {
   console.error(error);
 }
